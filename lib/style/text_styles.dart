@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
 class WakText {
+  /* base */
+  static const TextStyle txtBase = TextStyle(letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
+  static final TextStyle txtLBase = txtBase.copyWith(fontWeight: FontWeight.w300);
+  static final TextStyle txtMBase = txtBase.copyWith(fontWeight: FontWeight.w500);
+  static final TextStyle txtBBase = txtBase.copyWith(fontWeight: FontWeight.w700);
   /* light */
-  static final TextStyle txt12L = TextStyle(height: 18/12, fontSize: 12.0, fontWeight: FontWeight.w300, letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
+  static final TextStyle txt12L = txtLBase.copyWith(height: 18/12, fontSize: 12.0);
   /* medium */
-  static final TextStyle txt12MH = TextStyle(height: 18/12, fontSize: 12.0, fontWeight: FontWeight.w500, letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
-  static final TextStyle txt14MH = TextStyle(height: 24/14, fontSize: 14.0, fontWeight: FontWeight.w500, letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
-  static final TextStyle txt12M = TextStyle(height: 14/12, fontSize: 12.0, fontWeight: FontWeight.w500, letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
-  static final TextStyle txt14M = TextStyle(height: 20/14, fontSize: 14.0, fontWeight: FontWeight.w500, letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
-  static final TextStyle txt16M = TextStyle(height: 24/16, fontSize: 16.0, fontWeight: FontWeight.w500, letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
-  static final TextStyle txt18M = TextStyle(height: 28/18, fontSize: 18.0, fontWeight: FontWeight.w500, letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
+  static final TextStyle txt12MH = txtMBase.copyWith(height: 18/12, fontSize: 12.0);
+  static final TextStyle txt14MH = txtMBase.copyWith(height: 24/14, fontSize: 14.0);
+  static final TextStyle txt12M = txtMBase.copyWith(height: 14/12, fontSize: 12.0);
+  static final TextStyle txt14M = txtMBase.copyWith(height: 20/14, fontSize: 14.0);
+  static final TextStyle txt16M = txtMBase.copyWith(height: 24/16, fontSize: 16.0);
+  static final TextStyle txt18M = txtMBase.copyWith(height: 28/18, fontSize: 18.0);
   /* bold */
-  static final TextStyle txt12B = TextStyle(height: 18/12, fontSize: 12.0, fontWeight: FontWeight.w700, letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
-  static final TextStyle txt16B = TextStyle(height: 24/16, fontSize: 16.0, fontWeight: FontWeight.w700, letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
+  static final TextStyle txt12B = txtBBase.copyWith(height: 18/12, fontSize: 12.0);
+  static final TextStyle txt16B = txtBBase.copyWith(height: 24/16, fontSize: 16.0);
 }
