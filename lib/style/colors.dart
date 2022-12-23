@@ -19,6 +19,7 @@ class WakColor {
   static const Color yellow = Color(0xFFF4FF81);
   static const Color purple = Color(0xFF6859EA);
   static const Color dark = Color(0xFF080F34);
+  static const Color pink = Color(0xFFFA3168);
   static const Color mint = Color(0xFF00F4BA);
   static const Color blue = Color(0xFF00A3FF);
   static const Color orange = Color(0xFFFF8F0C); 

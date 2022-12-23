@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
 
-// extension WakText on TextTheme {
-//   TextStyle get txt12L{
-//     return TextStyle(
-//       fontSize: 12.0, 
-//     );
-//   }
-// }
 class WakText {
   /* light */
-  static final TextStyle txt12L = TextStyle(height: 1.5, fontSize: 12.0, fontWeight: FontWeight.w400);
+  static final TextStyle txt12L = TextStyle(height: 18/12, fontSize: 12.0, fontWeight: FontWeight.w400, letterSpacing: -0.5);
   /* medium */
-  static final TextStyle txt11M = TextStyle(height: 1.4, fontSize: 16.0, fontWeight: FontWeight.w600);
-  static final TextStyle txt12M = TextStyle(height: 1.1, fontSize: 16.0, fontWeight: FontWeight.w600);
-  static final TextStyle txt12MH = TextStyle(height: 1.5, fontSize: 16.0, fontWeight: FontWeight.w600);
-  static final TextStyle txt14M = TextStyle(height: 1.4, fontSize: 14.0, fontWeight: FontWeight.w600);
-  static final TextStyle txt14MH = TextStyle(height: 1.7, fontSize: 16.0, fontWeight: FontWeight.w600);
-  static final TextStyle txt16M = TextStyle(height: 1.5, fontSize: 16.0, fontWeight: FontWeight.w600);
-  static final TextStyle txt18M = TextStyle(height: 1.5, fontSize: 18.0, fontWeight: FontWeight.w600);
+  static final TextStyle txt12M = TextStyle(height: 14/12, fontSize: 16.0, fontWeight: FontWeight.w600, letterSpacing: -0.5);
+  static final TextStyle txt12MH = TextStyle(height: 18/12, fontSize: 16.0, fontWeight: FontWeight.w600, letterSpacing: -0.5);
+  static final TextStyle txt14M = TextStyle(height: 20/14, fontSize: 14.0, fontWeight: FontWeight.w600, letterSpacing: -0.5);
+  static final TextStyle txt14MH = TextStyle(height: 24/14, fontSize: 16.0, fontWeight: FontWeight.w600, letterSpacing: -0.5);
+  static final TextStyle txt16M = TextStyle(height: 24/16, fontSize: 16.0, fontWeight: FontWeight.w600, letterSpacing: -0.5);
+  static final TextStyle txt18M = TextStyle(height: 28/18, fontSize: 18.0, fontWeight: FontWeight.w600, letterSpacing: -0.5);
   /* bold */
-  static final TextStyle txt12B = TextStyle(height: 1.5, fontSize: 12.0, fontWeight: FontWeight.w700);
-  static final TextStyle txt16B = TextStyle(height: 1.5, fontSize: 16.0, fontWeight: FontWeight.w700);
+  static final TextStyle txt12B = TextStyle(height: 18/12, fontSize: 12.0, fontWeight: FontWeight.w700, letterSpacing: -0.5);
+  static final TextStyle txt16B = TextStyle(height: 24/16, fontSize: 16.0, fontWeight: FontWeight.w700, letterSpacing: -0.5);
 }
