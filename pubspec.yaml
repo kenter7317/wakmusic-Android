@@ -76,9 +76,9 @@ flutter:
     - family: Pretendard
       fonts:
         - asset: assets/fonts/Pretendard-Light.ttf
-          weight: 400
+          weight: 300
         - asset: assets/fonts/Pretendard-Medium.ttf
-          weight: 600
+          weight: 500
         - asset: assets/fonts/Pretendard-Bold.ttf
           weight: 700
 
