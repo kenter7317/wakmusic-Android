@@ -4,14 +4,15 @@ import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 enum TileType {
-  baseTile(false, false, false, true, 60, null),
-  homeTile(true, false, false, false, 12, Icon(Icons.play_circle_fill_rounded, size: 24,)),
-  nowPlayTile(false, false, false, false, 56, Icon(Icons.rectangle_rounded, size: 40,)),
-  canPlayTile(false, false, false, false, 60, Icon(Icons.play_circle_fill_rounded, size: 32,)),
-  chartTile(true, true, false, true, 12, null),
-  dateTile(false, false, true, true, 39, null);
+  baseTile(false, false, false, true, {'start': 20, 'middle': 60, 'end': 20}, {}),
+  homeTile(true, false, false, false, {'start': 0, 'middle': 12, 'end': 0}, {'icon': 'ic_24_play', 'width': 24.0, 'height': 24.0}),
+  nowPlayTile(false, false, false, false, {'start': 20, 'middle': 56, 'end': 16}, {'icon': 'logo_00', 'width': 40.0, 'height': 26.0}),
+  canPlayTile(false, false, false, false, {'start': 20, 'middle': 60, 'end': 20}, {'icon': 'ic_32_play_point', 'width': 32.0, 'height': 32.0}),
+  chartTile(true, true, false, true, {'start': 20, 'middle': 12, 'end': 20}, {}),
+  dateTile(false, false, true, true, {'start': 20, 'middle': 39, 'end': 20}, {});
 
   const TileType(this.showRank, this.showViews, this.showDate, this.canSelect,
       this.padding, this.icon);
@@ -19,8 +20,8 @@ enum TileType {
   final bool showViews;
   final bool showDate;
   final bool canSelect;
-  final double padding;
-  final Icon? icon;
+  final Map<String, double> padding;
+  final Map<String, dynamic> icon;
 }
 
 class SongTile extends StatefulWidget {
@@ -44,14 +45,13 @@ class _SongTileState extends State<SongTile> {
     return GestureDetector(
       onTap: () {
         if (widget.tileType.canSelect) {
-          /* */
+          /* select <-> unselect */
         }
       },
       child: Container(
-        padding: EdgeInsets.fromLTRB(
-            20, 0, widget.tileType == TileType.nowPlayTile ? 16 : 20, 0),
-        color: widget.tileType.canSelect
-            ? WakColor.grey200 /* <= color if isSelected*/ : Colors.transparent,
+        padding: EdgeInsets.fromLTRB(widget.tileType.padding['start']!, 0, widget.tileType.padding['end']!, 0),
+        color: widget.tileType.canSelect /* && isSelected */
+            ? WakColor.grey200 : Colors.transparent,
         child: SizedBox(
           height: widget.tileType == TileType.homeTile ? 42 : 60,
           child: Row(
@@ -97,7 +97,7 @@ class _SongTileState extends State<SongTile> {
                   ],
                 ),
               ),
-              SizedBox(width: widget.tileType.padding),
+              SizedBox(width: widget.tileType.padding['middle']),
               if (widget.tileType.showViews)
                 Text(
                   NumberFormat('###,###,###회').format(widget.song.views),
@@ -111,14 +111,18 @@ class _SongTileState extends State<SongTile> {
                   textAlign: TextAlign.right,
                 ),
               if (!widget.tileType.canSelect)
-                (widget.tileType != TileType.nowPlayTile)
-                    ? GestureDetector(
-                        onTap: () {
-                          /* play song */
-                        },
-                        child: widget.tileType.icon,
-                      )
-                    : widget.tileType.icon!,
+                GestureDetector(
+                  onTap: () {
+                    if (widget.tileType != TileType.nowPlayTile){
+                      /* play song */
+                    }
+                  },
+                  child: SvgPicture.asset(
+                    'assets/icons/${widget.tileType.icon['icon']}.svg', 
+                    width: widget.tileType.icon['width'],
+                    height: widget.tileType.icon['height'],
+                  ),
+                ),
             ],
           ),
         ),
@@ -144,9 +148,9 @@ class _SongTileState extends State<SongTile> {
   }
 
   Widget _rankChange(BuildContext context) {
-    int diff = widget.rank - widget.song.last;
+    int diff = widget.song.last - widget.rank;
     /* NEW */
-    if (widget.song.last == 0) {
+    if (widget.song.last == 0 || diff > 99) {
       return Text(
         'NEW',
         style: WakText.txt11M.copyWith(color: WakColor.orange),
@@ -155,28 +159,25 @@ class _SongTileState extends State<SongTile> {
     }
     /* ZERO */
     else if (diff == 0) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: const [
-          Icon(
-            Icons.remove,
-            size: 12,
-            color: Color(0xFF202F61),
-          ),
-        ],
+      return Container(
+        height: 16,
+        alignment: Alignment.center,
+        child: SvgPicture.asset(
+          'assets/icons/ic_12_zero.svg',
+          width: 12,
+          height: 12,
+        ),
       );
     }
     /* UP or DOWN */
     else {
-      Color color = diff < 0 ? WakColor.pink : WakColor.blue;
+      Color color = diff > 0 ? WakColor.pink : WakColor.blue;
       return Row(
         children: [
-          Icon(
-            diff < 0
-                ? Icons.arrow_drop_up_rounded
-                : Icons.arrow_drop_down_rounded,
-            size: 12,
-            color: color,
+          SvgPicture.asset(
+            'assets/icons/ic_12_${diff > 0 ? 'up' : 'down'}.svg',
+            width: 12,
+            height: 12,
           ),
           SizedBox(
             width: 12,
