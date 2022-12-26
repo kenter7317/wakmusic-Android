@@ -9,11 +9,10 @@ class WakText {
   /* light */
   static final TextStyle txt12L = txtLBase.copyWith(height: 18/12, fontSize: 12.0);
   /* medium */
-  static final TextStyle txt11M = txtMBase.copyWith(height: 16/11, fontSize: 11.0);
-  static final TextStyle txt12M = txtMBase.copyWith(height: 14/12, fontSize: 12.0);
   static final TextStyle txt12MH = txtMBase.copyWith(height: 18/12, fontSize: 12.0);
-  static final TextStyle txt14M = txtMBase.copyWith(height: 20/14, fontSize: 14.0);
   static final TextStyle txt14MH = txtMBase.copyWith(height: 24/14, fontSize: 14.0);
+  static final TextStyle txt12M = txtMBase.copyWith(height: 14/12, fontSize: 12.0);
+  static final TextStyle txt14M = txtMBase.copyWith(height: 20/14, fontSize: 14.0);
   static final TextStyle txt16M = txtMBase.copyWith(height: 24/16, fontSize: 16.0);
   static final TextStyle txt18M = txtMBase.copyWith(height: 28/18, fontSize: 18.0);
   /* bold */
