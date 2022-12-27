@@ -12,7 +12,7 @@ enum TileType {
   nowPlayTile(false, false, false, false, {'start': 20, 'middle': 56, 'end': 16}, {'icon': 'logo_00', 'width': 40.0, 'height': 26.0}),
   canPlayTile(false, false, false, false, {'start': 20, 'middle': 60, 'end': 20}, {'icon': 'ic_32_play_point', 'width': 32.0, 'height': 32.0}),
   chartTile(true, true, false, true, {'start': 20, 'middle': 12, 'end': 20}, {}),
-  dateTile(false, false, true, true, {'start': 20, 'middle': 39, 'end': 20}, {});
+  dateTile(false, false, true, true, {'start': 20, 'middle': 40, 'end': 20}, {});
 
   const TileType(this.showRank, this.showViews, this.showDate, this.canSelect,
       this.padding, this.icon);
