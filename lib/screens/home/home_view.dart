@@ -196,36 +196,30 @@ class HomeView extends StatelessWidget {
               ),
             ),
           ),
-          SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            scrollDirection: Axis.horizontal,
-            child: SizedBox(
-              height: 130,
-              child: FutureBuilder<List<Song>>(
-                  future: viewModel.newList[viewModel.curTabName],
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      int itemN = 20;
-                      return Row(
-                        children: List.generate(
-                          2 * itemN - 1,
-                          (idx) {
-                            if (idx % 2 == 0) {
-                              return _buildNewListItem(
-                                  context, snapshot.data![idx ~/ 2]);
-                            } else {
-                              return const SizedBox(width: 8);
-                            }
-                          },
-                        ),
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
+          SizedBox(
+            height: 130,
+            child: FutureBuilder<List<Song>>(
+              future: viewModel.newList[viewModel.curTabName],
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: 20,
+                    itemBuilder: (context, idx) {
+                      return _buildNewListItem(context, snapshot.data![idx]);
+                    },
+                    separatorBuilder: (context, idx) {
+                      return const SizedBox(width: 8);
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
             ),
           ),
         ],
@@ -284,7 +278,7 @@ class HomeView extends StatelessWidget {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle, 
+                      shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
                           color: WakColor.dark.withOpacity(0.04),
