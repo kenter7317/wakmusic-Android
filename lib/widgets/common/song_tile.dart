@@ -7,12 +7,12 @@ import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 enum TileType {
-  baseTile(false, false, false, true, {'start': 20, 'middle': 60, 'end': 20}, {}),
-  homeTile(true, false, false, false, {'start': 0, 'middle': 12, 'end': 0}, {'icon': 'ic_24_play', 'width': 24.0, 'height': 24.0}),
-  nowPlayTile(false, false, false, false, {'start': 20, 'middle': 56, 'end': 16}, {'icon': 'logo_00', 'width': 40.0, 'height': 26.0}),
-  canPlayTile(false, false, false, false, {'start': 20, 'middle': 60, 'end': 20}, {'icon': 'ic_32_play_point', 'width': 32.0, 'height': 32.0}),
+  baseTile(false, false, false, true, {'start': 20, 'middle': 16, 'end': 20}, {}),
+  homeTile(true, false, false, false, {'start': 0, 'middle': 12, 'end': 0}, {'icon': 'ic_24_play_shadow', 'width': 24.0, 'height': 24.0}),
+  nowPlayTile(false, false, false, false, {'start': 20, 'middle': 12, 'end': 16}, {'icon': 'logo_00', 'width': 40.0, 'height': 26.0}),
+  canPlayTile(false, false, false, false, {'start': 20, 'middle': 16, 'end': 20}, {'icon': 'ic_32_play_point_shadow', 'width': 32.0, 'height': 32.0}),
   chartTile(true, true, false, true, {'start': 20, 'middle': 12, 'end': 20}, {}),
-  dateTile(false, false, true, true, {'start': 20, 'middle': 40, 'end': 20}, {});
+  dateTile(false, false, true, true, {'start': 20, 'middle': 16, 'end': 20}, {});
 
   const TileType(this.showRank, this.showViews, this.showDate, this.canSelect,
       this.padding, this.icon);
@@ -65,6 +65,11 @@ class _SongTileState extends State<SongTile> {
                 height: 40,
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(4),
+                loadStateChanged: (state) {
+                  if (state.extendedImageLoadState != LoadState.completed) {
+                    return Image.asset("assets/images/img_40_thumbnail.png");
+                  }
+                }
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -111,18 +116,34 @@ class _SongTileState extends State<SongTile> {
                   textAlign: TextAlign.right,
                 ),
               if (!widget.tileType.canSelect)
-                GestureDetector(
-                  onTap: () {
-                    if (widget.tileType != TileType.nowPlayTile){
-                      /* play song */
-                    }
-                  },
-                  child: SvgPicture.asset(
-                    'assets/icons/${widget.tileType.icon['icon']}.svg', 
-                    width: widget.tileType.icon['width'],
-                    height: widget.tileType.icon['height'],
-                  ),
-                ),
+                (widget.tileType != TileType.nowPlayTile)
+                  ? GestureDetector(
+                      onTap: () {
+                        /* play song */
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: WakColor.dark.withOpacity(0.04),
+                              blurRadius: 4,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                        ),
+                        child: SvgPicture.asset(
+                          'assets/icons/${widget.tileType.icon['icon']}.svg', 
+                          width: widget.tileType.icon['width'],
+                          height: widget.tileType.icon['height'],
+                        ),
+                      ),
+                    )
+                  : Image.asset(
+                      'assets/icons/${widget.tileType.icon['icon']}.png',
+                      width: widget.tileType.icon['width'],
+                        height: widget.tileType.icon['height'],
+                    ),
             ],
           ),
         ),
@@ -150,11 +171,23 @@ class _SongTileState extends State<SongTile> {
   Widget _rankChange(BuildContext context) {
     int diff = widget.song.last - widget.rank;
     /* NEW */
-    if (widget.song.last == 0 || diff > 99) {
+    if (widget.song.last == 0) {
       return Text(
         'NEW',
         style: WakText.txt11M.copyWith(color: WakColor.orange),
         textAlign: TextAlign.center,
+      );
+    }
+    /* BLOW UP */
+    else if (diff > 99) {
+      return Container(
+        height: 16,
+        alignment: Alignment.center,
+        child: SvgPicture.asset(
+          'assets/icons/ic_12_blowup.svg',
+          width: 12,
+          height: 12,
+        ),
       );
     }
     /* ZERO */

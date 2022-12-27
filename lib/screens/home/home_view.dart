@@ -27,63 +27,59 @@ class HomeView extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
-    return RefreshIndicator(
-      onRefresh: () => viewModel.getList(),
-      color: WakColor.lightBlue,
-      child: NotificationListener<OverscrollIndicatorNotification>(
-        onNotification: (overscroll) {
-          overscroll.disallowIndicator();
-          return true;
-        },
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Positioned(
-                top: -34,
-                left: 172,
-                child: Container(
-                  width: 276,
-                  height: 276,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0x0038E6FF), Color(0XFF00C8D2)],
-                      begin: Alignment(-1, -1),
-                      end: Alignment(1, 1),
-                      stops: [0.1469, 0.6148],
-                      //transform: GradientRotation(42.53 * math.pi / 180),
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                ),
+    return Stack(
+      children: [
+        Positioned(
+          top: -34,
+          right: -73,
+          child: Container(
+            width: 276,
+            height: 276,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0x0038E6FF), Color(0XFF00C8D2)],
+                begin: Alignment(-1, -1),
+                end: Alignment(1, 1),
+                stops: [0.1469, 0.6148],
+                //transform: GradientRotation(42.53 * math.pi / 180),
               ),
-              SafeArea(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: _buildChart(context),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: _buildNew(context),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 40),
-                      child: RecPlaylist(),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              shape: BoxShape.circle,
+            ),
           ),
         ),
-      ),
+        RefreshIndicator(
+          onRefresh: () => viewModel.getList(),
+          color: WakColor.lightBlue,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: _buildChart(context),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: _buildNew(context),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 20, 20, 40),
+                    child: RecPlaylist(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildChart(BuildContext context) {
     HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
-    return ClipRect(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
         child: Container(
@@ -249,7 +245,8 @@ class HomeView extends StatelessWidget {
           tabName.locale,
           style: tabName == viewModel.curTabName
               ? WakText.txt14B.copyWith(color: WakColor.grey900)
-              : WakText.txt14L.copyWith(color: WakColor.grey400),
+              : WakText.txt14L
+                  .copyWith(color: WakColor.grey900.withOpacity(0.6)),
           textAlign: TextAlign.right,
         ),
       ),
@@ -272,6 +269,11 @@ class HomeView extends StatelessWidget {
                 height: 80,
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(8),
+                loadStateChanged: (state) {
+                  if (state.extendedImageLoadState != LoadState.completed) {
+                    return Image.asset("assets/images/img_80_thumbnail.png");
+                  }
+                },
               ),
               Positioned(
                 right: 8,
@@ -280,10 +282,22 @@ class HomeView extends StatelessWidget {
                   onTap: () {
                     /* play song */
                   },
-                  child: SvgPicture.asset(
-                    'assets/icons/ic_24_play.svg',
-                    width: 24,
-                    height: 24,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle, 
+                      boxShadow: [
+                        BoxShadow(
+                          color: WakColor.dark.withOpacity(0.04),
+                          blurRadius: 4,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icons/ic_24_play_shadow.svg',
+                      width: 24,
+                      height: 24,
+                    ),
                   ),
                 ),
               ),
