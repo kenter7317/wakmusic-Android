@@ -11,7 +11,9 @@ import 'package:wakmusic/screens/home/home_view_model.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+  HomeView({super.key});
+
+  final ScrollController _controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -203,6 +205,7 @@ class HomeView extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.separated(
+                    controller: _controller,
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -234,6 +237,7 @@ class HomeView extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           viewModel.updateTab(tabName);
+          _controller.jumpTo(0);
         },
         child: Text(
           tabName.locale,
