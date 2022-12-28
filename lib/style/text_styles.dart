@@ -8,6 +8,7 @@ class WakText {
   static final TextStyle txtBBase = txtBase.copyWith(fontWeight: FontWeight.w700);
   /* light */
   static final TextStyle txt12L = txtLBase.copyWith(height: 18/12, fontSize: 12.0);
+  static final TextStyle txt14L = txtLBase.copyWith(height: 24/14, fontSize: 14.0);
   /* medium */
   static final TextStyle txt11M = txtMBase.copyWith(height: 16/11, fontSize: 11.0);
   static final TextStyle txt12M = txtMBase.copyWith(height: 14/12, fontSize: 12.0);
@@ -18,5 +19,6 @@ class WakText {
   static final TextStyle txt18M = txtMBase.copyWith(height: 28/18, fontSize: 18.0);
   /* bold */
   static final TextStyle txt12B = txtBBase.copyWith(height: 18/12, fontSize: 12.0);
+  static final TextStyle txt14B = txtBBase.copyWith(height: 24/14, fontSize: 14.0);
   static final TextStyle txt16B = txtBBase.copyWith(height: 24/16, fontSize: 16.0);
 }
