@@ -132,7 +132,6 @@ class HomeView extends StatelessWidget {
     return SizedBox(
       height: 24,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
             onTap: () {
@@ -154,14 +153,16 @@ class HomeView extends StatelessWidget {
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              /* play all the songs */
-            },
-            child: Text(
-              '전체듣기',
-              style: WakText.txt14MH.copyWith(color: WakColor.grey25),
-              textAlign: TextAlign.right,
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                /* play all the songs */
+              },
+              child: Text(
+                '전체듣기',
+                style: WakText.txt14MH.copyWith(color: WakColor.grey25),
+                textAlign: TextAlign.right,
+              ),
             ),
           )
         ],
@@ -181,11 +182,12 @@ class HomeView extends StatelessWidget {
               height: 24,
               child: Row(
                 children: [
-                  Text(
-                    '최신 음악',
-                    style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                  Expanded(
+                    child: Text(
+                      '최신 음악',
+                      style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                    ),
                   ),
-                  const Spacer(),
                   Row(
                     children: [
                       _buildNewTab(context, TabName.total),

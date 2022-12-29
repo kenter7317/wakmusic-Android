@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -42,15 +44,21 @@ class SongTile extends StatefulWidget {
 class _SongTileState extends State<SongTile> {
   @override
   Widget build(BuildContext context) {
+    SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
+    bool isSelected = selectedList.list.contains(widget.song);
     return GestureDetector(
       onTap: () {
         if (widget.tileType.canSelect) {
-          /* select <-> unselect */
+          if (selectedList.list.contains(widget.song)){
+            selectedList.removeSong(widget.song);
+          } else {
+            selectedList.addSong(widget.song);
+          }
         }
       },
       child: Container(
         padding: EdgeInsets.fromLTRB(widget.tileType.padding['start']!, 0, widget.tileType.padding['end']!, 0),
-        color: widget.tileType.canSelect /* && isSelected */
+        color: widget.tileType.canSelect && isSelected
             ? WakColor.grey200 : Colors.transparent,
         child: SizedBox(
           height: widget.tileType == TileType.homeTile ? 42 : 60,
@@ -127,8 +135,8 @@ class _SongTileState extends State<SongTile> {
                           boxShadow: [
                             BoxShadow(
                               color: WakColor.dark.withOpacity(0.04),
-                              blurRadius: 4,
-                              offset: const Offset(0, 4),
+                              blurRadius: widget.tileType.icon['height'] / 6,
+                              offset: Offset(0, widget.tileType.icon['height'] / 6),
                             ),
                           ]
                         ),

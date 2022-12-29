@@ -61,11 +61,12 @@ class RecPlaylist extends StatelessWidget {
           child: Row(
             children: [
               const SizedBox(width: 12),
-              Text(
-                name,
-                style: WakText.txt14MH.copyWith(color: WakColor.grey600),
+              Expanded(
+                child: Text(
+                  name,
+                  style: WakText.txt14MH.copyWith(color: WakColor.grey600),
+                ),
               ),
-              const Spacer(),
               Image.asset(
                 'assets/icons/$icon.png',
                 width: 48,

@@ -13,6 +13,16 @@ enum ChartType {
   final String locale;
 }
 
+enum SearchType {
+  title("노래"),
+  artist("가수"),
+  remix("조교"),
+  ids("아이디");
+
+  const SearchType(this.str);
+  final String str;
+}
+
 class API {
   final String baseUrl = 'https://wakmusic.xyz/api';
 
@@ -34,6 +44,18 @@ class API {
           .toList();
     } else {
       throw Exception('Top 100 Chart API failed :(');
+    }
+  }
+
+  Future<List<Song>> search(String keyword, SearchType type) async {
+    final response = await getResponse(
+        '$baseUrl/search?type=${type.name}&sort=popular&keyword=$keyword');
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Song.fromJson(e))
+          .toList();
+    } else {
+      throw Exception('Search failed :(');
     }
   }
 }

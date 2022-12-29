@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/home/home_view.dart';
 import 'package:wakmusic/screens/home/home_view_model.dart';
 import 'package:wakmusic/style/theme.dart';
+import 'package:wakmusic/screens/search/search_view.dart';
+import 'package:wakmusic/screens/search/search_view_model.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
+        ChangeNotifierProvider(create: (_) => SearchViewModel()),
+        ChangeNotifierProvider(create: (_) => SelectSongProvider()),
       ],
       child: const MyApp(),
     )
@@ -93,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return HomeView();
+    return SearchView();
     /*return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
