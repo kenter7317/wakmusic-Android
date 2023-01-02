@@ -31,7 +31,7 @@ class HomeViewModel with ChangeNotifier {
   Future<void> getList() async {
     _topList = _api.fetchTop(type: ChartType.hourly, length: 5);
     for (TabName tab in TabName.values) {
-      _newList[tab] = _api.fetchTop(type: ChartType.values[TabName.values.indexOf(tab)], length: 20); /* fetchTop <= for test */
+      _newList[tab] = _api.fetchTop(type: ChartType.values[TabName.values.indexOf(tab)], length: 10); /* fetchTop <= for test */
     }
     notifyListeners();
   }

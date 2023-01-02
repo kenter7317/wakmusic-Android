@@ -25,11 +25,17 @@ class Song {
         artist: json['artist'],
         remix: json['remix'],
         reaction: json['reaction'],
-        date: DateTime(
-          json['date'] ~/ 10000 + 2000,
-          json['date'] ~/ 100 % 100,
-          json['date'] % 100,
-        ),
+        date: () {
+          try {
+            return DateTime(
+              json['date'] ~/ 10000 + 2000,
+              json['date'] ~/ 100 % 100,
+              json['date'] % 100,
+            );
+          } catch (e) {
+            return DateTime(1999);
+          }
+        }(),
         views: json['views'] ?? 0,
         last: json['last'] ?? 0,
       );

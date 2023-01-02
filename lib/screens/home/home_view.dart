@@ -9,6 +9,7 @@ import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/common/rec_playlist.dart';
 import 'package:wakmusic/screens/home/home_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
@@ -61,12 +62,9 @@ class HomeView extends StatelessWidget {
                     padding: const EdgeInsets.all(20),
                     child: _buildChart(context),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: _buildNew(context),
-                  ),
+                  _buildNew(context),
                   const Padding(
-                    padding: EdgeInsets.fromLTRB(20, 20, 20, 40),
+                    padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
                     child: RecPlaylist(),
                   ),
                 ],
@@ -92,142 +90,140 @@ class HomeView extends StatelessWidget {
             border: Border.all(color: WakColor.grey25),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Column(
-            children: [
-              _buildChartTitle(context),
-              const SizedBox(height: 20),
-              SizedBox(
-                height: 274,
-                child: FutureBuilder<List<Song>>(
-                  future: viewModel.topList,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(
-                          5,
-                          (idx) => SongTile(
-                            song: snapshot.data![idx],
-                            tileType: TileType.homeTile,
-                            rank: idx + 1,
-                          ),
-                        ),
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
+          child: FutureBuilder<List<Song>>(
+            future: viewModel.topList,
+            builder: (context, snapshot) => Column(
+              children: [
+                _buildChartTitle(context, snapshot.hasData),
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 274,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(
+                      5,
+                      (idx) => SongTile(
+                        song: (snapshot.hasData) ? snapshot.data![idx] : null,
+                        tileType: TileType.homeTile,
+                        rank: idx + 1,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildChartTitle(BuildContext context) {
-    return SizedBox(
-      height: 24,
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () {
-              /* go to chart page */
-            },
-            child: Row(
-              children: [
-                Text(
-                  '왁뮤차트 TOP100',
-                  style: WakText.txt16B.copyWith(color: WakColor.grey900),
-                ),
-                const SizedBox(width: 4),
-                SvgPicture.asset(
-                  'assets/icons/ic_16_arrow_right.svg',
-                  color: WakColor.grey900,
-                  width: 16,
-                  height: 16,
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: GestureDetector(
+  Widget _buildChartTitle(BuildContext context, bool hasData) {
+    if (!hasData) {
+      return SizedBox(
+        height: 24,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SkeletonText(wakTxtStyle: WakText.txt16B, width: 135),
+            SkeletonText(wakTxtStyle: WakText.txt14MH, width: 47),
+          ],
+        ),
+      );
+    } else {
+      return SizedBox(
+        height: 24,
+        child: Row(
+          children: [
+            GestureDetector(
               onTap: () {
-                /* play all the songs */
+                /* go to chart page */
               },
-              child: Text(
-                '전체듣기',
-                style: WakText.txt14MH.copyWith(color: WakColor.grey25),
-                textAlign: TextAlign.right,
+              child: Row(
+                children: [
+                  Text(
+                    '왁뮤차트 TOP100',
+                    style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                  ),
+                  const SizedBox(width: 4),
+                  SvgPicture.asset(
+                    'assets/icons/ic_16_arrow_right.svg',
+                    color: WakColor.grey900,
+                    width: 16,
+                    height: 16,
+                  ),
+                ],
               ),
             ),
-          )
-        ],
-      ),
-    );
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  /* play all the songs */
+                },
+                child: Text(
+                  '전체듣기',
+                  style: WakText.txt14MH.copyWith(color: WakColor.grey25),
+                  textAlign: TextAlign.right,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   Widget _buildNew(BuildContext context) {
     HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
     return SizedBox(
-      height: 174,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-            child: SizedBox(
-              height: 24,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '최신 음악',
-                      style: WakText.txt16B.copyWith(color: WakColor.grey900),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      _buildNewTab(context, TabName.total),
-                      _buildNewTab(context, TabName.woowakgood),
-                      _buildNewTab(context, TabName.isedol),
-                      _buildNewTab(context, TabName.gomem),
-                    ],
-                  )
-                ],
+      height: 194,
+      child: FutureBuilder<List<Song>>(
+        future: viewModel.newList[viewModel.curTabName],
+        builder: (context, snapshot) => Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: SizedBox(
+                height: 24,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    (snapshot.hasData)
+                      ? Expanded(
+                          child: Text(
+                            '최신 음악',
+                            style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                          ),
+                        )
+                      : SkeletonText(wakTxtStyle: WakText.txt16B, width: 57),
+                    Row(
+                      children: TabName.values.map(
+                        (tabName) => (snapshot.hasData)
+                          ? _buildNewTab(context, tabName)
+                          : Padding(
+                              padding: const EdgeInsets.only(left: 12),
+                              child: SkeletonText(wakTxtStyle: WakText.txt14B, width: 30),
+                            ),
+                        ).toList(),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 130,
-            child: FutureBuilder<List<Song>>(
-              future: viewModel.newList[viewModel.curTabName],
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.separated(
-                    controller: _controller,
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: 20,
-                    itemBuilder: (context, idx) {
-                      return _buildNewListItem(context, snapshot.data![idx]);
-                    },
-                    separatorBuilder: (context, idx) {
-                      return const SizedBox(width: 8);
-                    },
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
+            SizedBox(
+              height: 130,
+              child: ListView.separated(
+                controller: _controller,
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: 10,
+                itemBuilder: (context, idx) => _buildNewListItem(context, (snapshot.hasData) ? snapshot.data![idx] : null),
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -243,86 +239,122 @@ class HomeView extends StatelessWidget {
         },
         child: Text(
           tabName.locale,
-          style: tabName == viewModel.curTabName
-              ? WakText.txt14B.copyWith(color: WakColor.grey900)
-              : WakText.txt14L
-                  .copyWith(color: WakColor.grey900.withOpacity(0.6)),
+          style: (tabName == viewModel.curTabName)
+            ? WakText.txt14B.copyWith(color: WakColor.grey900)
+            : WakText.txt14L.copyWith(color: WakColor.grey900.withOpacity(0.6)),
           textAlign: TextAlign.right,
         ),
       ),
     );
   }
 
-  Widget _buildNewListItem(BuildContext context, Song song) {
-    return SizedBox(
-      width: 144,
-      height: 130,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ExtendedImage.network(
-                'https://i.ytimg.com/vi/${song.id}/hqdefault.jpg',
-                fit: BoxFit.cover,
+  Widget _buildNewListItem(BuildContext context, Song? song) {
+    if (song == null) {
+      return SizedBox(
+        width: 144,
+        height: 130,
+        child: Column(
+          children: [
+            SkeletonBox(
+              child: Container(
                 width: 144,
                 height: 80,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(8),
-                loadStateChanged: (state) {
-                  if (state.extendedImageLoadState != LoadState.completed) {
-                    return Image.asset("assets/images/img_80_thumbnail.png");
-                  }
-                },
+                decoration: BoxDecoration(
+                  color: WakColor.grey200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
-              Positioned(
-                right: 8,
-                bottom: 8,
-                child: GestureDetector(
-                  onTap: () {
-                    /* play song */
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: 144,
+              padding: const EdgeInsets.only(right: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SkeletonText(wakTxtStyle: WakText.txt14MH),
+                  SkeletonText(wakTxtStyle: WakText.txt12L),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return SizedBox(
+        width: 144,
+        height: 130,
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                ExtendedImage.network(
+                  'https://i.ytimg.com/vi/${song.id}/hqdefault.jpg',
+                  fit: BoxFit.cover,
+                  width: 144,
+                  height: 80,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(8),
+                  loadStateChanged: (state) {
+                    if (state.extendedImageLoadState != LoadState.completed) {
+                      return Image.asset(
+                        "assets/images/img_80_thumbnail.png",
+                        width: 144,
+                        height: 80,
+                      );
+                    }
+                    return null;
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: WakColor.dark.withOpacity(0.04),
-                          blurRadius: 4,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: SvgPicture.asset(
-                      'assets/icons/ic_24_play_shadow.svg',
-                      width: 24,
-                      height: 24,
+                ),
+                Positioned(
+                  right: 8,
+                  bottom: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                      /* play song */
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: WakColor.dark.withOpacity(0.04),
+                            blurRadius: 4,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/icons/ic_24_play_shadow.svg',
+                        width: 24,
+                        height: 24,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Container(
-            width: 144,
-            padding: const EdgeInsets.only(right: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  song.title,
-                  style: WakText.txt14MH.copyWith(color: WakColor.grey900),
-                ),
-                Text(
-                  song.artist,
-                  style: WakText.txt12L.copyWith(color: WakColor.grey900),
-                ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+            const SizedBox(height: 8),
+            Container(
+              width: 144,
+              padding: const EdgeInsets.only(right: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    song.title,
+                    style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                  ),
+                  Text(
+                    song.artist,
+                    style: WakText.txt12L.copyWith(color: WakColor.grey900),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }

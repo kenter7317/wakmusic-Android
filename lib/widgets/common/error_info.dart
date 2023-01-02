@@ -2,15 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 
-class ErrorInfo extends StatefulWidget {
+class ErrorInfo extends StatelessWidget {
   const ErrorInfo({super.key, required this.errorMsg});
   final String errorMsg;
 
-  @override
-  State<ErrorInfo> createState() => _ErrorInfoState();
-}
-
-class _ErrorInfoState extends State<ErrorInfo> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +32,7 @@ class _ErrorInfoState extends State<ErrorInfo> {
             ),
             const SizedBox(height: 16),
             Text(
-              widget.errorMsg,
+              errorMsg,
               style: WakText.txt14MH.copyWith(color: WakColor.grey900),
               textAlign: TextAlign.center,
             )

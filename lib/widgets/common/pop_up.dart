@@ -23,23 +23,23 @@ class PopUp extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           (type != PopUpType.contentBtn)
-              ? Padding(
-                  padding: const EdgeInsets.fromLTRB(40, 60, 40, 32),
-                  child: Text(
-                    msg ?? '',
-                    maxLines: 2,
-                    style: WakText.txt18M.copyWith(color: WakColor.grey900),
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              : Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width,
-                  decoration: const BoxDecoration(
-                    color: WakColor.grey900,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                  ),
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(40, 60, 40, 32),
+                child: Text(
+                  msg ?? '',
+                  maxLines: 2,
+                  style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                  textAlign: TextAlign.center,
                 ),
+              )
+            : Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  color: WakColor.grey900,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                ),
+              ),
           _buildButtons(context),
         ],
       ),
@@ -68,8 +68,9 @@ class PopUp extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        type == PopUpType.contentBtn ? '다시보지 않기' : '취소',
+                        (type == PopUpType.contentBtn) ? '다시보지 않기' : '취소',
                         style: WakText.txt18M.copyWith(color: WakColor.grey25),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
@@ -90,8 +91,9 @@ class PopUp extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    type == PopUpType.contentBtn ? '닫기' : '확인',
+                    (type == PopUpType.contentBtn) ? '닫기' : '확인',
                     style: WakText.txt18M.copyWith(color: WakColor.grey25),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),

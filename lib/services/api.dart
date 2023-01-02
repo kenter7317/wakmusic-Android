@@ -9,8 +9,8 @@ enum ChartType {
   weekly('주간'),
   monthly('월간');
 
-  const ChartType(this.locale);
-  final String locale;
+  const ChartType(this.str);
+  final String str;
 }
 
 enum SearchType {

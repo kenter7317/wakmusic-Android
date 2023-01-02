@@ -10,25 +10,24 @@ class SearchViewModel extends ChangeNotifier {
   SearchStatus _status = SearchStatus.before;
   List<String> _history = [];
   late final API _api;
-  final List<Future<List<Song>>> _list = [];
+  late Map<SearchType, Future<List<Song>>> _list;
   
   SearchStatus get curStatus => _status;
   List<String> get history => _history;
-  List<Future<List<Song>>> get list => _list;
+  Map<SearchType, Future<List<Song>>> get list => _list;
 
   SearchViewModel() {
     _api = API();
+    _list = {};
     getHistory();
   }
 
   Future<void> search(String keyword) async {
-    for (int idx = 0; idx < 3; idx++) {
-      if (_list.length == 3) {
-        _list[idx] = _api.search(keyword, SearchType.values[idx]);
-      } else {
-        _list.add(_api.search(keyword, SearchType.values[idx]));
-      }
+    for (SearchType type in SearchType.values) {
+      if (type == SearchType.ids) continue;
+      _list[type] = _api.search(keyword, type);
     }
+    _status = SearchStatus.after;
     addHistory(keyword);
   }
 
