@@ -113,8 +113,10 @@ class _BotSheetState extends State<BotSheet> {
               return _buildCreateForm(context);
             case BotSheetType.loadList:
               return _buildLoadForm(context);
-            default:
+            case BotSheetType.shareList:
               return _buildShareForm(context);
+            default:
+              return Container();
           }
         }(),
       ],
@@ -328,7 +330,7 @@ class _BotSheetState extends State<BotSheet> {
           children: List.generate(
             7,
             (idx) {
-              if (idx % 2 ==0 ){
+              if (idx % 2 == 0){
                 return _buildProfile(context, idx ~/ 2);
               } else {
                 return const SizedBox(width: 10);
@@ -341,7 +343,7 @@ class _BotSheetState extends State<BotSheet> {
           children: List.generate(
             7,
             (idx) {
-              if (idx % 2 ==0 ){
+              if (idx % 2 == 0){
                 return _buildProfile(context, 4 + idx ~/ 2);
               } else {
                 return const SizedBox(width: 10);
