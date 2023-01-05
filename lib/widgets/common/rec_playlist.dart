@@ -11,9 +11,9 @@ class RecPlaylist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RecPlaylistProvider playlists = Provider.of<RecPlaylistProvider>(context);
+    RecPlaylistProvider recPlaylist = Provider.of<RecPlaylistProvider>(context);
     return FutureBuilder<List<List<Song>>>(
-      future: Future.wait(playlists.list),
+      future: Future.wait(recPlaylist.songLists),
       builder: (context, snapshot) {
         return SizedBox(
           height: 300,
@@ -24,12 +24,10 @@ class RecPlaylist extends StatelessWidget {
               List<Widget> children = [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
-                  child: (snapshot.hasData)
-                    ? Text(
-                        '왁뮤팀이 추천하는 플레이리스트',
-                        style: WakText.txt16B.copyWith(color: WakColor.grey900),
-                      )
-                    : SkeletonText(wakTxtStyle: WakText.txt16B, width: 194),
+                  child: Text(
+                    '왁뮤팀이 추천하는 플레이리스트',
+                    style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                  ),
                 ),
               ];
               children.addAll(
@@ -37,9 +35,9 @@ class RecPlaylist extends StatelessWidget {
                   3,
                   (idx) => Row(
                     children: [
-                      _buildPlaylist(context, playlists.listInfo[idx * 2], (snapshot.hasData) ? snapshot.data![idx * 2] : null),
+                      _buildPlaylist(context, recPlaylist.infoList[idx * 2], (snapshot.hasData) ? snapshot.data![idx * 2] : null),
                       const SizedBox(width: 8),
-                      _buildPlaylist(context, playlists.listInfo[idx * 2 + 1], (snapshot.hasData) ? snapshot.data![idx * 2 + 1] : null),
+                      _buildPlaylist(context, recPlaylist.infoList[idx * 2 + 1], (snapshot.hasData) ? snapshot.data![idx * 2 + 1] : null),
                     ],
                   ),
                 ),
@@ -52,8 +50,8 @@ class RecPlaylist extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaylist(BuildContext context, Map<String, dynamic> listInfo, List<Song>? playlist) {
-    if (playlist == null) {
+  Widget _buildPlaylist(BuildContext context, Map<String, dynamic> info, List<Song>? songList) {
+    if (songList == null) {
       return Expanded(
         child: SkeletonBox(
           child: Container(
@@ -82,13 +80,13 @@ class RecPlaylist extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    listInfo['title'],
+                    info['title'],
                     style: WakText.txt14MH.copyWith(color: WakColor.grey600),
                   ),
                 ),
                 const SizedBox(width: 4),
                 Image.asset(
-                  'assets/icons/ic_48_${listInfo['iconName']}.png',
+                  'assets/icons/ic_48_${info['iconName']}.png',
                   width: 48,
                   height: 48,
                 ),

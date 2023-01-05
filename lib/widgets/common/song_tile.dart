@@ -8,19 +8,20 @@ import 'package:wakmusic/style/text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
+import 'package:lottie/lottie.dart';
 
 enum TileType {
   baseTile(false, false, false, true,
     {'start': 20, 'middle': 16, 'end': 20}, {}),
   homeTile(true, false, false, false,
     {'start': 0, 'middle': 12, 'end': 0},
-    {'icon': 'ic_24_play_shadow', 'width': 24.0, 'height': 24.0}),
+    {'icon': 'ic_24_play_shadow', 'size': 24.0}),
   nowPlayTile(false, false, false, false,
     {'start': 20, 'middle': 12, 'end': 16},
-    {'icon': 'logo_00', 'width': 40.0, 'height': 26.0}),
+    {'icon': 'WaveStream', 'size': 32.0}),
   canPlayTile(false, false, false, false,
     {'start': 20, 'middle': 16, 'end': 20},
-    {'icon': 'ic_32_play_point_shadow', 'width': 32.0, 'height': 32.0}),
+    {'icon': 'ic_32_play_point_shadow', 'size': 32.0}),
   chartTile(true, true, false, true,
     {'start': 20, 'middle': 12, 'end': 20}, {}),
   dateTile(false, false, true, true,
@@ -77,9 +78,7 @@ class _SongTileState extends State<SongTile> {
         },
         child: Container(
           padding: EdgeInsets.fromLTRB(widget.tileType.padding['start']!, 0, widget.tileType.padding['end']!, 0),
-          color: (widget.tileType.canSelect && isSelected)
-            ? WakColor.grey200
-            : Colors.transparent,
+          color: (widget.tileType.canSelect && isSelected) ? WakColor.grey200 : Colors.transparent,
           child: SizedBox(
             height: (widget.tileType == TileType.homeTile) ? 42 : 60,
             child: Row(
@@ -95,7 +94,7 @@ class _SongTileState extends State<SongTile> {
                   loadStateChanged: (state) {
                     if (state.extendedImageLoadState != LoadState.completed) {
                       return Image.asset(
-                        "assets/images/img_40_thumbnail.png",
+                        'assets/images/img_40_thumbnail.png',
                         width: 72,
                         height: 40,
                       );
@@ -114,9 +113,7 @@ class _SongTileState extends State<SongTile> {
                         child: Text(
                           widget.song!.title,
                           style: WakText.txt14MH.copyWith(
-                            color: (widget.tileType == TileType.nowPlayTile)
-                              ? WakColor.lightBlue
-                              : WakColor.grey900
+                            color: (widget.tileType == TileType.nowPlayTile) ? WakColor.lightBlue : WakColor.grey900,
                           ),
                         ),
                       ),
@@ -125,9 +122,7 @@ class _SongTileState extends State<SongTile> {
                         child: Text(
                           widget.song!.artist,
                           style: WakText.txt12L.copyWith(
-                            color: (widget.tileType == TileType.nowPlayTile)
-                              ? WakColor.lightBlue
-                              : WakColor.grey900,
+                            color: (widget.tileType == TileType.nowPlayTile) ? WakColor.lightBlue : WakColor.grey900,
                           ),
                         ),
                       ),
@@ -161,22 +156,22 @@ class _SongTileState extends State<SongTile> {
                             boxShadow: [
                               BoxShadow(
                                 color: WakColor.dark.withOpacity(0.04),
-                                blurRadius: widget.tileType.icon['height'] / 6,
-                                offset: Offset(0, widget.tileType.icon['height'] / 6),
+                                blurRadius: widget.tileType.icon['size'] / 6,
+                                offset: Offset(0, widget.tileType.icon['size'] / 6),
                               ),
                             ],
                           ),
                           child: SvgPicture.asset(
                             'assets/icons/${widget.tileType.icon['icon']}.svg',
-                            width: widget.tileType.icon['width'],
-                            height: widget.tileType.icon['height'],
+                            width: widget.tileType.icon['size'],
+                            height: widget.tileType.icon['size'],
                           ),
                         ),
                       )
-                    : Image.asset(
-                        'assets/icons/${widget.tileType.icon['icon']}.png',
-                        width: widget.tileType.icon['width'],
-                        height: widget.tileType.icon['height'],
+                    : Lottie.asset(
+                        'assets/lottie/${widget.tileType.icon['icon']}.json',
+                        width: widget.tileType.icon['size'],
+                        height: widget.tileType.icon['size'],
                       ),
               ],
             ),
@@ -310,11 +305,11 @@ class _SongTileState extends State<SongTile> {
             if (!widget.tileType.canSelect)
               SkeletonBox(
                 child: Container(
-                  width: widget.tileType.icon['width'],
-                  height: widget.tileType.icon['height'],
-                  decoration: BoxDecoration(
+                  width: widget.tileType.icon['size'],
+                  height: widget.tileType.icon['size'],
+                  decoration: const BoxDecoration(
                     color: WakColor.grey200,
-                    borderRadius: BorderRadius.circular(widget.tileType.icon['height'] / 2),
+                    shape: BoxShape.circle,
                   ),
                 ),
               ),

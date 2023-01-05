@@ -94,7 +94,7 @@ class HomeView extends StatelessWidget {
             future: viewModel.topList,
             builder: (context, snapshot) => Column(
               children: [
-                _buildChartTitle(context, snapshot.hasData),
+                _buildChartTitle(context, (snapshot.hasData) ? snapshot.data : null),
                 const SizedBox(height: 20),
                 SizedBox(
                   height: 274,
@@ -118,59 +118,48 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildChartTitle(BuildContext context, bool hasData) {
-    if (!hasData) {
-      return SizedBox(
-        height: 24,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SkeletonText(wakTxtStyle: WakText.txt16B, width: 135),
-            SkeletonText(wakTxtStyle: WakText.txt14MH, width: 47),
-          ],
-        ),
-      );
-    } else {
-      return SizedBox(
-        height: 24,
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                /* go to chart page */
-              },
-              child: Row(
-                children: [
-                  Text(
-                    '왁뮤차트 TOP100',
-                    style: WakText.txt16B.copyWith(color: WakColor.grey900),
-                  ),
-                  const SizedBox(width: 4),
-                  SvgPicture.asset(
-                    'assets/icons/ic_16_arrow_right.svg',
-                    color: WakColor.grey900,
-                    width: 16,
-                    height: 16,
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  /* play all the songs */
-                },
-                child: Text(
-                  '전체듣기',
-                  style: WakText.txt14MH.copyWith(color: WakColor.grey25),
-                  textAlign: TextAlign.right,
+  Widget _buildChartTitle(BuildContext context, List<Song>? toplist) {
+    return SizedBox(
+      height: 24,
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              /* go to chart page */
+            },
+            child: Row(
+              children: [
+                Text(
+                  '왁뮤차트 TOP100',
+                  style: WakText.txt16B.copyWith(color: WakColor.grey900),
                 ),
+                const SizedBox(width: 4),
+                SvgPicture.asset(
+                  'assets/icons/ic_16_arrow_right.svg',
+                  color: WakColor.grey900,
+                  width: 16,
+                  height: 16,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                if (toplist != null) {
+                  /* play all the songs */
+                }
+              },
+              child: Text(
+                '전체듣기',
+                style: WakText.txt14MH.copyWith(color: WakColor.grey25),
+                textAlign: TextAlign.right,
               ),
             ),
-          ],
-        ),
-      );
-    }
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildNew(BuildContext context) {
@@ -178,7 +167,7 @@ class HomeView extends StatelessWidget {
     return SizedBox(
       height: 194,
       child: FutureBuilder<List<Song>>(
-        future: viewModel.newList[viewModel.curTabName],
+        future: viewModel.newLists[viewModel.curTabName],
         builder: (context, snapshot) => Column(
           children: [
             Padding(
@@ -188,24 +177,15 @@ class HomeView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    (snapshot.hasData)
-                      ? Expanded(
-                          child: Text(
-                            '최신 음악',
-                            style: WakText.txt16B.copyWith(color: WakColor.grey900),
-                          ),
-                        )
-                      : SkeletonText(wakTxtStyle: WakText.txt16B, width: 57),
+                    Expanded(
+                      child: Text(
+                        '최신 음악',
+                        style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                      ),
+                    ),
                     Row(
-                      children: TabName.values.map(
-                        (tabName) => (snapshot.hasData)
-                          ? _buildNewTab(context, tabName)
-                          : Padding(
-                              padding: const EdgeInsets.only(left: 12),
-                              child: SkeletonText(wakTxtStyle: WakText.txt14B, width: 30),
-                            ),
-                        ).toList(),
-                    )
+                      children: TabName.values.map((tabName) => _buildNewTab(context, tabName)).toList(),
+                    ),
                   ],
                 ),
               ),
@@ -298,7 +278,7 @@ class HomeView extends StatelessWidget {
                   loadStateChanged: (state) {
                     if (state.extendedImageLoadState != LoadState.completed) {
                       return Image.asset(
-                        "assets/images/img_80_thumbnail.png",
+                        'assets/images/img_80_thumbnail.png',
                         width: 144,
                         height: 80,
                       );

@@ -31,7 +31,7 @@ class SkeletonText extends StatelessWidget {
 
 class SkeletonBox extends StatelessWidget {
   const SkeletonBox({super.key, required this.child});
-  final Widget child; // child should not be transparent
+  final Widget child; /* child should not be transparent */
 
   @override
   Widget build(BuildContext context) {

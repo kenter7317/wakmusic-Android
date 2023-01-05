@@ -5,8 +5,7 @@ import 'package:wakmusic/style/text_styles.dart';
 enum PopUpType { txtOneBtn, txtTwoBtn, contentBtn }
 
 class PopUp extends StatelessWidget {
-  const PopUp(
-      {super.key, required this.type, this.msg, this.negFunc, this.posFunc});
+  const PopUp({super.key, required this.type, this.msg, this.negFunc, this.posFunc});
   final PopUpType type;
   final String? msg;
   final void Function()? negFunc;
@@ -32,7 +31,7 @@ class PopUp extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               )
-            : Container(
+            : Container( /* image */
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.width,
                 decoration: const BoxDecoration(
