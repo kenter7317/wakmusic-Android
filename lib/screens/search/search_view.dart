@@ -87,6 +87,9 @@ class SearchView extends StatelessWidget {
       child: TextFormField(
         controller: _fieldText,
         onTap: () => viewModel.updateStatus(SearchStatus.during),
+        onChanged: (_) {
+          if (viewModel.curStatus != SearchStatus.during) viewModel.updateStatus(SearchStatus.during);
+        },
         onFieldSubmitted: (keyword) {
           if (keyword.isNotEmpty) {
             viewModel.search(keyword);
@@ -110,7 +113,7 @@ class SearchView extends StatelessWidget {
           height: 1.0,
           color: (viewModel.curStatus == SearchStatus.during) ? Colors.white : WakColor.grey900,
         ),
-        cursorColor: Colors.white,
+        cursorColor: (viewModel.curStatus == SearchStatus.during) ? Colors.white : WakColor.grey900,
         decoration: InputDecoration(
           isDense: true,
           contentPadding: EdgeInsets.zero,

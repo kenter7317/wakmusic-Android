@@ -136,7 +136,6 @@ class HomeView extends StatelessWidget {
                 const SizedBox(width: 4),
                 SvgPicture.asset(
                   'assets/icons/ic_16_arrow_right.svg',
-                  color: WakColor.grey900,
                   width: 16,
                   height: 16,
                 ),
