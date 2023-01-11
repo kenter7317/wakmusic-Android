@@ -81,7 +81,7 @@ class HomeView extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+        filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
         child: Container(
           height: 354,
           padding: const EdgeInsets.fromLTRB(19, 15, 19, 19),
@@ -164,7 +164,7 @@ class HomeView extends StatelessWidget {
   Widget _buildNew(BuildContext context) {
     HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
     return SizedBox(
-      height: 194,
+      height: 195,
       child: FutureBuilder<List<Song>>(
         future: viewModel.newLists[viewModel.curTabName],
         builder: (context, snapshot) => Column(
@@ -190,7 +190,7 @@ class HomeView extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 130,
+              height: 131,
               child: ListView.separated(
                 controller: _controller,
                 scrollDirection: Axis.horizontal,
@@ -231,16 +231,17 @@ class HomeView extends StatelessWidget {
     if (song == null) {
       return SizedBox(
         width: 144,
-        height: 130,
+        height: 131,
         child: Column(
           children: [
             SkeletonBox(
-              child: Container(
-                width: 144,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: WakColor.grey200,
-                  borderRadius: BorderRadius.circular(8),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: WakColor.grey200,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ),
@@ -262,28 +263,28 @@ class HomeView extends StatelessWidget {
     } else {
       return SizedBox(
         width: 144,
-        height: 130,
+        height: 131,
         child: Column(
           children: [
             Stack(
               children: [
-                ExtendedImage.network(
-                  'https://i.ytimg.com/vi/${song.id}/hqdefault.jpg',
-                  fit: BoxFit.cover,
-                  width: 144,
-                  height: 80,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(8),
-                  loadStateChanged: (state) {
-                    if (state.extendedImageLoadState != LoadState.completed) {
-                      return Image.asset(
-                        'assets/images/img_80_thumbnail.png',
-                        width: 144,
-                        height: 80,
-                      );
-                    }
-                    return null;
-                  },
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: ExtendedImage.network(
+                    'https://i.ytimg.com/vi/${song.id}/hqdefault.jpg',
+                    shape: BoxShape.rectangle,
+                    fit: BoxFit.cover,
+                    borderRadius: BorderRadius.circular(8),
+                    loadStateChanged: (state) {
+                      if (state.extendedImageLoadState != LoadState.completed) {
+                        return Image.asset(
+                          'assets/images/img_81_thumbnail.png',
+                          fit: BoxFit.cover,
+                        );
+                      }
+                      return null;
+                    },
+                  ),
                 ),
                 Positioned(
                   right: 8,

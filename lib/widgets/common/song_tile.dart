@@ -84,23 +84,26 @@ class _SongTileState extends State<SongTile> {
             child: Row(
               children: [
                 if (widget.tileType.showRank) _buildRank(context),
-                ExtendedImage.network(
-                  'https://i.ytimg.com/vi/${widget.song!.id}/hqdefault.jpg',
-                  fit: BoxFit.cover,
-                  width: 72,
-                  height: 40,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(4),
-                  loadStateChanged: (state) {
-                    if (state.extendedImageLoadState != LoadState.completed) {
-                      return Image.asset(
-                        'assets/images/img_40_thumbnail.png',
-                        width: 72,
-                        height: 40,
-                      );
-                    }
-                    return null;
-                  },
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: (widget.tileType == TileType.homeTile) ? 1 : 10),
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: ExtendedImage.network(
+                      'https://i.ytimg.com/vi/${widget.song!.id}/hqdefault.jpg',
+                      fit: BoxFit.cover,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(4),
+                      loadStateChanged: (state) {
+                        if (state.extendedImageLoadState != LoadState.completed) {
+                          return Image.asset(
+                            'assets/images/img_40_thumbnail.png',
+                            fit: BoxFit.cover,
+                          );
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -277,12 +280,16 @@ class _SongTileState extends State<SongTile> {
                 ),
               ),
             SkeletonBox(
-              child: Container(
-                width: 72,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: WakColor.grey200,
-                  borderRadius: BorderRadius.circular(4),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: (widget.tileType == TileType.homeTile) ? 1 : 10),
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: WakColor.grey200,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
                 ),
               ),
             ),
