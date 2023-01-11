@@ -50,27 +50,22 @@ class SearchView extends StatelessWidget {
         children: [
           _buildHeader(context),
           Expanded(
-            child: NotificationListener<OverscrollIndicatorNotification>(
-              onNotification: (overscroll) {
-                overscroll.disallowIndicator();
-                return true;
-              },
-              child: () {
-                switch (viewModel.curStatus) {
-                  case SearchStatus.before:
-                    return const SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 32, horizontal: 20),
-                        child: RecPlaylist(),
-                      ),
-                    );
-                  case SearchStatus.during:
-                    return _buildDuring(context);
-                  case SearchStatus.after:
-                    return _buildAfter(context);
-                }
-              }(),
-            ),
+            child: () {
+              switch (viewModel.curStatus) {
+                case SearchStatus.before:
+                  return const SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+                      child: RecPlaylist(),
+                    ),
+                  );
+                case SearchStatus.during:
+                  return _buildDuring(context);
+                case SearchStatus.after:
+                  return _buildAfter(context);
+              }
+            }(),
           ),
         ],
       ),
@@ -214,7 +209,7 @@ class SearchView extends StatelessWidget {
     SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
     return Expanded(
       child: ListView.separated(
-        physics: const ScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.zero,
         itemCount: viewModel.history.length,
         itemBuilder: (_, idx) => SizedBox(
@@ -296,6 +291,7 @@ class SearchView extends StatelessWidget {
               ),
               Expanded(
                 child: TabBarView(
+                  physics: const BouncingScrollPhysics(),
                   children: List.generate(
                     4,
                     (idx) => (idx == 0)
@@ -331,6 +327,7 @@ class SearchView extends StatelessWidget {
             return const ErrorInfo(errorMsg: '검색 결과가 없습니다.');
           } else if (tabs.length == 1){
             return ListView.builder(
+              physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.zero,
               itemCount: snapshot.data![tabs[0]].length + 1,
               itemBuilder: (context, songIdx) => (songIdx == 0)
@@ -342,6 +339,7 @@ class SearchView extends StatelessWidget {
             );
           } else {
             return ListView.separated(
+              physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.zero,
               itemCount: tabs.length,
               itemBuilder: (context, idx) => Column(
@@ -366,6 +364,7 @@ class SearchView extends StatelessWidget {
           }
         } else {
           return ListView.separated(
+            physics: const BouncingScrollPhysics(),
             padding: EdgeInsets.zero,
             itemCount: 3,
             itemBuilder: (context, _) => Column(
@@ -451,6 +450,7 @@ class SearchView extends StatelessWidget {
           return const ErrorInfo(errorMsg: '검색 결과가 없습니다.');
         } else {
           return ListView.builder(
+            physics: const BouncingScrollPhysics(),
             padding: EdgeInsets.zero,
             itemCount: (snapshot.hasData) ? snapshot.data!.length : 10,
             itemBuilder: (_, idx) => SongTile(
