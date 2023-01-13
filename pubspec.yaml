@@ -40,6 +40,7 @@ dependencies:
   flutter_svg: ^1.1.6
   provider: ^6.0.5
   http: ^0.13.5
+  audio_video_progress_bar: ^0.11.0
 
 dev_dependencies:
   flutter_test:
