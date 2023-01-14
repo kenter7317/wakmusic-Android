@@ -61,7 +61,7 @@ class PlayButton extends StatelessWidget {
 class PlayCircleButton extends StatelessWidget {
   const PlayCircleButton({
     Key? key,
-    this.size = 100,
+    this.size = 80,
   }) : super(key: key);
   final double size;
 
@@ -71,8 +71,8 @@ class PlayCircleButton extends StatelessWidget {
       onTap: () => {},
       child: SvgPicture.asset(
         'assets/icons/ic_80_play_shadow.svg',
-        width: 80,
-        height: 80,
+        width: size,
+        height: size,
       )
     );
   }
@@ -118,15 +118,18 @@ class PlayerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: const [
-        RepeatButton(),
-        PreviousSongButton(),
-        PlayCircleButton(),
-        NextSongButton(),
-        ShuffleButton(),
-      ],
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: const [
+          RepeatButton(),
+          PreviousSongButton(),
+          PlayCircleButton(),
+          NextSongButton(),
+          ShuffleButton(),
+        ],
+      ),
     );
   }
 }

@@ -33,27 +33,33 @@ class Player extends StatelessWidget {
 
     return Stack(
       children: [
-        Positioned(
-          left: -83,
-          child: Container(
-            height: status_height + 45 + 172 + (blank * 4 + 4) - 36,
-            width: 540,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                    'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg'),
+        Positioned.fill(
+          //left: -83,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              height: status_height + 48 + ((width - 50) / (16/9)) + (blank * 4 + 12) - 36,
+              width: width * 1.44,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: NetworkImage(
+                      'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg'),
+                  colorFilter: ColorFilter.mode(
+                    Colors.white.withOpacity(0.6),
+                    BlendMode.dstATop
+                  )
+                ),
               ),
-            ),
-            child: ClipRRect(
-              child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: 200,
-                    sigmaY: 200,
-                  ),
-                  child: Container(
-                    color: Colors.white.withOpacity(0.6),
-                  ),
+              child: ClipRRect(
+                child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                      sigmaX: 200,
+                      sigmaY: 200,
+                    ),
+                    child: Container(
+                    ),
+                ),
               ),
             ),
           ),
@@ -97,7 +103,7 @@ class Player extends StatelessWidget {
 
   Widget _buildTitle(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 1.5),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Center(
         child: Column(
           children: [
@@ -116,18 +122,22 @@ class Player extends StatelessWidget {
 
   Widget _buildAlbumImage(BuildContext context) {
     return Container(
-      height: 172,
-      width: 310,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        image: const DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(
-              'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg'),
+      padding: EdgeInsets.symmetric(horizontal: 25),
+      child: AspectRatio(
+        aspectRatio: 16/9,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            image: const DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(
+                  'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg'),
+            ),
+            /*colorFilter: ColorFilter.mode(
+                        Colors.white.withOpacity(0.1),
+                        BlendMode.dstATop),*/
+          ),
         ),
-        /*colorFilter: ColorFilter.mode(
-                    Colors.white.withOpacity(0.1),
-                    BlendMode.dstATop),*/
       ),
     );
   }
@@ -200,8 +210,13 @@ class Player extends StatelessWidget {
 
   Widget _buildPlayerBottomNav(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(
+          color: WakColor.grey100,
+        ))
+      ),
       height: 56,
-      color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
