@@ -7,13 +7,15 @@ import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:wakmusic/widgets/common/toast_msg.dart';
 
 enum BotSheetType {
-  createList('플레이리스트 만들기', '플레이리스트 생성'),
-  loadList('플레이리스트 가져오기', '가져오기'),
-  shareList('플레이리스트 공유하기', '확인'),
-  selProfile('프로필을 선택해주세요', '완료');
+  createList('플레이리스트 만들기', '플레이리스트 제목', '플레이리스트 생성'),
+  editList('플레이리스트 수정하기', '플레이리스트 제목', '플레이리스트 수정'),
+  loadList('플레이리스트 가져오기', '플레이리스트 코드', '가져오기'),
+  shareList('플레이리스트 공유하기', '플레이리스트 코드', '확인'),
+  selProfile('프로필을 선택해주세요', '', '완료');
 
-  const BotSheetType(this.title, this.btnText);
+  const BotSheetType(this.title, this.formTitle, this.btnText);
   final String title;
+  final String formTitle;
   final String btnText;
 }
 
@@ -28,20 +30,26 @@ enum FormType {
 }
 
 class BotSheet extends StatefulWidget {
-  const BotSheet({super.key, required this.type, this.func, this.playlistCode});
+  const BotSheet({super.key, required this.type, this.func, this.initialValue});
   final BotSheetType type;
   final void Function()? func;
-  final String? playlistCode;
+  final String? initialValue;
 
   @override
   State<BotSheet> createState() => _BotSheetState();
 }
 
 class _BotSheetState extends State<BotSheet> {
-  late final int _maxLength = 12;
+  final int _maxLength = 12;
   FormType _type = FormType.none;
-  final TextEditingController _fieldText = TextEditingController();
   int _profileIdx = 0;
+  late final TextEditingController _fieldText;
+
+  @override
+  void initState() {
+    super.initState();
+    _fieldText = TextEditingController(text: widget.initialValue);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,13 +111,14 @@ class _BotSheetState extends State<BotSheet> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          (widget.type == BotSheetType.createList) ? '플레이리스트 제목' : '플레이리스트 코드',
+          widget.type.formTitle,
           style: WakText.txt16L.copyWith(color: WakColor.grey400),
         ),
         const SizedBox(height: 4),
         () {
           switch (widget.type) {
             case BotSheetType.createList:
+            case BotSheetType.editList:
               return _buildCreateForm(context);
             case BotSheetType.loadList:
               return _buildLoadForm(context);
@@ -183,7 +192,7 @@ class _BotSheetState extends State<BotSheet> {
           maxLength: _maxLength,
           onChanged: (value) {
             setState(() {
-              if (value.isEmpty) {
+              if (value.isEmpty || value == widget.initialValue) {
                 _type = FormType.none;
               } else if (value == 'test') { /* error condition */
                 _type = FormType.error;
@@ -262,7 +271,7 @@ class _BotSheetState extends State<BotSheet> {
     return Column(
       children: [
         TextFormField(
-          initialValue: widget.playlistCode,
+          initialValue: widget.initialValue,
           readOnly: true,
           enableInteractiveSelection: false,
           style: WakText.txt20M.copyWith(color: WakColor.grey800),
@@ -280,7 +289,7 @@ class _BotSheetState extends State<BotSheet> {
             ),
             suffixIcon: GestureDetector(
               onTap: () {
-                Clipboard.setData(ClipboardData(text: widget.playlistCode));
+                Clipboard.setData(ClipboardData(text: widget.initialValue));
                 showToastWidget(
                   context: context,
                   position: const StyledToastPosition(

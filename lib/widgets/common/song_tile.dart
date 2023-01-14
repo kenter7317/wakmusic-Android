@@ -5,6 +5,7 @@ import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wakmusic/widgets/keep/bot_sheet.dart';
 
 enum TileType {
   baseTile(false, false, false, true, {'start': 20, 'middle': 16, 'end': 20}, {}),
@@ -44,6 +45,19 @@ class _SongTileState extends State<SongTile> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        /* for test */
+        String title = '플레이리스트 01';
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          builder: (_) => BotSheet(
+            type: BotSheetType.editList,
+            initialValue: title,
+          ),
+        );
         if (widget.tileType.canSelect) {
           /* select <-> unselect */
         }
