@@ -272,8 +272,8 @@ class HomeView extends StatelessWidget {
                   aspectRatio: 16 / 9,
                   child: ExtendedImage.network(
                     'https://i.ytimg.com/vi/${song.id}/hqdefault.jpg',
-                    shape: BoxShape.rectangle,
                     fit: BoxFit.cover,
+                    shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(8),
                     loadStateChanged: (state) {
                       if (state.extendedImageLoadState != LoadState.completed) {

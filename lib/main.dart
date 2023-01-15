@@ -8,6 +8,7 @@ import 'package:wakmusic/style/theme.dart';
 import 'package:wakmusic/screens/search/search_view.dart';
 import 'package:wakmusic/screens/search/search_view_model.dart';
 import 'package:wakmusic/models/providers/rec_playlist_provider.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 
 void main() {
   runApp(
@@ -17,6 +18,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => SearchViewModel()),
         ChangeNotifierProvider(create: (_) => SelectSongProvider()),
         ChangeNotifierProvider(create: (_) => RecPlaylistProvider()),
+        ChangeNotifierProvider(create: (_) => PlaylistViewModel()),
       ],
       child: const MyApp(),
     )
@@ -51,6 +53,6 @@ class Main extends StatelessWidget {
       systemNavigationBarIconBrightness: Brightness.dark,
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark));
-    return SearchView();
+    return HomeView();
   }
 }

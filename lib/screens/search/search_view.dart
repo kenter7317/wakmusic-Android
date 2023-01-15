@@ -430,7 +430,7 @@ class SearchView extends StatelessWidget {
 
   Widget _buildTab(BuildContext context, SearchType type) {
     SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
-    return FutureBuilder(
+    return FutureBuilder<List<Song>>(
       future: viewModel.resultLists[type],
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isEmpty) {
