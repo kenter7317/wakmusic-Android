@@ -34,7 +34,6 @@ class SearchView extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
       statusBarIconBrightness: (viewModel.curStatus == SearchStatus.during) ? Brightness.light : Brightness.dark,
     ));
     return WillPopScope(
