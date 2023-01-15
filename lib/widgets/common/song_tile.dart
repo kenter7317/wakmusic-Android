@@ -186,16 +186,20 @@ class _SongTileState extends State<SongTile> {
 
   Widget _buildRank(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.only(right: 6),
       child: SizedBox(
-        width: 24,
+        width: 26,
         height: 40,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.rank.toString(),
-              style: WakText.txt16M.copyWith(color: WakColor.grey900),
-              textAlign: TextAlign.center,
+            SizedBox(
+              width: 24,
+              child: Text(
+                widget.rank.toString(),
+                style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                textAlign: TextAlign.center,
+              ),
             ),
             _rankChange(context),
           ],
@@ -208,15 +212,19 @@ class _SongTileState extends State<SongTile> {
     int diff = widget.song!.last - widget.rank;
     /* NEW */
     if (widget.song!.last == 0) {
-      return Text(
-        'NEW',
-        style: WakText.txt11M.copyWith(color: WakColor.orange),
-        textAlign: TextAlign.center,
+      return SizedBox(
+        width: 24,
+        child: Text(
+          'NEW',
+          style: WakText.txt11M.copyWith(color: WakColor.orange),
+          textAlign: TextAlign.center,
+        ),
       );
     }
     /* BLOW UP */
     else if (diff > 99) {
       return Container(
+        width: 24,
         height: 16,
         alignment: Alignment.center,
         child: SvgPicture.asset(
@@ -229,6 +237,7 @@ class _SongTileState extends State<SongTile> {
     /* ZERO */
     else if (diff == 0) {
       return Container(
+        width: 24,
         height: 16,
         alignment: Alignment.center,
         child: SvgPicture.asset(
@@ -249,7 +258,7 @@ class _SongTileState extends State<SongTile> {
             height: 12,
           ),
           SizedBox(
-            width: 12,
+            width: 14,
             child: Text(
               diff.abs().toString(),
               style: WakText.txt11M.copyWith(color: color),
@@ -271,9 +280,9 @@ class _SongTileState extends State<SongTile> {
             if (widget.tileType.showRank)
               SkeletonBox(
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.only(right: 6),
                   child: Container(
-                    width: 24,
+                    width: 26,
                     height: 40,
                     color: WakColor.grey200,
                   ),
