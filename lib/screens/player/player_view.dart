@@ -33,7 +33,7 @@ class Player extends StatelessWidget {
 
     return Stack(
       children: [
-        Positioned.fill(
+        Positioned(
           //left: -83,
           child: Align(
             alignment: Alignment.topCenter,
@@ -210,69 +210,87 @@ class Player extends StatelessWidget {
 
   Widget _buildPlayerBottomNav(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(
           color: WakColor.grey100,
         ))
       ),
       height: 56,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          InkWell(
-            onTap: () => {},
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset('assets/icons/ic_32_heart_on.svg'),
-                Text(
-                  '1.1만',
-                  style: WakText.txt12M.copyWith(color: WakColor.pink),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(0, 3, 0, 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            InkWell(
+              onTap: () => {},
+              child: SizedBox(
+                width: 74,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset('assets/icons/ic_32_heart_on.svg'),
+                    Text(
+                      '1.1만',
+                      style: WakText.txt12M.copyWith(color: WakColor.pink),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-          InkWell(
-            onTap: () => {},
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset('assets/icons/ic_32_views.svg'),
-                Text(
-                  '1.1만',
-                  style: WakText.txt12M.copyWith(color: WakColor.grey400),
+            const SizedBox(width: 12),
+            InkWell(
+              onTap: () => {},
+              child: SizedBox(
+                width: 74,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset('assets/icons/ic_32_views.svg'),
+                    Text(
+                      '1.1만',
+                      style: WakText.txt12M.copyWith(color: WakColor.grey400),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-          InkWell(
-            onTap: () => {},
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset('assets/icons/ic_32_playadd_900.svg'),
-                Text(
-                  '노래담기',
-                  style: WakText.txt12M.copyWith(color: WakColor.grey400),
+            const SizedBox(width: 12),
+            InkWell(
+              onTap: () => {},
+              child: SizedBox(
+                width: 74,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset('assets/icons/ic_32_playadd_900.svg'),
+                    Text(
+                      '노래담기',
+                      style: WakText.txt12M.copyWith(color: WakColor.grey400),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-          InkWell(
-            onTap: () => {},
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset('assets/icons/ic_32_play_list.svg'),
-                Text(
-                  '재생목록',
-                  style: WakText.txt12M.copyWith(color: WakColor.grey400),
+            const SizedBox(width: 12),
+            InkWell(
+              onTap: () => {},
+              child: SizedBox(
+                width: 74,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset('assets/icons/ic_32_play_list.svg'),
+                    Text(
+                      '재생목록',
+                      style: WakText.txt12M.copyWith(color: WakColor.grey400,
+                    ),)
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

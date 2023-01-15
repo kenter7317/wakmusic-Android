@@ -133,7 +133,7 @@ class PlayerButton extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: const [
           RepeatButton(),
           PreviousSongButton(),
