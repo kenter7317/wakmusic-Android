@@ -7,6 +7,7 @@ import 'package:wakmusic/screens/search/search_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/error_info.dart';
 import 'package:wakmusic/widgets/common/rec_playlist.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
@@ -133,23 +134,9 @@ class SearchView extends StatelessWidget {
                   _fieldText.clear();
                   viewModel.updateStatus(SearchStatus.before);
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Container(
-                    width: 45,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: WakColor.grey200),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '취소',
-                        style: WakText.txt12B.copyWith(color: WakColor.grey400),
-                      ),
-                    ),
-                  ),
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: EditBtn(type: BtnType.cancel),
                 ),
               )
             : null,
