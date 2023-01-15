@@ -16,22 +16,22 @@ class HomeViewModel with ChangeNotifier {
   TabName _tabName = TabName.total;
   late final API _api;
   late Future<List<Song>> _topList;
-  late Map<TabName, Future<List<Song>>> _newList;
+  late Map<TabName, Future<List<Song>>> _newLists;
 
   TabName get curTabName => _tabName;
   Future<List<Song>> get topList => _topList;
-  Map<TabName, Future<List<Song>>> get newList => _newList;
+  Map<TabName, Future<List<Song>>> get newLists => _newLists;
 
   HomeViewModel() {
     _api = API();
-    _newList = {};
+    _newLists = {};
     getList();
   }
 
   Future<void> getList() async {
-    _topList = _api.fetchTop(type: ChartType.hourly, length: 5);
+    _topList = _api.fetchTop(type: ChartType.hourly);
     for (TabName tab in TabName.values) {
-      _newList[tab] = _api.fetchTop(type: ChartType.values[TabName.values.indexOf(tab)], length: 20); /* fetchTop <= for test */
+      _newLists[tab] = _api.fetchTop(type: ChartType.values[TabName.values.indexOf(tab)], length: 10); /* fetchTop <= for test */
     }
     notifyListeners();
   }
