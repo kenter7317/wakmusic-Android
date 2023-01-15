@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:wakmusic/style/colors.dart';
 
 class RepeatButton extends StatelessWidget {
   const RepeatButton({Key? key, this.size = 32}) : super(key: key);
@@ -69,10 +70,21 @@ class PlayCircleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => {},
-      child: SvgPicture.asset(
-        'assets/icons/ic_80_play_shadow.svg',
-        width: size,
-        height: size,
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: WakColor.dark.withOpacity(0.08),
+              offset: Offset( 0, 8),
+              blurRadius: 40,
+            ),
+          ],
+        ),
+        child: SvgPicture.asset(
+          'assets/icons/ic_80_play_shadow.svg',
+          width: size,
+          height: size,
+        ),
       )
     );
   }
