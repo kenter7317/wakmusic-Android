@@ -65,20 +65,6 @@ class Player extends StatelessWidget {
           ),
         ),
         _buildPlayer(context, blank),
-        Positioned(
-          top: 8 + MediaQuery.of(context).padding.top,
-          left: 20,
-          height: 32,
-          width: 32,
-          child: GestureDetector(
-            onTap: () => {},
-            child: SvgPicture.asset(
-              'assets/icons/ic_32_arrow_bottom.svg',
-              width: 32,
-              height: 32,
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -102,21 +88,42 @@ class Player extends StatelessWidget {
   }
 
   Widget _buildTitle(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Center(
-        child: Column(
-          children: [
-            Text(
-              '리와인드 (RE:WIND)',
-              style: WakText.txt16M,
+    return Stack(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 0, 0),
+            child: GestureDetector(
+              onTap: () => {},
+              child: SvgPicture.asset(
+                'assets/icons/ic_32_arrow_bottom.svg',
+                width: 32,
+                height: 32,
+              ),
             ),
-            Text(
-              '이세계아이돌',
-              style: WakText.txt14M.copyWith(color: Colors.black.withOpacity(0.60)),
-            )
-          ],
-      )),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Column(
+              children: [
+                Text(
+                  '리와인드 (RE:WIND)',
+                  style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  '이세계아이돌',
+                  style: WakText.txt14M.copyWith(color: WakColor.grey900.withOpacity(0.6)),
+                  textAlign: TextAlign.center,
+                )
+              ],
+            )),
+        ),
+      ],
     );
   }
 
