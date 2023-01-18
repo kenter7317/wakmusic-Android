@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/screens/charts/charts_view.dart';
+import 'package:wakmusic/screens/charts/charts_view_model.dart';
 import 'package:wakmusic/screens/home/home_view.dart';
 import 'package:wakmusic/screens/home/home_view_model.dart';
 import 'package:wakmusic/style/theme.dart';
@@ -15,6 +17,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
         ChangeNotifierProvider(create: (_) => SearchViewModel()),
+        ChangeNotifierProvider(create: (_) => ChartsViewModel()),
         ChangeNotifierProvider(create: (_) => SelectSongProvider()),
         ChangeNotifierProvider(create: (_) => RecPlaylistProvider()),
       ],
@@ -47,10 +50,6 @@ class Main extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      systemNavigationBarIconBrightness: Brightness.dark,
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark));
-    return SearchView();
+    return const ChartsView();
   }
 }

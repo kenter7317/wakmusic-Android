@@ -3,11 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/song.dart';
 
 enum ChartType {
-  total('누적'),
-  hourly('시간'),
-  daily('일간'),
-  weekly('주간'),
-  monthly('월간');
+  total('누적순'),
+  hourly('시간순'),
+  daily('일간순'),
+  weekly('주간순'),
+  monthly('월간순');
 
   const ChartType(this.str);
   final String str;
@@ -40,6 +40,16 @@ class API {
       return (jsonDecode(response.body) as List).map((e) => Song.fromJson(e)).toList();
     } else {
       throw Exception('Top 100 Chart API failed :(');
+    }
+  }
+
+  Future<DateTime> fetchUpdatedTime() async {
+    final response = await getResponse('$baseUrl/updated');
+    if (response.statusCode == 200) {
+      return DateTime.fromMillisecondsSinceEpoch(
+          int.parse(response.body) * 1000);
+    } else {
+      throw Exception('Updated Time load failed :(');
     }
   }
 
