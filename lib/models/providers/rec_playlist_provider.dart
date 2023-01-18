@@ -8,7 +8,7 @@ class RecPlaylistProvider extends ChangeNotifier {
       title: '고멤가요제',
       image: '고멤가요제',
       iconName: 'GomemSongFestival',
-      songlist: ['', 'mLLvBeyKIUI'],
+      songlist: ['', ''],
     ),
     const Reclist(
       title: '연말공모전',

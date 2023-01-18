@@ -4,6 +4,7 @@ import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/toast_msg.dart';
 
 enum BotSheetType {
@@ -157,22 +158,9 @@ class _BotSheetState extends State<BotSheet> {
                 _fieldText.clear();
                 setState(() => _type = FormType.none);
               },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 16, 0, 16),
-                child: Container(
-                  width: 45,
-                  height: 24,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: WakColor.grey200),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    '취소',
-                    style: WakText.txt12B.copyWith(color: WakColor.grey400),
-                  ),
-                ),
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(8, 16, 0, 16),
+                child: EditBtn(type: BtnType.cancel),
               ),
             )
           : null,

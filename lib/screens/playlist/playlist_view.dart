@@ -8,6 +8,7 @@ import 'package:wakmusic/style/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
+import 'package:wakmusic/widgets/common/error_info.dart';
 import 'package:wakmusic/widgets/common/play_btns.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/models/playlist.dart';
@@ -236,16 +237,20 @@ class PlaylistView extends StatelessWidget {
   Widget _buildSonglist(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
     return Expanded(
-      child: (viewModel.curStatus != EditStatus.editing)
-        ? ListView.builder(
+      child: () {
+        if (viewModel.songs.isEmpty) {
+          return const ErrorInfo(errorMsg: '플레이리스트에 곡이 없습니다.');
+        } else if (viewModel.curStatus != EditStatus.editing) {
+          return ListView.builder(
             physics: const BouncingScrollPhysics(),
             itemCount: viewModel.songs.length,
             itemBuilder: (_, idx) => SongTile(
               song: viewModel.songs[idx],
               tileType: (canEdit) ? TileType.canPlayTile : TileType.dateTile,
             ),
-          )
-        : ReorderableListView.builder(
+          );
+        } else {
+          return ReorderableListView.builder(
             proxyDecorator: (child, _, animation) => AnimatedBuilder(
               animation: animation,
               builder: (_, child) => Material(
@@ -266,7 +271,9 @@ class PlaylistView extends StatelessWidget {
             onReorder: (oldIdx, newIdx) {
               viewModel.moveSong(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
             },
-          ),
+          );
+        }
+      }(),
     );
   }
 }
