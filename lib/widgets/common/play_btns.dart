@@ -42,7 +42,7 @@ class PlayBtns extends StatelessWidget {
           height: 52,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.4),
-            border: Border.all(color: WakColor.grey200),
+            border: Border.all(color: WakColor.grey200.withOpacity(0.4)),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

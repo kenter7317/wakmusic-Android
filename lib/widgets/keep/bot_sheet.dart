@@ -182,9 +182,9 @@ class _BotSheetState extends State<BotSheet> {
             setState(() {
               if (value.isEmpty || value == widget.initialValue) {
                 _type = FormType.none;
-              } else if (value == 'test') { /* error condition */
+              }/* else if (value == 'test') { /* error condition */
                 _type = FormType.error;
-              } else {
+              }*/ else {
                 _type = FormType.enable;
               }
             });
@@ -200,7 +200,7 @@ class _BotSheetState extends State<BotSheet> {
               ),
             ),
             Text(
-              '${_fieldText.text.length}자',
+              '${_fieldText.text.runes.length}자',
               style: WakText.txt12L.copyWith(color: WakColor.lightBlue),
               textAlign: TextAlign.right,
             ),
