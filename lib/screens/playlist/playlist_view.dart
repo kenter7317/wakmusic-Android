@@ -25,6 +25,10 @@ class PlaylistView extends StatelessWidget {
     return Scaffold(
       backgroundColor: WakColor.grey100,
       body: _buildBody(context),
+      bottomNavigationBar: Container(
+        height: 56,
+        color: Colors.white,
+      )
     );
   }
 
@@ -70,8 +74,16 @@ class PlaylistView extends StatelessWidget {
               children: [
                 _buildHeader(context),
                 _buildInfo(context),
-                const PlayBtns(),
-                _buildSonglist(context),
+                Expanded(
+                  child: (playlist.songlist.where((songId) => songId.isNotEmpty).isEmpty)
+                    ? const ErrorInfo(errorMsg: '플레이리스트에 곡이 없습니다.')
+                    : Column(
+                        children: [
+                          const PlayBtns(),
+                          _buildSonglist(context),
+                        ],
+                      ),
+                ),
               ],
             ),
           );
@@ -237,20 +249,16 @@ class PlaylistView extends StatelessWidget {
   Widget _buildSonglist(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
     return Expanded(
-      child: () {
-        if (viewModel.songs.isEmpty) {
-          return const ErrorInfo(errorMsg: '플레이리스트에 곡이 없습니다.');
-        } else if (viewModel.curStatus != EditStatus.editing) {
-          return ListView.builder(
+      child: (viewModel.curStatus != EditStatus.editing) 
+        ? ListView.builder(
             physics: const BouncingScrollPhysics(),
             itemCount: viewModel.songs.length,
             itemBuilder: (_, idx) => SongTile(
               song: viewModel.songs[idx],
               tileType: (canEdit) ? TileType.canPlayTile : TileType.dateTile,
             ),
-          );
-        } else {
-          return ReorderableListView.builder(
+          )
+        : ReorderableListView.builder(
             proxyDecorator: (child, _, animation) => AnimatedBuilder(
               animation: animation,
               builder: (_, child) => Material(
@@ -271,9 +279,7 @@ class PlaylistView extends StatelessWidget {
             onReorder: (oldIdx, newIdx) {
               viewModel.moveSong(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
             },
-          );
-        }
-      }(),
+          ),
     );
   }
 }
