@@ -18,13 +18,24 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin{
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.white,
-      systemNavigationBarIconBrightness: Brightness.dark,
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+
     _controller = AnimationController(vsync: this);
+    
+    Future.delayed(
+      const Duration(seconds: 5), 
+      () => Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Main()),
+      ),
+    );
   }
 
   @override
@@ -39,15 +50,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin{
               'assets/lottie/Splash_Logo_Main.json',
               controller: _controller,
               width: MediaQuery.of(context).size.width * 5 / 12,
-              repeat: false,
-              onLoaded: (composition) {
-                _controller
-                  ..duration = composition.duration
-                  ..forward().whenComplete(() => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MyApp()),
-                  ));
-              },
+              onLoaded: (composition) => _controller
+                ..duration = composition.duration
+                ..forward(),
             ),
           ],
         ),

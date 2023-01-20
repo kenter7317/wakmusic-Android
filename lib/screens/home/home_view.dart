@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -18,18 +19,15 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: WakColor.grey100,
-      body: _buildBody(context),
-      bottomNavigationBar: Container(
-        height: 56,
-        color: Colors.white,
+    HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
       ),
     );
-  }
-
-  Widget _buildBody(BuildContext context) {
-    HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
     return Stack(
       children: [
         Positioned(

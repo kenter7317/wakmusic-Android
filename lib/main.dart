@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:wakmusic/models/providers/select_song_provider.dart';
-import 'package:wakmusic/screens/home/home_view.dart';
-import 'package:wakmusic/screens/home/home_view_model.dart';
-import 'package:wakmusic/screens/splash.dart';
 import 'package:wakmusic/style/theme.dart';
+import 'package:wakmusic/models/providers/providers.dart';
+import 'package:wakmusic/screens/splash.dart';
+import 'package:wakmusic/screens/home/home_view.dart';
 import 'package:wakmusic/screens/search/search_view.dart';
-import 'package:wakmusic/screens/search/search_view_model.dart';
-import 'package:wakmusic/models/providers/rec_playlist_provider.dart';
 
 void main() {
-  runApp(const MaterialApp(home: Splash()));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -19,15 +14,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => HomeViewModel()),
-        ChangeNotifierProvider(create: (_) => SearchViewModel()),
-        ChangeNotifierProvider(create: (_) => SelectSongProvider()),
-        ChangeNotifierProvider(create: (_) => RecPlaylistProvider()),
-      ],
+    return Providers(
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: '왁타버스뮤직',
         builder: (context, child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
@@ -35,7 +24,7 @@ class MyApp extends StatelessWidget {
           );
         },
         theme: WakTheme.wakTheme,
-        home: const Main(),
+        home: const Splash(),
       ),
     );
   }
@@ -46,7 +35,15 @@ class Main extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
-    return SearchView();
+    return Scaffold(
+      body: HomeView(),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
+        child: Container(
+          height: 56,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 }
