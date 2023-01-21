@@ -36,4 +36,14 @@ class API {
       throw Exception('Top 100 Chart API failed :(');
     }
   }
+
+  Future<List<String>> getLyrics({required String id}) async {
+    final response = await getResponse('$baseUrl/lyrics/${id}.vtt');
+    if(response.statusCode == 200){
+      print(response.body);
+      return <String>[];
+    }else{
+      return <String>[];
+    }
+  }
 }

@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import 'package:wakmusic/screens/player/player_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/widgets/player/player_button.dart';
 
@@ -150,7 +152,11 @@ class Player extends StatelessWidget {
   }
 
   Widget _buildLyrics(BuildContext context) {
+    PlayerViewModel viewModel = Provider.of<PlayerViewModel>(context);
     var height = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
+
+    var test = viewModel.getLyrics();
+
     var lyricsList = [
       '기억나 우리 처음 만난 날',
       '내게 오던 너의 그 미소가',
@@ -158,16 +164,31 @@ class Player extends StatelessWidget {
       '매일 스쳐 지나 가던 바람 처럼',
       '가끔은 우리 사이가 멀어질까'
     ];
-    return Column(
-      children: List<Widget>.generate(height >= 732 ? 5 : 3, (index) {
-        return SizedBox(
-          height: 24,
-          child: Text(
-            lyricsList[index],
-            style: WakText.txt14MH.copyWith(color: WakColor.grey500),
-          ),
-        );
-      }).toList(),
+    return FutureBuilder<List<String>>(
+      future: viewModel.lyrics,
+      builder: (context, snapshot){
+        if(snapshot.hasData) {
+          return Container(
+            height: height >= 732 ? 120 : 72,
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              children: List<Widget>.generate(height >= 732 ? 5 : 3, (index) {
+                return SizedBox(
+                  height: 24,
+                  child: Text(
+                    lyricsList[index],
+                    style: WakText.txt14MH.copyWith(color: WakColor.grey500),
+                  ),
+                );
+              }).toList(),
+            ),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 
