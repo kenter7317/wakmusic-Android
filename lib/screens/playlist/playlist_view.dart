@@ -268,6 +268,7 @@ class PlaylistView extends StatelessWidget {
               ),
               child: child,
             ),
+            buildDefaultDragHandles: false,
             physics: const BouncingScrollPhysics(),
             itemCount: viewModel.tempsongs.length,
             itemBuilder: (_, idx) => SongTile(
