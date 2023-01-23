@@ -46,7 +46,8 @@ class PlaylistViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void applySongs(bool apply) {
+  void applySongs(bool? apply) {
+    if (apply == null) return;
     if (apply) {
       _songs = [..._tempsongs];
     } else {

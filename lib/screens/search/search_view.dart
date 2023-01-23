@@ -13,6 +13,7 @@ import 'package:wakmusic/widgets/common/rec_playlist.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
+import 'package:wakmusic/widgets/show_modal.dart';
 
 class SearchView extends StatelessWidget {
   SearchView({super.key});
@@ -90,12 +91,8 @@ class SearchView extends StatelessWidget {
           if (keyword.isNotEmpty) {
             viewModel.search(keyword);
           } else {
-            showModalBottomSheet(
+            showModal(
               context: context,
-              isScrollControlled: true,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-              ),
               builder: (_) => const PopUp(
                 type: PopUpType.txtOneBtn,
                 msg: '검색어를 입력해주세요.',
@@ -163,12 +160,8 @@ class SearchView extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    showModalBottomSheet(
+                    showModal(
                       context: context,
-                      isScrollControlled: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                      ),
                       builder: (context) => PopUp(
                         type: PopUpType.txtTwoBtn,
                         msg: '전체 내역을 삭제하시겠습니까?',

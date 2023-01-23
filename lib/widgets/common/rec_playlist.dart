@@ -69,6 +69,7 @@ class RecPlaylist extends StatelessWidget {
                 pageBuilder: (_, __, ___) => PlaylistView(playlist: playlist, canEdit: false),
                 transitionDuration: const Duration(milliseconds: 200),
                 reverseTransitionDuration: const Duration(milliseconds: 200),
+                opaque: false,
                 transitionsBuilder: (_, animation, __, child) {
                   return SlideTransition(
                     position: animation.drive(

@@ -64,6 +64,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
+  dismissible_page:
+    dependency: "direct main"
+    description:
+      name: dismissible_page
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   extended_image:
     dependency: "direct main"
     description:

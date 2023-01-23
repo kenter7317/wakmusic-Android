@@ -14,6 +14,8 @@ import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/keep/bot_sheet.dart';
+import 'package:dismissible_page/dismissible_page.dart';
+import 'package:wakmusic/widgets/show_modal.dart';
 
 class PlaylistView extends StatelessWidget {
   const PlaylistView({super.key, required this.playlist, required this.canEdit});
@@ -22,17 +24,32 @@ class PlaylistView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: WakColor.grey100,
-      body: _buildBody(context),
-      bottomNavigationBar: Container(
-        height: 56,
-        color: Colors.white,
-      )
+    PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
+    SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
+    return DismissiblePage(
+      onDismissed: () {
+        _canPop(context, viewModel, selectedList, dismissible: false).whenComplete(() => Navigator.pop(context));
+      },
+      direction: DismissiblePageDismissDirection.startToEnd,
+      minScale: 1,
+      minRadius: 0,
+      maxRadius: 0,
+      backgroundColor: Colors.transparent,
+      dragSensitivity: 1,
+      maxTransformValue: 0.1,
+      dismissThresholds: const { DismissiblePageDismissDirection.startToEnd: 0.1 },
+      child: Scaffold(
+        backgroundColor: WakColor.grey100,
+        body: _buildBody(context),
+        bottomNavigationBar: Container(
+          height: 56,
+          color: Colors.white,
+        )
+      ),
     );
   }
 
-  Future<bool> _canPop(BuildContext context, PlaylistViewModel viewModel, SelectSongProvider selectedList) async {
+  Future<bool> _canPop(BuildContext context, PlaylistViewModel viewModel, SelectSongProvider selectedList, {bool dismissible = true}) async {
     switch (viewModel.curStatus) {
       case EditStatus.none:
         selectedList.clearList();
@@ -44,17 +61,13 @@ class PlaylistView extends StatelessWidget {
         if (listEquals(viewModel.songs, viewModel.tempsongs)) {
           viewModel.updateStatus(EditStatus.none);
         } else {
-          viewModel.applySongs(await showModalBottomSheet(
+          viewModel.applySongs(await showModal(
             context: context,
-            isScrollControlled: true,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            ),
             builder: (_) => const PopUp(
               type: PopUpType.txtTwoBtn,
               msg: '변경된 내용을 저장할까요?',
             ),
-          ));
+          ) ?? ((dismissible) ? null : false));
         }
         selectedList.clearList();
         return false;
@@ -216,12 +229,8 @@ class PlaylistView extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 4),
                           child: GestureDetector(
                             onTap: () {
-                              showModalBottomSheet(
+                              showModal(
                                 context: context,
-                                isScrollControlled: true,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                                ),
                                 builder: (_) => BotSheet(
                                   type: BotSheetType.editList,
                                   initialValue: playlist.title,
