@@ -3,10 +3,12 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:subtitle/subtitle.dart';
 import 'package:wakmusic/screens/player/player_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/widgets/player/player_button.dart';
 
+import '../../models/song.dart';
 import '../../style/text_styles.dart';
 
 class Player extends StatelessWidget {
@@ -36,7 +38,6 @@ class Player extends StatelessWidget {
     return Stack(
       children: [
         Positioned(
-          //left: -83,
           child: Align(
             alignment: Alignment.topCenter,
             child: Container(
@@ -155,34 +156,43 @@ class Player extends StatelessWidget {
     PlayerViewModel viewModel = Provider.of<PlayerViewModel>(context);
     var height = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
-    var test = viewModel.getLyrics();
-
-    var lyricsList = [
-      '기억나 우리 처음 만난 날',
-      '내게 오던 너의 그 미소가',
-      '마치 날 알고있던 것처럼',
-      '매일 스쳐 지나 가던 바람 처럼',
-      '가끔은 우리 사이가 멀어질까'
-    ];
-    return FutureBuilder<List<String>>(
+    return FutureBuilder<SubtitleController>(
       future: viewModel.lyrics,
       builder: (context, snapshot){
         if(snapshot.hasData) {
-          return Container(
-            height: height >= 732 ? 120 : 72,
-            child: ListView(
-              scrollDirection: Axis.vertical,
-              children: List<Widget>.generate(height >= 732 ? 5 : 3, (index) {
-                return SizedBox(
-                  height: 24,
-                  child: Text(
-                    lyricsList[index],
-                    style: WakText.txt14MH.copyWith(color: WakColor.grey500),
-                  ),
-                );
-              }).toList(),
-            ),
-          );
+          if(snapshot.data!.subtitles.isEmpty){
+            return Container(
+              alignment: Alignment.center,
+              height: height >= 732 ? 120 : 72,
+              width: 270,
+              child: Text(
+                '가사가 존재하지 않습니다',
+                style: WakText.txt14MH.copyWith(color: WakColor.grey500),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }else{
+            return Container(
+              alignment: Alignment.center,
+              height: height >= 732 ? 120 : 72,
+              width: 270,
+              child: ListView(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                children: List<Widget>.generate(snapshot.data!.subtitles.length, (index) {
+                  return SizedBox(
+                    height: 24,
+                    child: Text(
+                      snapshot.data!.subtitles[index].data,
+                      style: WakText.txt14MH.copyWith(color: WakColor.grey500),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }).toList(),
+              ),
+            );
+          }
         } else {
           return const Center(
             child: CircularProgressIndicator(),
