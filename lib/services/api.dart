@@ -3,11 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/song.dart';
 
 enum ChartType {
-  total('누적순'),
   hourly('시간순'),
   daily('일간순'),
   weekly('주간순'),
-  monthly('월간순');
+  monthly('월간순'),
+  total('누적순');
 
   const ChartType(this.str);
   final String str;
