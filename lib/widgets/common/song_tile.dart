@@ -80,7 +80,7 @@ class _SongTileState extends State<SongTile> {
             } else {
               selectedList.addSong(widget.song!);
             }
-          } else if (widget.tileType == TileType.canPlayTile){
+          } else if (widget.tileType != TileType.nowPlayTile){
             /* play song */
           }
         },
