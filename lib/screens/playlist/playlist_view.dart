@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
@@ -273,7 +274,17 @@ class PlaylistView extends StatelessWidget {
               builder: (_, child) => Material(
                 elevation: 0,
                 color: Colors.transparent,
-                child: child,
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: WakColor.dark.withOpacity(0.25),
+                        blurRadius: 20,
+                      ),
+                    ],
+                  ),
+                  child: child,
+                ),
               ),
               child: child,
             ),
@@ -289,6 +300,7 @@ class PlaylistView extends StatelessWidget {
             onReorder: (oldIdx, newIdx) {
               viewModel.moveSong(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
             },
+            onReorderStart: (_) => HapticFeedback.lightImpact(),
           ),
     );
   }
