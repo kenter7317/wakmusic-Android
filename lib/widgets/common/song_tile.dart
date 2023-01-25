@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models/song.dart';
@@ -51,11 +52,13 @@ class SongTile extends StatefulWidget {
     required this.tileType,
     this.rank = 0,
     this.idx = 0,
+    this.onLongPress,
   });
   final Song? song;
   final TileType tileType;
   final int rank;
   final int idx;
+  final VoidCallback? onLongPress;
 
   @override
   State<SongTile> createState() => _SongTileState();
@@ -77,6 +80,14 @@ class _SongTileState extends State<SongTile> {
             } else {
               selectedList.addSong(widget.song!);
             }
+          } else if (widget.tileType == TileType.canPlayTile){
+            /* play song */
+          }
+        },
+        onLongPress: () {
+          if (widget.onLongPress != null) {
+            widget.onLongPress!();
+            HapticFeedback.lightImpact();
           }
         },
         child: Container(

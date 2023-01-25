@@ -266,6 +266,9 @@ class PlaylistView extends StatelessWidget {
             itemBuilder: (_, idx) => SongTile(
               song: viewModel.songs[idx],
               tileType: (canEdit) ? TileType.canPlayTile : TileType.dateTile,
+              onLongPress: (canEdit)
+                ? () => viewModel.updateStatus(EditStatus.editing)                  
+                : null,
             ),
           )
         : ReorderableListView.builder(
