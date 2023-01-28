@@ -10,10 +10,8 @@
         <item name="android:navigationBarColor">@android:color/white</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:forceDarkAllowed">false</item>
-        <item name="android:windowFullscreen">false</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
+    <color name="white">#FFFFFF</color>
     <!-- Theme applied to the Android Window as soon as the process has started.
          This theme determines the color of the Android Window while your
          Flutter UI initializes, as well as behind your Flutter UI while its

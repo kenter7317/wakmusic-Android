@@ -44,15 +44,6 @@ dependencies:
   flutter_styled_toast: ^2.1.3
   shared_preferences: ^2.0.15
   shimmer: ^2.0.0
-  flutter_native_splash: ^2.2.17
-
-flutter_native_splash:
-  color: "#FFFFFF"
-  image: assets/images/blank.png
-  
-  android_12:
-    color: "#FFFFFF"
-    image: assets/images/blank.png
 
 dev_dependencies:
   flutter_test:
