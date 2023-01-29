@@ -112,6 +112,7 @@ class PlaylistView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 13),
@@ -130,39 +131,18 @@ class PlaylistView extends StatelessWidget {
           ),
           if (canEdit)
             (viewModel.curStatus != EditStatus.editing)
-              ? Expanded(
-                  child: Row(
-                    children: [
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SearchView()),
-                          );
-                        },
-                        child: SvgPicture.asset(
-                          'assets/icons/ic_32_add.svg',
-                          width: 32,
-                          height: 32,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      GestureDetector(
-                        onTap: () {
-                          if (viewModel.curStatus == EditStatus.editing) { /* editing <= for test */
-                            viewModel.updateStatus(EditStatus.none);
-                          } else {
-                            viewModel.updateStatus(EditStatus.editing);
-                          }
-                        },
-                        child: SvgPicture.asset(
-                          'assets/icons/ic_32_more.svg',
-                          width: 32,
-                          height: 32,
-                        ),
-                      ),
-                    ],
+              ? GestureDetector(
+                  onTap: () {
+                    if (viewModel.curStatus == EditStatus.editing) { /* editing <= for test */
+                      viewModel.updateStatus(EditStatus.none);
+                    } else {
+                      viewModel.updateStatus(EditStatus.editing);
+                    }
+                  },
+                  child: SvgPicture.asset(
+                    'assets/icons/ic_32_more.svg',
+                    width: 32,
+                    height: 32,
                   ),
                 )
               : Expanded(
