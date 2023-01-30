@@ -7,6 +7,7 @@ import 'package:subtitle/subtitle.dart';
 import 'package:wakmusic/screens/player/player_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/widgets/player/player_button.dart';
+import 'package:scroll_snap_list/scroll_snap_list.dart';
 
 import '../../models/song.dart';
 import '../../style/text_styles.dart';
@@ -47,7 +48,9 @@ class Player extends StatelessWidget {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
-                      'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg'),
+                      'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg',
+
+                  ),
                   colorFilter: ColorFilter.mode(
                     Colors.white.withOpacity(0.6),
                     BlendMode.dstATop
@@ -143,9 +146,6 @@ class Player extends StatelessWidget {
               image: NetworkImage(
                   'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg'),
             ),
-            /*colorFilter: ColorFilter.mode(
-                        Colors.white.withOpacity(0.1),
-                        BlendMode.dstATop),*/
           ),
         ),
       ),
@@ -176,22 +176,31 @@ class Player extends StatelessWidget {
               alignment: Alignment.center,
               height: height >= 732 ? 120 : 72,
               width: 270,
-              child: ListView(
-                padding: EdgeInsets.zero,
+              child: ScrollSnapList(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                children: List<Widget>.generate(snapshot.data!.subtitles.length, (index) {
-                  return SizedBox(
-                    height: 24,
-                    child: Text(
-                      snapshot.data!.subtitles[index].data,
-                      style: WakText.txt14MH.copyWith(color: WakColor.grey500),
-                      textAlign: TextAlign.center,
-                    ),
+                onItemFocus: (int) => {},
+                itemSize: 24,
+                itemBuilder: (context, index) {
+                  return Text(
+                    snapshot.data!.subtitles[index].data,
+                    style: WakText.txt14MH.copyWith(color: WakColor.grey500),
+                    textAlign: TextAlign.center,
                   );
-                }).toList(),
+                },
+                itemCount: snapshot.data!.subtitles.length,
               ),
             );
+            List<Widget>.generate(snapshot.data!.subtitles.length, (index) {
+            return SizedBox(
+            height: 24,
+            child: Text(
+            snapshot.data!.subtitles[index].data,
+            style: WakText.txt14MH.copyWith(color: WakColor.grey500),
+            textAlign: TextAlign.center,
+            ),
+            );
+            }).toList();
           }
         } else {
           return const Center(
