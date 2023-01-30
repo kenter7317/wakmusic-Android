@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
-import 'package:wakmusic/screens/search/search_view.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -19,9 +18,8 @@ import 'package:dismissible_page/dismissible_page.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
 class PlaylistView extends StatelessWidget {
-  const PlaylistView({super.key, required this.playlist, required this.canEdit});
+  const PlaylistView({super.key, required this.playlist});
   final Playlist playlist;
-  final bool canEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +127,7 @@ class PlaylistView extends StatelessWidget {
               ),
             ),
           ),
-          if (canEdit)
+          if (playlist is! Reclist)
             (viewModel.curStatus != EditStatus.editing)
               ? GestureDetector(
                   onTap: () {
@@ -245,8 +243,8 @@ class PlaylistView extends StatelessWidget {
             itemCount: viewModel.songs.length,
             itemBuilder: (_, idx) => SongTile(
               song: viewModel.songs[idx],
-              tileType: (canEdit) ? TileType.canPlayTile : TileType.dateTile,
-              onLongPress: (canEdit)
+              tileType: (playlist is! Reclist) ? TileType.canPlayTile : TileType.dateTile,
+              onLongPress: (playlist is! Reclist)
                 ? () => viewModel.updateStatus(EditStatus.editing)                  
                 : null,
             ),

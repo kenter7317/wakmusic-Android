@@ -66,7 +66,7 @@ class RecPlaylist extends StatelessWidget {
             Navigator.push(
               context,
               PageRouteBuilder(
-                pageBuilder: (_, __, ___) => PlaylistView(playlist: playlist, canEdit: false),
+                pageBuilder: (_, __, ___) => PlaylistView(playlist: playlist),
                 transitionDuration: const Duration(milliseconds: 200),
                 reverseTransitionDuration: const Duration(milliseconds: 200),
                 opaque: false,
