@@ -57,18 +57,21 @@ class PlaylistView extends StatelessWidget {
         viewModel.updateStatus(EditStatus.none);
         return false;
       case EditStatus.editing:
+        bool? result;
         if (listEquals(viewModel.songs, viewModel.tempsongs)) {
           viewModel.updateStatus(EditStatus.none);
+          result = true;
         } else {
-          viewModel.applySongs(await showModal(
+          result = await showModal(
             context: context,
             builder: (_) => const PopUp(
               type: PopUpType.txtTwoBtn,
               msg: '변경된 내용을 저장할까요?',
             ),
-          ) ?? ((dismissible) ? null : false));
+          ) ?? ((dismissible) ? null : false);
+          viewModel.applySongs(result);
         }
-        selectedList.clearList();
+        if (result != null) selectedList.clearList();
         return false;
     }
   }
