@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/screens/charts/charts_view.dart';
+import 'package:wakmusic/screens/charts/charts_view_model.dart';
 import 'package:wakmusic/style/theme.dart';
 import 'package:wakmusic/models/providers/providers.dart';
 import 'package:wakmusic/screens/splash.dart';

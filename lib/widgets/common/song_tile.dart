@@ -71,7 +71,7 @@ class _SongTileState extends State<SongTile> {
       return _buildSkeleton(context);
     } else {
       SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
-      bool isSelected = selectedList.list.contains(widget.song);
+      bool isSelected = selectedList.contains(widget.song!);
       return GestureDetector(
         onTap: () {
           if (widget.tileType.canSelect) {
@@ -213,15 +213,13 @@ class _SongTileState extends State<SongTile> {
 
   Widget _buildRank(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 6),
+      padding: const EdgeInsets.only(right: 8),
       child: SizedBox(
-        width: 26,
+        width: 28,
         height: 40,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: 24,
               child: Text(
                 widget.rank.toString(),
                 style: WakText.txt16M.copyWith(color: WakColor.grey900),
@@ -239,19 +237,15 @@ class _SongTileState extends State<SongTile> {
     int diff = widget.song!.last - widget.rank;
     /* NEW */
     if (widget.song!.last == 0) {
-      return SizedBox(
-        width: 24,
-        child: Text(
-          'NEW',
-          style: WakText.txt11M.copyWith(color: WakColor.orange),
-          textAlign: TextAlign.center,
-        ),
+      return Text(
+        'NEW',
+        style: WakText.txt11M.copyWith(color: WakColor.orange),
+        textAlign: TextAlign.center,
       );
     }
     /* BLOW UP */
     else if (diff > 99) {
       return Container(
-        width: 24,
         height: 16,
         alignment: Alignment.center,
         child: SvgPicture.asset(
@@ -264,7 +258,6 @@ class _SongTileState extends State<SongTile> {
     /* ZERO */
     else if (diff == 0) {
       return Container(
-        width: 24,
         height: 16,
         alignment: Alignment.center,
         child: SvgPicture.asset(
@@ -278,6 +271,7 @@ class _SongTileState extends State<SongTile> {
     else {
       Color color = (diff > 0) ? WakColor.pink : WakColor.blue;
       return Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           SvgPicture.asset(
             'assets/icons/ic_12_${(diff > 0) ? 'up' : 'down'}.svg',
@@ -307,9 +301,9 @@ class _SongTileState extends State<SongTile> {
             if (widget.tileType.showRank)
               SkeletonBox(
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 6),
+                  padding: const EdgeInsets.only(right: 8),
                   child: Container(
-                    width: 26,
+                    width: 28,
                     height: 40,
                     color: WakColor.grey200,
                   ),

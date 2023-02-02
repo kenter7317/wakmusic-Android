@@ -13,6 +13,7 @@ import 'package:wakmusic/widgets/common/rec_playlist.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
+import 'package:wakmusic/widgets/common/tab_view.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
 class SearchView extends StatelessWidget {
@@ -220,62 +221,13 @@ class SearchView extends StatelessWidget {
   }
 
   Widget _buildAfter(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      child: Builder(
-        builder: (context) {
-          return Column(
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    height: 54,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: WakColor.grey200),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-                    child: TabBar(
-                      indicatorColor: WakColor.lightBlue,
-                      labelStyle: WakText.txt16B,
-                      unselectedLabelStyle: WakText.txt16M,
-                      labelColor: WakColor.grey900,
-                      unselectedLabelColor: WakColor.grey400,
-                      overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                      splashFactory: NoSplash.splashFactory,
-                      labelPadding: EdgeInsets.zero,
-                      tabs: List.generate(
-                        4,
-                        (idx) => Container(
-                          height: 36,
-                          padding: const EdgeInsets.fromLTRB(0, 2, 0, 10),
-                          child: Text(
-                            (idx == 0) ? '전체' : SearchType.values[idx - 1].str,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: TabBarView(
-                  physics: const BouncingScrollPhysics(),
-                  children: List.generate(
-                    4,
-                    (idx) => (idx == 0)
-                      ? _buildTotalTab(context)
-                      : _buildTab(context, SearchType.values[idx - 1]),
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
+    return TabView(
+      tabBarList: List.generate(4, (idx) => (idx == 0) ? '전체' : SearchType.values[idx - 1].str),
+      tabViewList: List.generate(
+        4,
+        (idx) => (idx == 0)
+          ? _buildTotalTab(context)
+          : _buildTab(context, SearchType.values[idx - 1]),
       ),
     );
   }
