@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.wakmusic">
-   <application
-        android:label="wakmusic"
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <application
+        android:label="왁타버스뮤직"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

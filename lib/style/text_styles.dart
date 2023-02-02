@@ -23,4 +23,5 @@ class WakText {
   static final TextStyle txt12B = txtBBase.copyWith(height: 18 / 12, fontSize: 12.0);
   static final TextStyle txt14B = txtBBase.copyWith(height: 24 / 14, fontSize: 14.0);
   static final TextStyle txt16B = txtBBase.copyWith(height: 24 / 16, fontSize: 16.0);
+  static final TextStyle txt20B = txtBBase.copyWith(height: 32 / 20, fontSize: 20.0);
 }

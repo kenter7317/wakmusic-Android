@@ -1,51 +1,57 @@
 import 'package:flutter/cupertino.dart';
-import 'package:wakmusic/models/song.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/models/playlist.dart';
 
 class RecPlaylistProvider extends ChangeNotifier {
-  final List<Map<String, dynamic>> _infoList = [
-    {
-      'title': '고멤가요제',
-      'iconName': 'GomemSongFestival',
-      'songList': ['', 'mLLvBeyKIUI']
-    },
-    {
-      'title': '연말공모전',
-      'iconName': 'Competition',
-      'songList': ['', 'mLLvBeyKIUI', '0D7GPhsrXYo']
-    },
-    {
-      'title': '상콘 OST',
-      'iconName': 'situationalplay_OST',
-      'songList': ['', 'mLLvBeyKIUI', '0D7GPhsrXYo', 'HXA9ZL8K5Js']
-    },
-    {
-      'title': '힙합 SWAG',
-      'iconName': 'Hiphop',
-      'songList': [
+  /* no api yet to fetch RecPlaylist */
+  final List<Reclist> _list = [
+    const Reclist(
+      title: '고멤가요제',
+      image: '고멤가요제',
+      iconName: 'GomemSongFestival',
+      songlist: ['', ''],
+    ),
+    const Reclist(
+      title: '연말공모전',
+      image: '연말공모전',
+      iconName: 'Competition',
+      songlist: ['', 'mLLvBeyKIUI', '0D7GPhsrXYo'],
+    ),
+    const Reclist(
+      title: '상콘 OST',
+      image: '상콘OST',
+      iconName: 'situationalplay_OST',
+      songlist: ['', 'mLLvBeyKIUI', '0D7GPhsrXYo', 'HXA9ZL8K5Js'],
+    ),
+    const Reclist(
+      title: '힙합 SWAG',
+      image: '힙합',
+      iconName: 'Hiphop',
+      songlist: [
         '',
         'mLLvBeyKIUI',
         '0D7GPhsrXYo',
         'HXA9ZL8K5Js',
         '2j0f-ZZ77_c'
-      ]
-    },
-    {
-      'title': '캐롤',
-      'iconName': 'carol',
-      'songList': [
+      ],
+    ),
+    const Reclist(
+      title: '캐롤',
+      image: '캐롤',
+      iconName: 'carol',
+      songlist: [
         '',
         'mLLvBeyKIUI',
         '0D7GPhsrXYo',
         'HXA9ZL8K5Js',
         '2j0f-ZZ77_c',
         'z_FW8Tnj2z0'
-      ]
-    },
-    {
-      'title': '노동요',
-      'iconName': 'worksong',
-      'songList': [
+      ],
+    ),
+    const Reclist(
+      title: '노동요',
+      image: '노동요',
+      iconName: 'worksong',
+      songlist: [
         '',
         'mLLvBeyKIUI',
         '0D7GPhsrXYo',
@@ -53,22 +59,9 @@ class RecPlaylistProvider extends ChangeNotifier {
         '2j0f-ZZ77_c',
         'z_FW8Tnj2z0',
         'ybQ2nXaoPMQ'
-      ]
-    },
+      ],
+    ),
   ];
-  late final API _api;
-  late final List<Future<List<Song>>> _songLists;
 
-  List<Map<String, dynamic>> get infoList => _infoList;
-  List<Future<List<Song>>> get songLists => _songLists;
-
-  RecPlaylistProvider() {
-    _api = API();
-    getList();
-  }
-
-  Future<void> getList() async {
-    _songLists = _infoList.map((info) => _api.search(keyword: info['songList'].join(','), type: SearchType.ids)).toList();
-    notifyListeners();
-  }
+  List<Reclist> get list => _list;
 }

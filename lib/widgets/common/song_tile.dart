@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models/song.dart';
@@ -11,8 +12,9 @@ import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:lottie/lottie.dart';
 
 enum TileType {
-  baseTile(false, false, false, true,
-    {'start': 20, 'middle': 16, 'end': 20}, {}),
+  editTile(false, false, false, true,
+    {'start': 20, 'middle': 16, 'end': 20}, 
+    {'icon': 'ic_32_move', 'size': 32.0}),
   homeTile(true, false, false, false,
     {'start': 0, 'middle': 12, 'end': 0},
     {'icon': 'ic_24_play_shadow', 'size': 24.0}),
@@ -49,10 +51,14 @@ class SongTile extends StatefulWidget {
     required this.song,
     required this.tileType,
     this.rank = 0,
+    this.idx = 0,
+    this.onLongPress,
   });
   final Song? song;
   final TileType tileType;
   final int rank;
+  final int idx;
+  final VoidCallback? onLongPress;
 
   @override
   State<SongTile> createState() => _SongTileState();
@@ -74,11 +80,23 @@ class _SongTileState extends State<SongTile> {
             } else {
               selectedList.addSong(widget.song!);
             }
+          } else if (widget.tileType != TileType.nowPlayTile){
+            /* play song */
+          }
+        },
+        onLongPress: () {
+          if (widget.onLongPress != null) {
+            widget.onLongPress!();
+            HapticFeedback.lightImpact();
           }
         },
         child: Container(
           padding: EdgeInsets.fromLTRB(widget.tileType.padding['start']!, 0, widget.tileType.padding['end']!, 0),
-          color: (widget.tileType.canSelect && isSelected) ? WakColor.grey200 : Colors.transparent,
+          color: (widget.tileType.canSelect && isSelected) 
+            ? WakColor.grey200
+            : (widget.tileType == TileType.editTile)
+              ? WakColor.grey100
+              : Colors.transparent,
           child: SizedBox(
             height: (widget.tileType == TileType.homeTile) ? 42 : 60,
             child: Row(
@@ -176,6 +194,15 @@ class _SongTileState extends State<SongTile> {
                         width: widget.tileType.icon['size'],
                         height: widget.tileType.icon['size'],
                       ),
+                if (widget.tileType == TileType.editTile)
+                  ReorderableDragStartListener(
+                    index: widget.idx,
+                    child: SvgPicture.asset(
+                      'assets/icons/${widget.tileType.icon['icon']}.svg',
+                      width: widget.tileType.icon['size'],
+                      height: widget.tileType.icon['size'],
+                    ),
+                  ),
               ],
             ),
           ),
@@ -312,7 +339,7 @@ class _SongTileState extends State<SongTile> {
               SkeletonText(wakTxtStyle: WakText.txt12L, width: 75),
             if (widget.tileType.showDate)
               SkeletonText(wakTxtStyle: WakText.txt12L, width: 60),
-            if (!widget.tileType.canSelect)
+            if (!widget.tileType.canSelect || widget.tileType == TileType.editTile)
               SkeletonBox(
                 child: Container(
                   width: widget.tileType.icon['size'],
