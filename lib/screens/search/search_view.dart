@@ -21,22 +21,15 @@ class SearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: WakColor.grey100,
-      body: _buildBody(context),
-      bottomNavigationBar: Container(
-        height: 56,
-        color: Colors.white,
+    SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: (viewModel.curStatus == SearchStatus.during) ? Brightness.light : Brightness.dark,
       ),
     );
-  }
-
-  Widget _buildBody(BuildContext context) {
-    SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: (viewModel.curStatus == SearchStatus.during) ? Brightness.light : Brightness.dark,
-    ));
     return WillPopScope(
       onWillPop: () async {
         if (viewModel.curStatus != SearchStatus.before) {
@@ -208,7 +201,7 @@ class SearchView extends StatelessWidget {
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();
                     _fieldText.text = viewModel.history[idx];
-                    viewModel.search(_fieldText.text);
+                    viewModel.search(viewModel.history[idx]);
                   },
                   child: Text(
                     viewModel.history[idx],
