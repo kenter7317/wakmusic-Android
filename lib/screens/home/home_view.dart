@@ -49,7 +49,11 @@ class HomeView extends StatelessWidget {
           ),
         ),
         RefreshIndicator(
-          onRefresh: () => viewModel.getList(),
+          onRefresh: () async {
+            viewModel.updateTab(TabName.total);
+            _controller.jumpTo(0);
+            viewModel.getList();
+          },
           color: WakColor.lightBlue,
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
@@ -165,42 +169,50 @@ class HomeView extends StatelessWidget {
       height: 195,
       child: FutureBuilder<List<Song>>(
         future: viewModel.newLists[viewModel.curTabName],
-        builder: (context, snapshot) => Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: SizedBox(
-                height: 24,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '최신 음악',
-                        style: WakText.txt16B.copyWith(color: WakColor.grey900),
+        builder: (context, snapshot) {
+          List<Song?> newList;
+          if (!snapshot.hasError && snapshot.connectionState == ConnectionState.waiting) {
+            newList = viewModel.prevLists[viewModel.curTabName]!;
+          } else {
+            newList = (snapshot.hasData) ? snapshot.data! : List.filled(10, null);
+          }
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: SizedBox(
+                  height: 24,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '최신 음악',
+                          style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                        ),
                       ),
-                    ),
-                    Row(
-                      children: TabName.values.map((tabName) => _buildNewTab(context, tabName)).toList(),
-                    ),
-                  ],
+                      Row(
+                        children: TabName.values.map((tabName) => _buildNewTab(context, tabName)).toList(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 131,
-              child: ListView.separated(
-                controller: _controller,
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: 10,
-                itemBuilder: (context, idx) => _buildNewListItem(context, (snapshot.hasData) ? snapshot.data![idx] : null),
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
+              SizedBox(
+                height: 131,
+                child: ListView.separated(
+                  controller: _controller,
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: 10,
+                  itemBuilder: (context, idx) => _buildNewListItem(context, newList[idx]),
+                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -270,8 +282,8 @@ class HomeView extends StatelessWidget {
                   aspectRatio: 16 / 9,
                   child: ExtendedImage.network(
                     'https://i.ytimg.com/vi/${song.id}/hqdefault.jpg',
-                    shape: BoxShape.rectangle,
                     fit: BoxFit.cover,
+                    shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(8),
                     loadStateChanged: (state) {
                       if (state.extendedImageLoadState != LoadState.completed) {

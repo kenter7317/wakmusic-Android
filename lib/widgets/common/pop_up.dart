@@ -57,7 +57,7 @@ class PopUp extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     if (negFunc != null) negFunc!();
-                    Navigator.pop(context);
+                    Navigator.pop(context, false);
                   },
                   child: Container(
                     height: 56,
@@ -80,7 +80,7 @@ class PopUp extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 if (posFunc != null) posFunc!();
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               },
               child: Container(
                 height: 56,

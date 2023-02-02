@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/models/playlist.dart';
 
 enum ChartType {
   total('누적'),
@@ -49,6 +50,15 @@ class API {
       return (jsonDecode(response.body) as List).map((e) => Song.fromJson(e)).toList();
     } else {
       throw Exception('Search failed :(');
+    }
+  }
+
+  Future<Playlist> fetchPlaylist({required String key}) async {
+    final response = await getResponse('$baseUrl/playlist/detail/$key');
+    if (response.statusCode == 200) {
+      return Playlist.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Playlist load failed :(');
     }
   }
 }
