@@ -19,14 +19,15 @@ class ChartsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: WakColor.grey100,
-      body: _buildBody(context),
-      bottomNavigationBar: Container(
-        height: 56,
-        color: Colors.white,
-      ),
-    );
+    return _buildBody(context);
+    // return Scaffold(
+    //   backgroundColor: WakColor.grey100,
+    //   body: _buildBody(context),
+    //   bottomNavigationBar: Container(
+    //     height: 56,
+    //     color: Colors.white,
+    //   ),
+    // );
   }
 
   Widget _buildBody(BuildContext context) {
