@@ -66,7 +66,7 @@ class ChartsView extends StatelessWidget {
                   return Row(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/ic_16_Check.svg',
+                        'assets/icons/ic_16_check.svg',
                         width: 16,
                         height: 16,
                       ),

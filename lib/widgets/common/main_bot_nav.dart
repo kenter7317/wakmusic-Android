@@ -105,7 +105,7 @@ class _MainBotNavState extends State<MainBotNav> with TickerProviderStateMixin {
                       },
                     )
                   : Image.asset(
-                      'assets/images/img_128_${icon}_disabled.png',
+                      'assets/icons/ic_128_${icon}_disabled.png',
                       width: 32,
                       height: 32,
                     ),

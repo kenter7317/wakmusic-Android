@@ -259,9 +259,9 @@ class _SubBotNavState extends State<SubBotNav> {
             children: [
               if (type.showSelect)
                 selNav.selNum != selNav.maxSel
-                    ? editBarBtn("ic_32_Check_off", "전체선택",
+                    ? editBarBtn("ic_32_check_off", "전체선택",
                         onTap: selNav.addAllSong)
-                    : editBarBtn("ic_32_Check_on", "전체선택해제",
+                    : editBarBtn("ic_32_check_on", "전체선택해제",
                         onTap: selNav.clearList),
               if (type.showSongAdd) editBarBtn("ic_32_playadd_25", "노래담기"),
               if (type.showPlayListAdd) editBarBtn("ic_32_play_add", "재생목록추가"),

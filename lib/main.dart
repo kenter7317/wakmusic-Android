@@ -147,24 +147,6 @@ class Temp extends StatelessWidget {
                   botNav.subChange(7);
                 },
                 child: Text('보관함 노래 추가')),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     TextButton(
-            //       onPressed: () {
-            //         selNav.selSub();
-            //       },
-            //       child: Text('-'),
-            //     ),
-            //     Text(selNav.selNum.toString()),
-            //     TextButton(
-            //       onPressed: () {
-            //         selNav.addSong(Song(id: "1", title: "", artist: artist, remix: remix, reaction: reaction, date: date, views: views, last: last));
-            //       },
-            //       child: Text('+'),
-            //     ),
-            //   ],
-            // )
           ]),
     ));
   }
