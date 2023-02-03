@@ -20,17 +20,23 @@ class Song {
   });
 
   factory Song.fromJson(Map<String, dynamic> json) => Song(
-        id: json['id'],
-        title: json['title'],
-        artist: json['artist'],
-        remix: json['remix'],
-        reaction: json['reaction'],
-        date: DateTime(
+    id: json['id'],
+    title: json['title'],
+    artist: json['artist'],
+    remix: json['remix'],
+    reaction: json['reaction'],
+    date: () {
+      try {
+        return DateTime(
           json['date'] ~/ 10000 + 2000,
           json['date'] ~/ 100 % 100,
           json['date'] % 100,
-        ),
-        views: json['views'] ?? 0,
-        last: json['last'] ?? 0,
-      );
+        );
+      } catch (e) {
+        return DateTime(1999);
+      }
+    }(),
+    views: json['views'] ?? 0,
+    last: json['last'] ?? 0,
+  );
 }
