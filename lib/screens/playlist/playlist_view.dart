@@ -40,10 +40,6 @@ class PlaylistView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: WakColor.grey100,
         body: _buildBody(context),
-        bottomNavigationBar: Container(
-          height: 56,
-          color: Colors.white,
-        )
       ),
     );
   }

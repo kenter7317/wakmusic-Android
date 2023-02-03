@@ -88,7 +88,6 @@ class Temp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final botNav = Provider.of<NavProvider>(context);
-    final selNav = Provider.of<SelectSongProvider>(context);
 
     return SingleChildScrollView(
         child: Center(
