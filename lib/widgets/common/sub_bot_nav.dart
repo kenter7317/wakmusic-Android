@@ -154,7 +154,7 @@ class _SubBotNavState extends State<SubBotNav> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 12),
                           tempIsPlaying
                               ? iconBtn("ic_32_stop", edgePadding: true,
                                   onTap: () {
