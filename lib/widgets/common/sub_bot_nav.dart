@@ -42,6 +42,7 @@ class _SubBotNavState extends State<SubBotNav> {
   Widget playDetailBar() {
     return Container(
       decoration: const BoxDecoration(
+        color: Colors.white,
         border: Border(
           top: BorderSide(
             color: WakColor.grey100,
@@ -54,34 +55,37 @@ class _SubBotNavState extends State<SubBotNav> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           tempLike == true
-              ? playDetailBarBtn(
-                  "ic_32_heart_on", koreanNumberFormater(1217), WakColor.pink,
-                  onTap: () {
+              ? playDetailBarBtn("ic_32_heart_on", koreanNumberFormater(1217),
+                  txtColor: WakColor.pink, onTap: () {
                   setState(() {
                     tempLike = !tempLike;
                   });
                 })
               : playDetailBarBtn("ic_32_heart_off", koreanNumberFormater(1217),
-                  WakColor.grey400, onTap: () {
+                  onTap: () {
                   setState(() {
                     tempLike = !tempLike;
                   });
                 }), // 수정 (좋아요 상태 연결)
-          playDetailBarBtn("ic_32_views", koreanNumberFormater(10000),
-              WakColor.grey400), // 수정 (조회수 연결)
-          playDetailBarBtn("ic_32_playadd_900", "노래담기",
-              WakColor.grey400), // 수정 (onTap 액션 필요)
-          playDetailBarBtn("ic_32_play_list", "재생목록", WakColor.grey400,
-              edgePadding: true), // 수정 (onTap 액션 필요)
+          playDetailBarBtn(
+            "ic_32_views",
+            koreanNumberFormater(10000),
+          ), // 수정 (조회수 연결)
+          playDetailBarBtn(
+            "ic_32_playadd_900",
+            "노래담기",
+          ), // 수정 (onTap 액션 필요)
+          playDetailBarBtn("ic_32_play_list", "재생목록",
+              edgePadding: false), // 수정 (onTap 액션 필요)
         ],
       ),
     );
   }
 
-  Widget playDetailBarBtn(String icon, String txt, Color txtColor,
-      {bool edgePadding = false, onTap}) {
+  Widget playDetailBarBtn(String icon, String txt,
+      {Color txtColor = WakColor.grey400, bool edgePadding = true, onTap}) {
     return Padding(
-      padding: edgePadding ? EdgeInsets.zero : const EdgeInsets.only(right: 12),
+      padding: edgePadding ? const EdgeInsets.only(right: 12) : EdgeInsets.zero,
       child: GestureDetector(
         onTap: onTap,
         child: Container(
@@ -110,138 +114,142 @@ class _SubBotNavState extends State<SubBotNav> {
 
   /* 임시 노래 재생 바 */
   Widget playerBar(PlayerBarType type) {
-    return Container(
-        height: 56,
-        color: Colors.white,
-        child: Stack(
-          children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 0, 16, 0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ExtendedImage.network(
-                    'https://i.ytimg.com/vi/A5Zge2ggBSA/hqdefault.jpg', // 수정
-                    fit: BoxFit.cover,
-                    width: 72,
-                    height: 40,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  type == PlayerBarType.main
-                      ? Expanded(
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("리와인드 (RE:WIND)",
-                                          style: WakText.txt14MH), // 수정
-                                      Text("이세계아이돌",
-                                          style: WakText.txt12L) // 수정
-                                    ]),
-                              ),
-                              const SizedBox(width: 8),
-                              tempIsPlaying
-                                  ? iconBtn("ic_32_stop", edgePadding: true,
-                                      onTap: () {
-                                      setState(() {
-                                        tempIsPlaying = !tempIsPlaying;
-                                      });
-                                    })
-                                  : iconBtn("ic_32_play_900", edgePadding: true,
-                                      onTap: () {
-                                      setState(() {
-                                        tempIsPlaying = !tempIsPlaying;
-                                      });
-                                    }), // 수정
-                              const SizedBox(width: 20),
-                              iconBtn(
-                                "ic_32_close",
-                                edgePadding: true,
-                              ), // 수정
-                            ],
-                          ),
-                        )
-                      : Expanded(
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+    return Stack(
+      children: [
+        Container(
+          height: 56,
+          color: Colors.white,
+          padding: const EdgeInsets.fromLTRB(20, 0, 16, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ExtendedImage.network(
+                'https://i.ytimg.com/vi/A5Zge2ggBSA/hqdefault.jpg', // 수정
+                fit: BoxFit.cover,
+                width: 72,
+                height: 40,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              type == PlayerBarType.main
+                  ? Expanded(
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Expanded(child: SizedBox(height: 56)),
-                                if (tempRepeat == RepeatType.all)
-                                  iconBtn("ic_32_repeat_on_all", onTap: () {
+                                Text(
+                                  "리와인드 (RE:WIND)",
+                                  style: WakText.txt14MH
+                                      .copyWith(color: WakColor.grey900),
+                                ), // 수정
+                                Text(
+                                  "이세계아이돌",
+                                  style: WakText.txt12L
+                                      .copyWith(color: WakColor.grey900),
+                                ), // 수정
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          tempIsPlaying
+                              ? iconBtn("ic_32_stop", edgePadding: true,
+                                  onTap: () {
+                                  setState(() {
+                                    tempIsPlaying = !tempIsPlaying;
+                                  });
+                                })
+                              : iconBtn("ic_32_play_900", edgePadding: true,
+                                  onTap: () {
+                                  setState(() {
+                                    tempIsPlaying = !tempIsPlaying;
+                                  });
+                                }), // 수정
+                          iconBtn(
+                            "ic_32_close",
+                            edgePadding: false,
+                          ), // 수정
+                        ],
+                      ),
+                    )
+                  : Expanded(
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            () {
+                              switch (tempRepeat) {
+                                case RepeatType.all:
+                                  return iconBtn("ic_32_repeat_on_all",
+                                      onTap: () {
                                     setState(() {
                                       tempRepeat = RepeatType.one;
                                     });
-                                  })
-                                else if (tempRepeat == RepeatType.one)
-                                  iconBtn("ic_32_repeat_on_1", onTap: () {
+                                  });
+                                case RepeatType.one:
+                                  return iconBtn("ic_32_repeat_on_1",
+                                      onTap: () {
                                     setState(() {
                                       tempRepeat = RepeatType.none;
                                     });
-                                  })
-                                else
-                                  iconBtn("ic_32_repeat_off", onTap: () {
+                                  });
+                                default:
+                                  return iconBtn("ic_32_repeat_off", onTap: () {
                                     setState(() {
                                       tempRepeat = RepeatType.all;
                                     });
+                                  }); // 수정 (실제 플레이어와 연결)
+                              }
+                            }(),
+                            iconBtn("ic_32_prev_on"), // 수정 (실제 플레이어와 연결)
+                            tempIsPlaying
+                                ? iconBtn("ic_32_stop", onTap: () {
+                                    setState(() {
+                                      tempIsPlaying = !tempIsPlaying;
+                                    });
+                                  })
+                                : iconBtn("ic_32_play_900", onTap: () {
+                                    setState(() {
+                                      tempIsPlaying = !tempIsPlaying;
+                                    });
                                   }), // 수정 (실제 플레이어와 연결)
-                                iconBtn("ic_32_prev_on"), // 수정 (실제 플레이어와 연결)
-                                tempIsPlaying
-                                    ? iconBtn("ic_32_stop", onTap: () {
-                                        setState(() {
-                                          tempIsPlaying = !tempIsPlaying;
-                                        });
-                                      })
-                                    : iconBtn("ic_32_play_900", onTap: () {
-                                        setState(() {
-                                          tempIsPlaying = !tempIsPlaying;
-                                        });
-                                      }), // 수정 (실제 플레이어와 연결)
-                                iconBtn("ic_32_next_on"), // 수정 (실제 플레이어와 연결)
-                                tempRandom
-                                    ? iconBtn("ic_32_random_on",
-                                        edgePadding: true, onTap: () {
-                                        setState(() {
-                                          tempRandom = !tempRandom;
-                                        });
-                                      })
-                                    : iconBtn("ic_32_random_off",
-                                        edgePadding: true, onTap: () {
-                                        setState(() {
-                                          tempRandom = !tempRandom;
-                                        });
-                                      }), // 수정 (실제 플레이어와 연결)
-                              ]),
-                        ),
-                ],
-              ),
-            ),
-            Container(height: 1, color: WakColor.lightBlue), // 수정 (프로그레스 바)
-          ],
-        ));
+                            iconBtn("ic_32_next_on"), // 수정 (실제 플레이어와 연결)
+                            tempRandom
+                                ? iconBtn("ic_32_random_on", edgePadding: true,
+                                    onTap: () {
+                                    setState(() {
+                                      tempRandom = !tempRandom;
+                                    });
+                                  })
+                                : iconBtn("ic_32_random_off", edgePadding: true,
+                                    onTap: () {
+                                    setState(() {
+                                      tempRandom = !tempRandom;
+                                    });
+                                  }), // 수정 (실제 플레이어와 연결)
+                          ]),
+                    ),
+            ],
+          ),
+        ),
+        Container(height: 1, color: WakColor.lightBlue), // 수정 (프로그레스 바)
+      ],
+    );
   }
 
-  Padding iconBtn(String icon, {edgePadding = false, onTap}) {
+  Widget iconBtn(String icon, {edgePadding = true, onTap}) {
     return Padding(
-      padding: edgePadding ? EdgeInsets.zero : const EdgeInsets.only(right: 20),
-      child: IconButton(
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
-        constraints: const BoxConstraints(),
-        padding: const EdgeInsets.all(0),
-        onPressed: onTap,
-        icon: SvgPicture.asset(
+      padding: edgePadding ? const EdgeInsets.only(right: 20) : EdgeInsets.zero,
+      child: GestureDetector(
+        onTap: onTap,
+        child: SvgPicture.asset(
           "assets/icons/$icon.svg",
           width: 32,
           height: 32,
         ),
-        iconSize: 32,
       ),
     );
   }
@@ -288,7 +296,7 @@ class _SubBotNavState extends State<SubBotNav> {
                   BoxShadow(
                     color: WakColor.dark.withOpacity(0.04),
                     blurRadius: 4,
-                    offset: const Offset(0, 4),
+                    offset: const Offset(4, 4),
                   ),
                 ],
               ),

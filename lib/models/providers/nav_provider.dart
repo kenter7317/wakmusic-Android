@@ -9,12 +9,6 @@ class IdxProvider extends ChangeNotifier {
 
   void update(int idx) {
     _idx = idx;
-    switch (idx) {
-      case 0:
-        _statusBarColor = Brightness.light;
-        break;
-      default:
-    }
     notifyListeners();
   }
 }
@@ -33,11 +27,6 @@ class NavProvider extends IdxProvider {
     _mainState = !_mainState;
     notifyListeners();
   }
-
-  // void mainChange() {
-  //   _idx = idx;
-  //   notifyListeners();
-  // }
 
   void subSwitch() {
     _subState = !_subState;
