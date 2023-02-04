@@ -4,9 +4,6 @@ class IdxProvider extends ChangeNotifier {
   int _idx = 0;
   int get curIdx => _idx;
 
-  Brightness _statusBarColor = Brightness.dark;
-  Brightness get statusBarColor => _statusBarColor;
-
   void update(int idx) {
     _idx = idx;
     notifyListeners();
