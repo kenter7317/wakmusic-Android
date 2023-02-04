@@ -54,20 +54,21 @@ class _SubBotNavState extends State<SubBotNav> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           tempLike == true
-              ? playDetailBarBtn("ic_32_heart_on", koreanNumberFormater(1217), WakColor.pink,
+              ? playDetailBarBtn(
+                  "ic_32_heart_on", koreanNumberFormater(1217), WakColor.pink,
                   onTap: () {
                   setState(() {
                     tempLike = !tempLike;
                   });
                 })
-              : playDetailBarBtn("ic_32_heart_off", koreanNumberFormater(1217), WakColor.grey400,
-                  onTap: () {
+              : playDetailBarBtn("ic_32_heart_off", koreanNumberFormater(1217),
+                  WakColor.grey400, onTap: () {
                   setState(() {
                     tempLike = !tempLike;
                   });
                 }), // 수정 (좋아요 상태 연결)
-          playDetailBarBtn(
-              "ic_32_views", koreanNumberFormater(10000), WakColor.grey400), // 수정 (조회수 연결)
+          playDetailBarBtn("ic_32_views", koreanNumberFormater(10000),
+              WakColor.grey400), // 수정 (조회수 연결)
           playDetailBarBtn("ic_32_playadd_900", "노래담기",
               WakColor.grey400), // 수정 (onTap 액션 필요)
           playDetailBarBtn("ic_32_play_list", "재생목록", WakColor.grey400,
@@ -98,6 +99,7 @@ class _SubBotNavState extends State<SubBotNav> {
               Text(
                 txt,
                 style: WakText.txt12M.copyWith(color: txtColor),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -294,6 +296,7 @@ class _SubBotNavState extends State<SubBotNav> {
               child: Text(
                 selNav.selNum.toString(),
                 style: WakText.txt18B.copyWith(color: WakColor.lightBlue),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
@@ -311,8 +314,12 @@ Widget editBarBtn(String icon, String txt, {onTap}) {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SvgPicture.asset('assets/icons/$icon.svg'),
-            Text(txt, style: WakText.txt12M.copyWith(color: WakColor.grey25)),
+            SvgPicture.asset('assets/icons/$icon.svg', width: 32, height: 32),
+            Text(
+              txt,
+              style: WakText.txt12M.copyWith(color: WakColor.grey25),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),

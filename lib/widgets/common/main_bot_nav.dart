@@ -115,6 +115,7 @@ class _MainBotNavState extends State<MainBotNav> with TickerProviderStateMixin {
                     color: botNav.curIdx == idx
                         ? WakColor.grey900
                         : WakColor.grey400),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
