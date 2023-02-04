@@ -47,8 +47,8 @@ class _MainState extends State<Main> {
   final List<Widget> navList = [
     HomeView(),
     ChartsView(),
-    SearchView(),                                                                                                                                                                                                                                                                                                                                                                         
-    Temp(),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+    SearchView(),
+    Temp(),
     Keep(),
   ];
 
@@ -62,22 +62,20 @@ class _MainState extends State<Main> {
         systemNavigationBarIconBrightness: Brightness.dark,
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark));
-    return MaterialApp(
-      theme: WakTheme.wakTheme,
-      home: Scaffold(
-          backgroundColor: WakColor.grey100,
-          body: IndexedStack(
-            index: botNav.curIdx,
-            children: navList.map((page) {
-              return Navigator(
-                key: navKeyList[navList.indexOf(page)],
-                onGenerateRoute: (_) {
-                  return MaterialPageRoute(builder: (context) => page);
-                },
-              );
-            }).toList(),
-          ),
-          bottomNavigationBar: const MainBotNav()),
+    return Scaffold(
+      backgroundColor: WakColor.grey100,
+      body: IndexedStack(
+        index: botNav.curIdx,
+        children: navList.map((page) {
+          return Navigator(
+            key: navKeyList[navList.indexOf(page)],
+            onGenerateRoute: (_) {
+              return MaterialPageRoute(builder: (context) => page);
+            },
+          );
+        }).toList(),
+      ),
+      bottomNavigationBar: const MainBotNav(),
     );
   }
 }
