@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -47,10 +48,24 @@ class Player extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(
-                      'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg',
-
-                  ),
+                  // image: NetworkImage(
+                  //     'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg',
+                  // ),
+                  image : ExtendedImage.network(
+                    'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg',
+                    fit: BoxFit.cover,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(8),
+                    loadStateChanged: (state) {
+                      if (state.extendedImageLoadState != LoadState.completed) {
+                        return Image.asset(
+                          'assets/images/img_81_thumbnail.png',
+                          fit: BoxFit.cover,
+                        );
+                      }
+                      return null;
+                    },
+                  ).image,
                   colorFilter: ColorFilter.mode(
                     Colors.white.withOpacity(0.6),
                     BlendMode.dstATop
@@ -141,10 +156,23 @@ class Player extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            image: const DecorationImage(
+            image: DecorationImage(
               fit: BoxFit.cover,
-              image: NetworkImage(
-                  'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg'),
+              image: ExtendedImage.network(
+                'https://i.ytimg.com/vi/lLIpFxWtqCQ/hqdefault.jpg',
+                fit: BoxFit.cover,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(8),
+                loadStateChanged: (state) {
+                  if (state.extendedImageLoadState != LoadState.completed) {
+                    return Image.asset(
+                      'assets/images/img_81_thumbnail.png',
+                      fit: BoxFit.cover,
+                    );
+                  }
+                  return null;
+                },
+              ).image,
             ),
           ),
         ),
@@ -191,16 +219,6 @@ class Player extends StatelessWidget {
                 itemCount: snapshot.data!.subtitles.length,
               ),
             );
-            List<Widget>.generate(snapshot.data!.subtitles.length, (index) {
-            return SizedBox(
-            height: 24,
-            child: Text(
-            snapshot.data!.subtitles[index].data,
-            style: WakText.txt14MH.copyWith(color: WakColor.grey500),
-            textAlign: TextAlign.center,
-            ),
-            );
-            }).toList();
           }
         } else {
           return const Center(
