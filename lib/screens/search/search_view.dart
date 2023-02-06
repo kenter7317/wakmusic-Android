@@ -33,7 +33,7 @@ class SearchView extends StatelessWidget {
       ),
     );
     _fieldText.text = viewModel.text;
-    _fieldText.selection = TextSelection.fromPosition(TextPosition(offset: viewModel.text.length));
+    _fieldText.selection = TextSelection.collapsed(offset: viewModel.text.length);
     return WillPopScope(
       onWillPop: () async {
         if (viewModel.curStatus != SearchStatus.before) {
