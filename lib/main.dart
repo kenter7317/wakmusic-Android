@@ -41,7 +41,7 @@ class Main extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: HomeView(),
+      body: SearchView(),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
         child: Container(

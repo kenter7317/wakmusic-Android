@@ -32,6 +32,8 @@ class SearchView extends StatelessWidget {
         statusBarIconBrightness: (viewModel.curStatus == SearchStatus.during) ? Brightness.light : Brightness.dark,
       ),
     );
+    _fieldText.text = viewModel.text;
+    _fieldText.selection = TextSelection.fromPosition(TextPosition(offset: viewModel.text.length));
     return WillPopScope(
       onWillPop: () async {
         if (viewModel.curStatus != SearchStatus.before) {
@@ -78,8 +80,9 @@ class SearchView extends StatelessWidget {
       child: TextFormField(
         controller: _fieldText,
         onTap: () => viewModel.updateStatus(SearchStatus.during),
-        onChanged: (_) {
+        onChanged: (text) {
           if (viewModel.curStatus != SearchStatus.during) viewModel.updateStatus(SearchStatus.during);
+          viewModel.updateText(text);
         },
         onFieldSubmitted: (keyword) {
           if (keyword.isNotEmpty) {
