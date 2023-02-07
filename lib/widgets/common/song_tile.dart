@@ -20,7 +20,7 @@ enum TileType {
     {'icon': 'ic_24_play_shadow', 'size': 24.0}),
   nowPlayTile(false, false, false, false,
     {'start': 20, 'middle': 12, 'end': 16},
-    {'icon': 'WaveStream', 'size': 32.0}),
+    {'icon': 'wavestream', 'size': 32.0}),
   canPlayTile(false, false, false, false,
     {'start': 20, 'middle': 16, 'end': 20},
     {'icon': 'ic_32_play_point_shadow', 'size': 32.0}),
