@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -24,6 +25,7 @@ class SearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
+    SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white,
@@ -38,8 +40,8 @@ class SearchView extends StatelessWidget {
       onWillPop: () async {
         if (viewModel.curStatus != SearchStatus.before) {
           FocusManager.instance.primaryFocus?.unfocus();
-          _fieldText.clear();
           viewModel.updateStatus(SearchStatus.before);
+          selectedList.clearList();
           return false;
         }
         return true;
@@ -72,6 +74,7 @@ class SearchView extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
+    SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
     double statusBarHeight = MediaQuery.of(context).padding.top;
     return Container(
       height: 56 + statusBarHeight,
@@ -79,15 +82,21 @@ class SearchView extends StatelessWidget {
       color: (viewModel.curStatus == SearchStatus.during) ? WakColor.lightBlue : Colors.white,
       child: TextFormField(
         controller: _fieldText,
-        onTap: () => viewModel.updateStatus(SearchStatus.during),
+        onTap: () {
+          viewModel.updateStatus(SearchStatus.during);
+          selectedList.clearList();
+        },
         onChanged: (text) {
-          if (viewModel.curStatus != SearchStatus.during) viewModel.updateStatus(SearchStatus.during);
-          viewModel.updateText(text);
+          if (viewModel.curStatus != SearchStatus.during) {
+            viewModel.updateStatus(SearchStatus.during);
+            selectedList.clearList();
+          }
         },
         onFieldSubmitted: (keyword) {
           if (keyword.isNotEmpty) {
             viewModel.search(keyword);
           } else {
+            viewModel.updateText(keyword);
             showModal(
               context: context,
               builder: (_) => const PopUp(
@@ -125,8 +134,8 @@ class SearchView extends StatelessWidget {
             ? GestureDetector(
                 onTap: () {
                   FocusManager.instance.primaryFocus?.unfocus();
-                  _fieldText.clear();
                   viewModel.updateStatus(SearchStatus.before);
+                  selectedList.clearList();
                 },
                 child: const Padding(
                   padding: EdgeInsets.only(left: 8),
@@ -157,6 +166,7 @@ class SearchView extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
+                    viewModel.updateText(_fieldText.text);
                     showModal(
                       context: context,
                       builder: (context) => PopUp(
@@ -197,7 +207,6 @@ class SearchView extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();
-                    _fieldText.text = viewModel.history[idx];
                     viewModel.search(viewModel.history[idx]);
                   },
                   child: Text(
@@ -208,7 +217,10 @@ class SearchView extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               GestureDetector(
-                onTap: () => viewModel.removeHistory(idx),
+                onTap: () {
+                  viewModel.updateText(_fieldText.text);
+                  viewModel.removeHistory(idx);
+                },
                 child: SvgPicture.asset(
                   'assets/icons/ic_24_close.svg',
                   width: 24,
