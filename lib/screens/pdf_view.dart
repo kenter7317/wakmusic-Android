@@ -28,8 +28,10 @@ class _PDFViewState extends State<PDFView> {
   void initState() {
     super.initState();
     _pdfController = PdfController(
-        document: PdfDocument.openData(InternetFile.get(
-            'https://static.wakmusic.xyz/static/document/${widget.type.name}.pdf')));
+      document: PdfDocument.openData(
+        InternetFile.get('https://static.wakmusic.xyz/static/document/${widget.type.name}.pdf'),
+      ),
+    );
   }
 
   @override

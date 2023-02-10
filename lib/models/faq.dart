@@ -17,7 +17,7 @@ class FAQ {
     question: json['question'],
     description: json['description'],
     createAt: DateTime.fromMillisecondsSinceEpoch(
-      int.parse(json['creat_at']) * 1000),
+      int.parse(json['create_at']) * 1000),
   );
 
   factory FAQ.clone(FAQ faq) => FAQ(
