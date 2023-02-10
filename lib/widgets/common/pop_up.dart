@@ -27,7 +27,7 @@ class PopUp extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(40, 60, 40, 32),
                 child: Text(
                   msg ?? '',
-                  maxLines: 2,
+                  maxLines: 4,
                   style: WakText.txt18M.copyWith(color: WakColor.grey900),
                   textAlign: TextAlign.center,
                 ),

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:wakmusic/screens/faq/faq_view.dart';
+import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
-import 'package:wakmusic/widgets/common/header.dart';
+import 'package:wakmusic/widgets/common/edit_btn.dart';
+import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/keep/policy.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
+import 'package:wakmusic/widgets/show_modal.dart';
 
 class Suggestions extends StatelessWidget {
   const Suggestions({super.key});
@@ -22,6 +26,7 @@ class Suggestions extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
+    KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
     double statusBarHeight = MediaQuery.of(context).padding.top;
     double botPadding = WidgetsBinding.instance.window.viewPadding.bottom / WidgetsBinding.instance.window.devicePixelRatio;
     double height = MediaQuery.of(context).size.height - statusBarHeight - botPadding;
@@ -35,7 +40,58 @@ class Suggestions extends StatelessWidget {
       child: ListView(
         physics: const BouncingScrollPhysics(),
         children: [
-          const Header(headerTxt: '건의사항'),
+          SizedBox(
+            height: 48,
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 8,
+                  left: 20,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: SvgPicture.asset(
+                      'assets/icons/ic_32_arrow_left.svg',
+                      width: 32,
+                      height: 32,
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    '건의사항',
+                    style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Positioned(
+                  top: 12,
+                  right: 20,
+                  child: GestureDetector(
+                    onTap: () async {
+                      List<String> msgList = ['회원탈퇴 신청을 하시겠습니까?', '정말 탈퇴하시겠습니까?', '회원탈퇴가 완료되었습니다.\n이용해 주셔서 감사합니다.'];
+                      for (int i = 0; i < 3; i++) {
+                        if (i == 2) {
+                          viewModel.updateLoginStatus(LoginStatus.before); 
+                          /* call api */
+                        }
+                        bool result = await showModal(
+                          context: context,
+                          builder: (_) => PopUp(
+                            type: (i == 2) ? PopUpType.txtOneBtn : PopUpType.txtTwoBtn,
+                            msg: msgList[i],
+                          ),
+                        ).whenComplete(() {
+                          if (i == 2) Navigator.pop(context);
+                        });
+                        if (result != true) return;
+                      }
+                    },
+                    child: const EditBtn(type: BtnType.edit, btnText: '회원탈퇴'),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Container(
             height: 196 + 32,
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
