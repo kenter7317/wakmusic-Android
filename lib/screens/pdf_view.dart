@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:internet_file/internet_file.dart';
 import 'package:pdfx/pdfx.dart';
+import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/header.dart';
@@ -29,7 +30,7 @@ class _PDFViewState extends State<PDFView> {
     super.initState();
     _pdfController = PdfController(
       document: PdfDocument.openData(
-        InternetFile.get('https://static.wakmusic.xyz/static/document/${widget.type.name}.pdf'),
+        InternetFile.get('$staticBaseUrl/document/${widget.type.name}.pdf'),
       ),
     );
   }

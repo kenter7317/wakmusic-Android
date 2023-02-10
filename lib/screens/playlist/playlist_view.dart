@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
+import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -175,7 +176,7 @@ class PlaylistView extends StatelessWidget {
       child: Row(
         children: [
           ExtendedImage.network(
-            'https://static.wakmusic.xyz/static/playlist/${(playlist is! Reclist) ? playlist.image : 'icon/square/${playlist.image}'}.png',
+            '$staticBaseUrl/playlist/${(playlist is! Reclist) ? playlist.image : 'icon/square/${playlist.image}'}.png',
             fit: BoxFit.cover,
             shape: BoxShape.rectangle,
             width: 140,

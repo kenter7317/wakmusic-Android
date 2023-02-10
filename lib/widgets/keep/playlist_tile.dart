@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
+import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -65,7 +66,7 @@ class PlaylistTile extends StatelessWidget {
             child: Row(
               children: [
                 ExtendedImage.network(
-                  'https://static.wakmusic.xyz/static/playlist/${playlist!.image}.png',
+                  '$staticBaseUrl/playlist/${playlist!.image}.png',
                   fit: BoxFit.cover,
                   shape: BoxShape.rectangle,
                   width: 40,

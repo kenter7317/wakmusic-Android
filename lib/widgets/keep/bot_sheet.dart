@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -422,7 +421,7 @@ class _BotSheetState extends State<BotSheet> {
     return GestureDetector(
       onTap: () => setState(() => _profile = profileName[idx]),
       child: ExtendedImage.network(
-        'https://static.wakmusic.xyz/static/profile/${profileName[idx]}.png',
+        '$staticBaseUrl/profile/${profileName[idx]}.png',
         fit: BoxFit.cover,
         shape: BoxShape.circle,
         width: width,

@@ -24,8 +24,10 @@ enum SearchType {
   final String str;
 }
 
+const baseUrl = 'https://wakmusic.xyz/api';
+const staticBaseUrl = 'https://static.wakmusic.xyz/static';
+
 class API {
-  final String baseUrl = 'https://wakmusic.xyz/api';
 
   Future<http.Response> getResponse(String url) async {
     try {

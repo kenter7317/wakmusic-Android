@@ -8,6 +8,7 @@ import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/suggestions.dart';
+import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/error_info.dart';
@@ -241,7 +242,7 @@ class KeepView extends StatelessWidget {
             child: Row(
               children: [
                 ExtendedImage.network(
-                  'https://static.wakmusic.xyz/static/profile/${viewModel.user.profile}.png',
+                  '$staticBaseUrl/profile/${viewModel.user.profile}.png',
                   fit: BoxFit.cover,
                   shape: BoxShape.circle,
                   width: 40,
