@@ -222,6 +222,7 @@ class SearchView extends StatelessWidget {
 
   Widget _buildAfter(BuildContext context) {
     return TabView(
+      type: TabType.maxTab,
       tabBarList: List.generate(4, (idx) => (idx == 0) ? '전체' : SearchType.values[idx - 1].str),
       tabViewList: List.generate(
         4,

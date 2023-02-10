@@ -45,7 +45,7 @@ enum TileType {
   final Map<String, dynamic> icon;
 }
 
-class SongTile extends StatefulWidget {
+class SongTile extends StatelessWidget {
   const SongTile({
     super.key,
     required this.song,
@@ -61,53 +61,48 @@ class SongTile extends StatefulWidget {
   final VoidCallback? onLongPress;
 
   @override
-  State<SongTile> createState() => _SongTileState();
-}
-
-class _SongTileState extends State<SongTile> {
-  @override
   Widget build(BuildContext context) {
-    if (widget.song == null) {
+    if (song == null) {
       return _buildSkeleton(context);
     } else {
       SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
-      bool isSelected = selectedList.contains(widget.song!);
+      bool isSelected = selectedList.list.contains(song);
       return GestureDetector(
         onTap: () {
-          if (widget.tileType.canSelect) {
+          if (tileType.canSelect) {
             if (isSelected) {
-              selectedList.removeSong(widget.song!);
+              selectedList.removeSong(song!);
             } else {
-              selectedList.addSong(widget.song!);
+              selectedList.addSong(song!);
             }
-          } else if (widget.tileType != TileType.nowPlayTile){
+          } else if (tileType != TileType.nowPlayTile){
             /* play song */
           }
         },
         onLongPress: () {
-          if (widget.onLongPress != null) {
-            widget.onLongPress!();
+          if (onLongPress != null) {
+            onLongPress!();
             HapticFeedback.lightImpact();
           }
         },
         child: Container(
-          padding: EdgeInsets.fromLTRB(widget.tileType.padding['start']!, 0, widget.tileType.padding['end']!, 0),
-          color: (widget.tileType.canSelect && isSelected) 
+          padding: EdgeInsets.fromLTRB(tileType.padding['start']!, 0, tileType.padding['end']!, 0),
+          color: (tileType.canSelect && isSelected) 
             ? WakColor.grey200
-            : (widget.tileType == TileType.editTile)
+            : (tileType == TileType.editTile)
               ? WakColor.grey100
               : Colors.transparent,
           child: SizedBox(
-            height: (widget.tileType == TileType.homeTile) ? 42 : 60,
+            height: (tileType == TileType.homeTile) ? 42 : 60,
             child: Row(
               children: [
-                if (widget.tileType.showRank) _buildRank(context),
+                if (tileType.showRank) _buildRank(context),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: (widget.tileType == TileType.homeTile) ? 1 : 10),
+                  padding: EdgeInsets.symmetric(vertical: (tileType == TileType.homeTile) ? 1 : 10),
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
                     child: ExtendedImage.network(
-                      'https://i.ytimg.com/vi/${widget.song!.id}/hqdefault.jpg',
+                      'https://i.ytimg.com/vi/${song!.id}/hqdefault.jpg',
                       fit: BoxFit.cover,
                       shape: BoxShape.rectangle,
                       borderRadius: BorderRadius.circular(4),
@@ -132,41 +127,41 @@ class _SongTileState extends State<SongTile> {
                       SizedBox(
                         height: 24,
                         child: Text(
-                          widget.song!.title,
+                          song!.title,
                           style: WakText.txt14MH.copyWith(
-                            color: (widget.tileType == TileType.nowPlayTile) ? WakColor.lightBlue : WakColor.grey900,
+                            color: (tileType == TileType.nowPlayTile) ? WakColor.lightBlue : WakColor.grey900,
                           ),
                         ),
                       ),
                       SizedBox(
                         height: 18,
                         child: Text(
-                          widget.song!.artist,
+                          song!.artist,
                           style: WakText.txt12L.copyWith(
-                            color: (widget.tileType == TileType.nowPlayTile) ? WakColor.lightBlue : WakColor.grey900,
+                            color: (tileType == TileType.nowPlayTile) ? WakColor.lightBlue : WakColor.grey900,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(width: widget.tileType.padding['middle']),
-                if (widget.tileType.showViews)
+                SizedBox(width: tileType.padding['middle']),
+                if (tileType.showViews)
                   Text(
-                    NumberFormat('###,###,###회').format(widget.song!.views),
+                    NumberFormat('###,###,###회').format(song!.views),
                     style: WakText.txt12L.copyWith(color: WakColor.grey900),
                     textAlign: TextAlign.right,
                   ),
-                if (widget.tileType.showDate)
+                if (tileType.showDate)
                   Text(
-                    (widget.song!.date != DateTime(1999))
-                      ? DateFormat('yyyy.MM.dd').format(widget.song!.date)
+                    (song!.date != DateTime(1999))
+                      ? DateFormat('yyyy.MM.dd').format(song!.date)
                       : '-',
                     style: WakText.txt12L.copyWith(color: WakColor.grey900),
                     textAlign: TextAlign.right,
                   ),
-                if (!widget.tileType.canSelect)
-                  (widget.tileType != TileType.nowPlayTile)
+                if (!tileType.canSelect)
+                  (tileType != TileType.nowPlayTile)
                     ? GestureDetector(
                         onTap: () {
                           /* play song */
@@ -177,30 +172,30 @@ class _SongTileState extends State<SongTile> {
                             boxShadow: [
                               BoxShadow(
                                 color: WakColor.dark.withOpacity(0.04),
-                                blurRadius: widget.tileType.icon['size'] / 6,
-                                offset: Offset(0, widget.tileType.icon['size'] / 6),
+                                blurRadius: tileType.icon['size'] / 6,
+                                offset: Offset(0, tileType.icon['size'] / 6),
                               ),
                             ],
                           ),
                           child: SvgPicture.asset(
-                            'assets/icons/${widget.tileType.icon['icon']}.svg',
-                            width: widget.tileType.icon['size'],
-                            height: widget.tileType.icon['size'],
+                            'assets/icons/${tileType.icon['icon']}.svg',
+                            width: tileType.icon['size'],
+                            height: tileType.icon['size'],
                           ),
                         ),
                       )
                     : Lottie.asset(
-                        'assets/lottie/${widget.tileType.icon['icon']}.json',
-                        width: widget.tileType.icon['size'],
-                        height: widget.tileType.icon['size'],
+                        'assets/lottie/${tileType.icon['icon']}.json',
+                        width: tileType.icon['size'],
+                        height: tileType.icon['size'],
                       ),
-                if (widget.tileType == TileType.editTile)
+                if (tileType == TileType.editTile)
                   ReorderableDragStartListener(
-                    index: widget.idx,
+                    index: idx,
                     child: SvgPicture.asset(
-                      'assets/icons/${widget.tileType.icon['icon']}.svg',
-                      width: widget.tileType.icon['size'],
-                      height: widget.tileType.icon['size'],
+                      'assets/icons/${tileType.icon['icon']}.svg',
+                      width: tileType.icon['size'],
+                      height: tileType.icon['size'],
                     ),
                   ),
               ],
@@ -221,7 +216,7 @@ class _SongTileState extends State<SongTile> {
           children: [
             SizedBox(
               child: Text(
-                widget.rank.toString(),
+                rank.toString(),
                 style: WakText.txt16M.copyWith(color: WakColor.grey900),
                 textAlign: TextAlign.center,
               ),
@@ -234,9 +229,9 @@ class _SongTileState extends State<SongTile> {
   }
 
   Widget _rankChange(BuildContext context) {
-    int diff = widget.song!.last - widget.rank;
+    int diff = song!.last - rank;
     /* NEW */
-    if (widget.song!.last == 0) {
+    if (song!.last == 0) {
       return Text(
         'NEW',
         style: WakText.txt11M.copyWith(color: WakColor.orange),
@@ -293,12 +288,12 @@ class _SongTileState extends State<SongTile> {
 
   Widget _buildSkeleton(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(widget.tileType.padding['start']!, 0, widget.tileType.padding['end']!, 0),
+      padding: EdgeInsets.fromLTRB(tileType.padding['start']!, 0, tileType.padding['end']!, 0),
       child: SizedBox(
-        height: (widget.tileType == TileType.homeTile) ? 42 : 60,
+        height: (tileType == TileType.homeTile) ? 42 : 60,
         child: Row(
           children: [
-            if (widget.tileType.showRank)
+            if (tileType.showRank)
               SkeletonBox(
                 child: Padding(
                   padding: const EdgeInsets.only(right: 8),
@@ -311,7 +306,7 @@ class _SongTileState extends State<SongTile> {
               ),
             SkeletonBox(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: (widget.tileType == TileType.homeTile) ? 1 : 10),
+                padding: EdgeInsets.symmetric(vertical: (tileType == TileType.homeTile) ? 1 : 10),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
                   child: Container(
@@ -334,16 +329,16 @@ class _SongTileState extends State<SongTile> {
                 ],
               ),
             ),
-            SizedBox(width: widget.tileType.padding['middle']),
-            if (widget.tileType.showViews)
+            SizedBox(width: tileType.padding['middle']),
+            if (tileType.showViews)
               SkeletonText(wakTxtStyle: WakText.txt12L, width: 75),
-            if (widget.tileType.showDate)
+            if (tileType.showDate)
               SkeletonText(wakTxtStyle: WakText.txt12L, width: 60),
-            if (!widget.tileType.canSelect || widget.tileType == TileType.editTile)
+            if (!tileType.canSelect || tileType == TileType.editTile)
               SkeletonBox(
                 child: Container(
-                  width: widget.tileType.icon['size'],
-                  height: widget.tileType.icon['size'],
+                  width: tileType.icon['size'],
+                  height: tileType.icon['size'],
                   decoration: const BoxDecoration(
                     color: WakColor.grey200,
                     shape: BoxShape.circle,

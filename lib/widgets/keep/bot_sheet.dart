@@ -1,10 +1,15 @@
+import 'dart:math';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
+import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/toast_msg.dart';
 
 enum BotSheetType {
@@ -23,7 +28,8 @@ enum BotSheetType {
 enum FormType {
   none(WakColor.grey200, ''),
   error(WakColor.pink, '오류 메시지 노출'),
-  enable(WakColor.blue, '사용할 수 있는 제목입니다.');
+  enable(WakColor.blue, '사용할 수 있는 제목입니다.'),
+  loading(WakColor.grey200, '');
 
   const FormType(this.color, this.errorMsg);
   final Color color;
@@ -31,9 +37,8 @@ enum FormType {
 }
 
 class BotSheet extends StatefulWidget {
-  const BotSheet({super.key, required this.type, this.func, this.initialValue});
+  const BotSheet({super.key, required this.type, this.initialValue});
   final BotSheetType type;
-  final void Function()? func;
   final String? initialValue;
 
   @override
@@ -43,13 +48,24 @@ class BotSheet extends StatefulWidget {
 class _BotSheetState extends State<BotSheet> {
   final int _maxLength = 12;
   FormType _type = FormType.none;
-  int _profileIdx = 0;
+  late API _api;
+  late String _profile;
   late final TextEditingController _fieldText;
 
   @override
   void initState() {
     super.initState();
+    _api = API();
+    if (widget.type == BotSheetType.selProfile) {
+      _profile = widget.initialValue ?? 'panchi';
+    }
     _fieldText = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void dispose() {
+    _fieldText.dispose();
+    super.dispose();
   }
 
   @override
@@ -58,7 +74,7 @@ class _BotSheetState extends State<BotSheet> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: EdgeInsets.only(bottom: max(MediaQuery.of(context).viewInsets.bottom, MediaQuery.of(context).viewPadding.bottom)),
           child: Container(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
             decoration: const BoxDecoration(
@@ -79,24 +95,63 @@ class _BotSheetState extends State<BotSheet> {
                     : _buildProfileSheet(context),
                 ),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     if (_type == FormType.enable) {
-                      if (widget.func != null) widget.func!();
-                      Navigator.pop(context);
+                      if (widget.type == BotSheetType.loadList) {
+                        try {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          setState(() { _type = FormType.loading; });
+                          if (_fieldText.text.length != 10) throw Exception('Invalid Playlist Key :(');
+                          /* call api */
+                          await _api.fetchPlaylist(key: _fieldText.text).then((playlist) => Navigator.pop(context, playlist));
+                        } catch (_) {
+                          showToastWidget(
+                            context: context,
+                            position: const StyledToastPosition(
+                              align: Alignment.bottomCenter,
+                              offset: 56,
+                            ),
+                            animation: StyledToastAnimation.slideFromBottomFade,
+                            reverseAnimation: StyledToastAnimation.fade,
+                            const ToastMsg(msg: '잘못된 플레이리스트 코드입니다.'),
+                          );
+                          setState(() { _type = FormType.enable; });
+                        }
+                      } else {
+                        Navigator.pop(
+                          context,
+                          () {
+                            switch (widget.type) {
+                              case BotSheetType.shareList:
+                                return null;
+                              case BotSheetType.selProfile:
+                                return _profile;
+                              default:
+                                return _fieldText.text;
+                            }
+                          }(),
+                        );
+                      }
                     }
                   },
                   child: Container(
                     height: 56,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: (_type == FormType.enable) ? WakColor.lightBlue : WakColor.grey300,
+                      color: (_type == FormType.enable || _type == FormType.loading) ? WakColor.lightBlue : WakColor.grey300,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
-                      widget.type.btnText,
-                      style: WakText.txt18M.copyWith(color: WakColor.grey25),
-                      textAlign: TextAlign.center,
-                    ),
+                    child: (_type == FormType.loading)
+                      ? const SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: CircularProgressIndicator(color: WakColor.grey25),
+                        )
+                      : Text(
+                          widget.type.btnText,
+                          style: WakText.txt18M.copyWith(color: WakColor.grey25),
+                          textAlign: TextAlign.center,
+                        ),
                   ),
                 ),
               ],
@@ -353,29 +408,44 @@ class _BotSheetState extends State<BotSheet> {
   }
 
   Widget _buildProfile(BuildContext context, int idx) {
-    List<String> profile = [
-      '팬치',
-      '이파리',
-      '둘기',
-      '박쥐',
-      '세균단',
-      '고라니',
-      '주폭도',
-      '똥강아지'
+    List<String> profileName = [
+      'panchi',
+      'ifari',
+      'dulgi',
+      'bat',
+      'segyun',
+      'gorani',
+      'jupock',
+      'ddong',
     ];
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() => _profileIdx = idx),
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: (_profileIdx == idx) ? WakColor.lightBlue : Colors.transparent,
-              width: 2,
-            ),
-          ),
-          child: Image.asset('assets/images/img_76_${profile[idx]}.png'),
+    double width = (MediaQuery.of(context).size.width - 70) / 4;
+    return GestureDetector(
+      onTap: () => setState(() => _profile = profileName[idx]),
+      child: ExtendedImage.network(
+        'https://static.wakmusic.xyz/static/profile/${profileName[idx]}.png',
+        fit: BoxFit.cover,
+        shape: BoxShape.circle,
+        width: width,
+        height: width,
+        border: Border.all(
+          color: (_profile == profileName[idx]) ? WakColor.lightBlue : Colors.transparent,
+          width: 2,
         ),
+        loadStateChanged: (state) {
+          if (state.extendedImageLoadState != LoadState.completed) {
+            return SkeletonBox(
+              child: Container(
+                width: width,
+                height: width,
+                decoration: const BoxDecoration(
+                  color: WakColor.grey200,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            );
+          } 
+          return null;
+        },
       ),
     );
   }

@@ -32,7 +32,7 @@ class Song {
           json['date'] ~/ 100 % 100,
           json['date'] % 100,
         );
-      } catch (e) {
+      } catch (_) {
         return DateTime(1999);
       }
     }(),

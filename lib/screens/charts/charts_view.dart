@@ -40,6 +40,7 @@ class ChartsView extends StatelessWidget {
     );
     return SafeArea(
       child: TabView(
+        type: TabType.maxTab,
         tabBarList: List.generate(5, (idx) => ChartType.values[idx].str),
         tabViewList: List.generate(5, (idx) => _buildTab(context, ChartType.values[idx])),
       )

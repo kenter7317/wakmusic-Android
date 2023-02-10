@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,14 +8,17 @@ import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/error_info.dart';
 import 'package:wakmusic/widgets/common/play_btns.dart';
+import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/keep/bot_sheet.dart';
 import 'package:dismissible_page/dismissible_page.dart';
+import 'package:wakmusic/widgets/proxy_decorator.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
 class PlaylistView extends StatelessWidget {
@@ -25,16 +29,10 @@ class PlaylistView extends StatelessWidget {
   Widget build(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
     SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
-    return DismissiblePage(
+    return DismissibleView(
       onDismissed: () {
         _canPop(context, viewModel, selectedList, dismissible: false).whenComplete(() => Navigator.pop(context));
       },
-      direction: DismissiblePageDismissDirection.startToEnd,
-      minScale: 1,
-      minRadius: 0,
-      maxRadius: 0,
-      backgroundColor: Colors.transparent,
-      dragSensitivity: 1,
       maxTransformValue: 0.1,
       dismissThresholds: const { DismissiblePageDismissDirection.startToEnd: 0.1 },
       child: Scaffold(
@@ -176,10 +174,28 @@ class PlaylistView extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
       child: Row(
         children: [
-          Image.asset(
-            'assets/images/img_140_${playlist.image}.png',
+          ExtendedImage.network(
+            'https://static.wakmusic.xyz/static/playlist/${(playlist is! Reclist) ? playlist.image : 'icon/square/${playlist.image}'}.png',
+            fit: BoxFit.cover,
+            shape: BoxShape.rectangle,
             width: 140,
             height: 140,
+            borderRadius: BorderRadius.circular(12),
+            loadStateChanged: (state) {
+              if (state.extendedImageLoadState != LoadState.completed) {
+                return SkeletonBox(
+                  child: Container(
+                    width: 140,
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: WakColor.grey200,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                );
+              } 
+              return null;
+            },
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -253,25 +269,7 @@ class PlaylistView extends StatelessWidget {
             ),
           )
         : ReorderableListView.builder(
-            proxyDecorator: (child, _, animation) => AnimatedBuilder(
-              animation: animation,
-              builder: (_, child) => Material(
-                elevation: 0,
-                color: Colors.transparent,
-                child: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: WakColor.dark.withOpacity(0.25),
-                        blurRadius: 20,
-                      ),
-                    ],
-                  ),
-                  child: child,
-                ),
-              ),
-              child: child,
-            ),
+            proxyDecorator: proxyDecorator,
             buildDefaultDragHandles: false,
             physics: const BouncingScrollPhysics(),
             itemCount: viewModel.tempsongs.length,

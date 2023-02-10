@@ -29,13 +29,19 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin{
 
     _controller = AnimationController(vsync: this);
     
-    Future.delayed(
+    /*Future.delayed(
       const Duration(seconds: 5), 
       () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const Main()),
       ),
-    );
+    );*/
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,7 +58,11 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin{
               width: MediaQuery.of(context).size.width * 5 / 12,
               onLoaded: (composition) => _controller
                 ..duration = composition.duration
-                ..forward(),
+                ..forward().whenComplete(() => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Main()),
+                  ),
+                ),
             ),
           ],
         ),
