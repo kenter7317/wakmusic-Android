@@ -47,7 +47,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin{
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.3),
             Lottie.asset(
-              'assets/lottie/Splash_Logo_Main.json',
+              'assets/lottie/splash_logo_main.json',
               controller: _controller,
               width: MediaQuery.of(context).size.width * 5 / 12,
               onLoaded: (composition) => _controller

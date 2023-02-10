@@ -7,25 +7,25 @@ class RecPlaylistProvider extends ChangeNotifier {
     const Reclist(
       title: '고멤가요제',
       image: '고멤가요제',
-      iconName: 'GomemSongFestival',
+      iconName: 'gomemsongfestival',
       songlist: ['', ''],
     ),
     const Reclist(
       title: '연말공모전',
       image: '연말공모전',
-      iconName: 'Competition',
+      iconName: 'competition',
       songlist: ['', 'mLLvBeyKIUI', '0D7GPhsrXYo'],
     ),
     const Reclist(
       title: '상콘 OST',
       image: '상콘OST',
-      iconName: 'situationalplay_OST',
+      iconName: 'situationalplay_ost',
       songlist: ['', 'mLLvBeyKIUI', '0D7GPhsrXYo', 'HXA9ZL8K5Js'],
     ),
     const Reclist(
       title: '힙합 SWAG',
       image: '힙합',
-      iconName: 'Hiphop',
+      iconName: 'hiphop',
       songlist: [
         '',
         'mLLvBeyKIUI',
