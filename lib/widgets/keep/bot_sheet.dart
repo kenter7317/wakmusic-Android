@@ -16,7 +16,8 @@ enum BotSheetType {
   editList('플레이리스트 수정하기', '플레이리스트 제목', '플레이리스트 수정'),
   loadList('플레이리스트 가져오기', '플레이리스트 코드', '가져오기'),
   shareList('플레이리스트 공유하기', '플레이리스트 코드', '확인'),
-  selProfile('프로필을 선택해주세요', '', '완료');
+  selProfile('프로필을 선택해주세요', '', '완료'),
+  editName('닉네임 수정', '닉네임', '완료');
 
   const BotSheetType(this.title, this.formTitle, this.btnText);
   final String title;
@@ -26,7 +27,7 @@ enum BotSheetType {
 
 enum FormType {
   none(WakColor.grey200, ''),
-  error(WakColor.pink, '오류 메시지 노출'),
+  error(WakColor.pink, '자 이내로 입력해 주세요.'),
   enable(WakColor.blue, '사용할 수 있는 제목입니다.'),
   loading(WakColor.grey200, '');
 
@@ -90,8 +91,8 @@ class _BotSheetState extends State<BotSheet> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 32, 0, 40),
                   child: (widget.type != BotSheetType.selProfile)
-                    ? _buildPlaylistSheet(context)
-                    : _buildProfileSheet(context),
+                    ? _buildFormSheet(context)
+                    : _buildProfileSheet(),
                 ),
                 GestureDetector(
                   onTap: () async {
@@ -161,7 +162,7 @@ class _BotSheetState extends State<BotSheet> {
     );
   }
 
-  Widget _buildPlaylistSheet(BuildContext context) {
+  Widget _buildFormSheet(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -174,9 +175,11 @@ class _BotSheetState extends State<BotSheet> {
           switch (widget.type) {
             case BotSheetType.createList:
             case BotSheetType.editList:
-              return _buildCreateForm(context);
+              return _buildCreateForm();
+            case BotSheetType.editName:
+              return _buildNameForm();
             case BotSheetType.loadList:
-              return _buildLoadForm(context);
+              return _buildLoadForm();
             case BotSheetType.shareList:
               return _buildShareForm(context);
             default:
@@ -187,9 +190,12 @@ class _BotSheetState extends State<BotSheet> {
     );
   }
 
-  Widget _buildBaseForm(BuildContext context,
-    {required UnderlineInputBorder border, required String hintText,
-    int? maxLength, required void Function(String)? onChanged}) {
+  Widget _buildBaseForm({
+    required UnderlineInputBorder border,
+    required String hintText,
+    int? maxLength,
+    required void Function(String)? onChanged,
+  }) {
     return TextFormField(
       controller: _fieldText,
       style: WakText.txt20M.copyWith(height: 1.0, color: WakColor.grey800),
@@ -218,15 +224,15 @@ class _BotSheetState extends State<BotSheet> {
               ),
             )
           : null,
+        suffixIconConstraints: const BoxConstraints(maxWidth: 53),
       ),
     );
   }
 
-  Widget _buildCreateForm(BuildContext context) {
+  Widget _buildCreateForm() {
     return Column(
       children: [
         _buildBaseForm(
-          context,
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: _type.color),
           ),
@@ -269,11 +275,10 @@ class _BotSheetState extends State<BotSheet> {
     );
   }
 
-  Widget _buildLoadForm(BuildContext context) {
+  Widget _buildLoadForm() {
     return Column(
       children: [
         _buildBaseForm(
-          context,
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: FormType.none.color),
           ),
@@ -373,7 +378,7 @@ class _BotSheetState extends State<BotSheet> {
     );
   }
 
-  Widget _buildProfileSheet(BuildContext context) {
+  Widget _buildProfileSheet() {
     _type = FormType.enable;
     return Column(
       children: [
@@ -382,7 +387,7 @@ class _BotSheetState extends State<BotSheet> {
             7,
             (idx) {
               if (idx % 2 == 0){
-                return _buildProfile(context, idx ~/ 2);
+                return _buildProfile(idx ~/ 2);
               } else {
                 return const SizedBox(width: 10);
               }
@@ -395,7 +400,7 @@ class _BotSheetState extends State<BotSheet> {
             7,
             (idx) {
               if (idx % 2 == 0){
-                return _buildProfile(context, 4 + idx ~/ 2);
+                return _buildProfile(4 + idx ~/ 2);
               } else {
                 return const SizedBox(width: 10);
               }
@@ -406,7 +411,7 @@ class _BotSheetState extends State<BotSheet> {
     );
   }
 
-  Widget _buildProfile(BuildContext context, int idx) {
+  Widget _buildProfile(int idx) {
     List<String> profileName = [
       'panchi',
       'ifari',
@@ -446,6 +451,62 @@ class _BotSheetState extends State<BotSheet> {
           return null;
         },
       ),
+    );
+  }
+
+  Widget _buildNameForm() {
+    if (_fieldText.text.runes.length > 8) _type = FormType.error;
+    return Column(
+      children: [
+        _buildBaseForm(
+          border: UnderlineInputBorder(
+            borderSide: BorderSide(color: _type.color),
+          ),
+          hintText: '닉네임을 입력하세요.',
+          maxLength: 8,
+          onChanged: (value) {
+            setState(() {
+              if (value.isEmpty || value == widget.initialValue) {
+                _type = FormType.none;
+              }/* else if (value == 'test') { /* error condition */
+                _type = FormType.error;
+              }*/ else {
+                _type = FormType.enable;
+              }
+            });
+          }
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                () {
+                  switch (_type) {
+                    case FormType.error:
+                      return '8${_type.errorMsg}';
+                    case FormType.enable:
+                      return '사용할 수 있는 닉네임입니다.';
+                    default:
+                      return _type.errorMsg;
+                  }
+                }(),
+                style: WakText.txt12L.copyWith(color: _type.color),
+              ),
+            ),
+            Text(
+              '${_fieldText.text.runes.length}자',
+              style: WakText.txt12L.copyWith(color: WakColor.lightBlue),
+              textAlign: TextAlign.right,
+            ),
+            Text(
+              '/8자',
+              style: WakText.txt12L.copyWith(color: WakColor.grey500),
+              textAlign: TextAlign.right,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

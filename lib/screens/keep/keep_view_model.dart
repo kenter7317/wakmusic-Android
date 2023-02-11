@@ -62,7 +62,14 @@ class KeepViewModel with ChangeNotifier {
 
   void getUser() {
     /* call api */
-    _user = User(id: '', platform: '', profile: 'panchi', displayName: '깊은꿈속', firstLoginTime: DateTime(1999), first: true);
+    _user = User(
+      id: '', 
+      platform: '', 
+      profile: 'panchi', 
+      displayName: '😀😀😀😀😀이모지를 사용한 긴 닉네임', 
+      firstLoginTime: DateTime(1999), 
+      first: true,
+    );
     getLists();
   }
 

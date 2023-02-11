@@ -183,7 +183,12 @@ class KeepView extends StatelessWidget {
     }
   }
 
-  GestureDetector tabDetector(BuildContext context, {required void Function() onTap, required Widget child}) {
+  GestureDetector tabDetector(
+    BuildContext context, {
+    required void Function() onTap,  
+    HitTestBehavior? behavior, 
+    required Widget child,
+  }) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
     SelectPlaylistProvider selectedPlaylist = Provider.of<SelectPlaylistProvider>(context);
     SelectSongProvider selectedLike = Provider.of<SelectSongProvider>(context);
@@ -191,6 +196,7 @@ class KeepView extends StatelessWidget {
       onTap: () async {
         if(await _canTap(context, viewModel, selectedPlaylist, selectedLike)) onTap();
       },
+      behavior: behavior,
       child: child,
     );
   }
@@ -229,15 +235,22 @@ class KeepView extends StatelessWidget {
         children: [
           tabDetector(
             context,
+            behavior: HitTestBehavior.translucent,
             onTap: () async {
-              viewModel.updateUserProfile(await showModal(
+              /*viewModel.updateUserProfile(await showModal(
                 context: context,
                 builder: (_) => BotSheet(
                   type: BotSheetType.selProfile,
                   initialValue: viewModel.user.profile,
                 ),
+              ));*/
+              viewModel.updateUserName(await showModal(
+                context: context,
+                builder: (_) => BotSheet(
+                  type: BotSheetType.editName,
+                  initialValue: viewModel.user.displayName,
+                ),
               ));
-              /* or updateUserName */
             },
             child: Row(
               children: [
@@ -265,7 +278,7 @@ class KeepView extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  viewModel.user.displayName,
+                  _nameProcessing(viewModel.user.displayName),
                   style: WakText.txt16M.copyWith(color: WakColor.grey900),
                 ),
               ],
@@ -299,6 +312,14 @@ class KeepView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _nameProcessing(String rawName) {
+    Runes runes = rawName.runes;
+    if (runes.length <= 8) return rawName;
+    List<String> charList = runes.map((code) => String.fromCharCode(code)).toList();
+    String subString = charList.sublist(0, 8).join();
+    return '$subString...';
   }
 
   Widget _buildPlaylistTab(BuildContext context) {
