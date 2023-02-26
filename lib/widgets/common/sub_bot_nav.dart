@@ -123,13 +123,17 @@ class _SubBotNavState extends State<SubBotNav> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ExtendedImage.network(
-                'https://i.ytimg.com/vi/A5Zge2ggBSA/hqdefault.jpg', // 수정
-                fit: BoxFit.cover,
-                width: 72,
-                height: 40,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(4),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 7, 0, 8),
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: ExtendedImage.network(
+                    'https://i.ytimg.com/vi/A5Zge2ggBSA/hqdefault.jpg',
+                    fit: BoxFit.cover,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
               ),
               type == PlayerBarType.main
                   ? Expanded(
