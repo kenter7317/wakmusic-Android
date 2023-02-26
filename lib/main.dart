@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/screens/charts/charts_view.dart';
 import 'package:wakmusic/style/colors.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/main_bot_nav.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -56,12 +57,8 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
-    final botNav = Provider.of<NavProvider>(context);
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark));
+    NavProvider botNav = Provider.of<NavProvider>(context);
+    statusNavColor(context, ScreenType.etc);
     return Scaffold(
       backgroundColor: WakColor.grey100,
       body: IndexedStack(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wakmusic/main.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -18,28 +19,20 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin{
   void initState() {
     super.initState();
     //SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
-
     _controller = AnimationController(vsync: this);
     
     Future.delayed(
       const Duration(seconds: 5), 
       () => Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const Main()),
+        MaterialPageRoute(builder: (context) => Main()),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    statusNavColor(context, ScreenType.search);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(

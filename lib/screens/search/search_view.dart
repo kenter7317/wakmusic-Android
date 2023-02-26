@@ -7,6 +7,7 @@ import 'package:wakmusic/screens/search/search_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/error_info.dart';
 import 'package:wakmusic/widgets/common/rec_playlist.dart';
@@ -24,14 +25,7 @@ class SearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: (viewModel.curStatus == SearchStatus.during) ? Brightness.light : Brightness.dark,
-      ),
-    );
+    statusNavColor(context, ScreenType.search);
     return WillPopScope(
       onWillPop: () async {
         if (viewModel.curStatus != SearchStatus.before) {
