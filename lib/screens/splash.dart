@@ -18,7 +18,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin{
   @override
   void initState() {
     super.initState();
-    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     _controller = AnimationController(vsync: this);
     
     Future.delayed(

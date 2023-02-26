@@ -31,11 +31,14 @@ class _MainBotNavState extends State<MainBotNav> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final botNav = Provider.of<NavProvider>(context);
-    return Wrap(
-      children: [
-        if (botNav.subState) const SubBotNav(),
-        if (botNav.mainState) mainBotNav(context),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 48),
+      child: Wrap(
+        children: [
+          if (botNav.subState) const SubBotNav(),
+          if (botNav.mainState) mainBotNav(context),
+        ],
+      ),
     );
   }
 
