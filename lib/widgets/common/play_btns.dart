@@ -1,4 +1,12 @@
+import 'dart:developer';
+
+import 'package:audio_service/audio_handler.dart';
+import 'package:audio_service/models/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,6 +16,8 @@ class PlayBtns extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
       child: Row(
@@ -17,7 +27,13 @@ class PlayBtns extends StatelessWidget {
             iconName: 'ic_32_play_all',
             btnName: '전체재생',
             onTap: () {
-              /* play all the songs */
+              audioProvider.addQueueItems(
+                viewModel.tempsongs.whereType<Song>().toList(),
+                override: true,
+                autoplay: true,
+              );
+              log(audioProvider.queue.first.title);
+              audioProvider.nextLoopMode(v: LoopMode.all);
             },
           ),
           const SizedBox(width: 8),
@@ -26,7 +42,11 @@ class PlayBtns extends StatelessWidget {
             iconName: 'ic_32_random_900',
             btnName: '랜덤재생',
             onTap: () {
-              /* play all the songs with shuffle */
+              audioProvider.addQueueItems(
+                viewModel.tempsongs.whereType<Song>().toList(),
+                override: true,
+                randomize: true,
+              );
             },
           ),
         ],
@@ -34,7 +54,10 @@ class PlayBtns extends StatelessWidget {
     );
   }
 
-  Widget _buildBtn(BuildContext context, {required String iconName, required String btnName, required void Function()? onTap}) {
+  Widget _buildBtn(BuildContext context,
+      {required String iconName,
+      required String btnName,
+      required void Function()? onTap}) {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
