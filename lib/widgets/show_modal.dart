@@ -5,6 +5,7 @@ Future<T?> showModal<T>({
   required WidgetBuilder builder,
 }) {
   return showModalBottomSheet(
+    useRootNavigator: true,
     context: context,
     isScrollControlled: true,
     barrierColor: Colors.black.withOpacity(0.4),
