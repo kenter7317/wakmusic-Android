@@ -5,7 +5,6 @@ import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/screens/pdf_view.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
-import 'package:wakmusic/widgets/show_modal.dart';
 
 class Policy extends StatelessWidget {
   const Policy({super.key});
@@ -23,7 +22,7 @@ class Policy extends StatelessWidget {
                 Navigator.push(
                   context,
                   pageRouteBuilder(
-                    page: const PDFView(type: PdfType.terms),
+                    page: const PDFView(type: PDFType.terms),
                     offset: const Offset(0.0, 1.0),
                   ),
                 );
@@ -33,7 +32,7 @@ class Policy extends StatelessWidget {
                 Navigator.push(
                   context,
                   pageRouteBuilder(
-                    page: const PDFView(type: PdfType.privacy),
+                    page: const PDFView(type: PDFType.privacy),
                     offset: const Offset(0.0, 1.0),
                   ),
                 );

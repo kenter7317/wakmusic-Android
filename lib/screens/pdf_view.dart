@@ -4,19 +4,20 @@ import 'package:pdfx/pdfx.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/widgets/common/error_info.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 
-enum PdfType {
+enum PDFType {
   terms('서비스 이용약관'),
   privacy('개인정보처리방침');
 
-  const PdfType(this.str);
+  const PDFType(this.str);
   final String str;
 }
 
 class PDFView extends StatefulWidget {
   const PDFView({super.key, required this.type});
-  final PdfType type;
+  final PDFType type;
 
   @override
   State<PDFView> createState() => _PDFViewState();
@@ -59,6 +60,17 @@ class _PDFViewState extends State<PDFView> {
                       controller: _pdfController,
                       physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.vertical,
+                      builders: PdfViewBuilders<DefaultBuilderOptions>(
+                        options: const DefaultBuilderOptions(loaderSwitchDuration: Duration.zero),
+                        documentLoaderBuilder: (_) => const Center(
+                          child: CircularProgressIndicator(color: WakColor.grey25),
+                        ),
+                        errorBuilder: (_, error) => Container(
+                          alignment: Alignment.center,
+                          color: WakColor.grey100,
+                          child: const ErrorInfo(errorMsg: '파일을 불러오는 데 문제가 발생했습니다.'),
+                        ),
+                      ),
                     ),
                   ),
                 ],
