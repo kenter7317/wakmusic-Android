@@ -60,7 +60,6 @@ class _MainState extends State<Main> {
     NavProvider botNav = Provider.of<NavProvider>(context);
     statusNavColor(context, ScreenType.etc);
     return Scaffold(
-      backgroundColor: WakColor.grey100,
       body: IndexedStack(
         index: botNav.curIdx,
         children: navList.map((page) {

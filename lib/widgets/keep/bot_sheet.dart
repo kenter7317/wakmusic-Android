@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -58,7 +60,10 @@ class _BotSheetState extends State<BotSheet> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: EdgeInsets.only(
+            bottom: max(MediaQuery.of(context).viewInsets.bottom,
+                MediaQuery.of(context).viewPadding.bottom),
+          ),
           child: Container(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
             decoration: const BoxDecoration(
@@ -75,8 +80,8 @@ class _BotSheetState extends State<BotSheet> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 32, 0, 40),
                   child: (widget.type != BotSheetType.selProfile)
-                    ? _buildPlaylistSheet(context)
-                    : _buildProfileSheet(context),
+                      ? _buildPlaylistSheet(context)
+                      : _buildProfileSheet(context),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -89,7 +94,9 @@ class _BotSheetState extends State<BotSheet> {
                     height: 56,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: (_type == FormType.enable) ? WakColor.lightBlue : WakColor.grey300,
+                      color: (_type == FormType.enable)
+                          ? WakColor.lightBlue
+                          : WakColor.grey300,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -134,14 +141,17 @@ class _BotSheetState extends State<BotSheet> {
   }
 
   Widget _buildBaseForm(BuildContext context,
-    {required UnderlineInputBorder border, required String hintText,
-    int? maxLength, required void Function(String)? onChanged}) {
+      {required UnderlineInputBorder border,
+      required String hintText,
+      int? maxLength,
+      required void Function(String)? onChanged}) {
     return TextFormField(
       controller: _fieldText,
       style: WakText.txt20M.copyWith(height: 1.0, color: WakColor.grey800),
       cursorColor: WakColor.grey900,
       maxLength: maxLength,
-      buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
+      buildCounter:
+          (_, {required currentLength, required isFocused, maxLength}) => null,
       onChanged: onChanged,
       decoration: InputDecoration(
         isDense: true,
@@ -152,18 +162,18 @@ class _BotSheetState extends State<BotSheet> {
         hintText: hintText,
         hintStyle: WakText.txt20M.copyWith(color: WakColor.grey400),
         suffixIcon: (_fieldText.text != '')
-          ? GestureDetector(
-              onTap: () {
-                FocusManager.instance.primaryFocus?.unfocus();
-                _fieldText.clear();
-                setState(() => _type = FormType.none);
-              },
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(8, 16, 0, 16),
-                child: EditBtn(type: BtnType.cancel),
-              ),
-            )
-          : null,
+            ? GestureDetector(
+                onTap: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  _fieldText.clear();
+                  setState(() => _type = FormType.none);
+                },
+                child: const Padding(
+                  padding: EdgeInsets.fromLTRB(8, 16, 0, 16),
+                  child: EditBtn(type: BtnType.cancel),
+                ),
+              )
+            : null,
       ),
     );
   }
@@ -171,25 +181,23 @@ class _BotSheetState extends State<BotSheet> {
   Widget _buildCreateForm(BuildContext context) {
     return Column(
       children: [
-        _buildBaseForm(
-          context,
-          border: UnderlineInputBorder(
-            borderSide: BorderSide(color: _type.color),
-          ),
-          hintText: '플레이리스트 제목을 입력하세요.',
-          maxLength: _maxLength,
-          onChanged: (value) {
-            setState(() {
-              if (value.isEmpty || value == widget.initialValue) {
-                _type = FormType.none;
-              }/* else if (value == 'test') { /* error condition */
+        _buildBaseForm(context,
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(color: _type.color),
+            ),
+            hintText: '플레이리스트 제목을 입력하세요.',
+            maxLength: _maxLength, onChanged: (value) {
+          setState(() {
+            if (value.isEmpty || value == widget.initialValue) {
+              _type = FormType.none;
+            } /* else if (value == 'test') { /* error condition */
                 _type = FormType.error;
-              }*/ else {
-                _type = FormType.enable;
-              }
-            });
-          }
-        ),
+              }*/
+            else {
+              _type = FormType.enable;
+            }
+          });
+        }),
         const SizedBox(height: 4),
         Row(
           children: [
@@ -218,22 +226,19 @@ class _BotSheetState extends State<BotSheet> {
   Widget _buildLoadForm(BuildContext context) {
     return Column(
       children: [
-        _buildBaseForm(
-          context,
-          border: UnderlineInputBorder(
-            borderSide: BorderSide(color: FormType.none.color),
-          ),
-          hintText: '코드를 입력해주세요.',
-          onChanged: (value) {
-            setState(() {
-              if (value.isEmpty) {
-                _type = FormType.none;
-              } else {
-                _type = FormType.enable;
-              }
-            });
-          }
-        ),
+        _buildBaseForm(context,
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(color: FormType.none.color),
+            ),
+            hintText: '코드를 입력해주세요.', onChanged: (value) {
+          setState(() {
+            if (value.isEmpty) {
+              _type = FormType.none;
+            } else {
+              _type = FormType.enable;
+            }
+          });
+        }),
         const SizedBox(height: 12),
         Row(
           children: [
@@ -327,7 +332,7 @@ class _BotSheetState extends State<BotSheet> {
           children: List.generate(
             7,
             (idx) {
-              if (idx % 2 == 0){
+              if (idx % 2 == 0) {
                 return _buildProfile(context, idx ~/ 2);
               } else {
                 return const SizedBox(width: 10);
@@ -340,7 +345,7 @@ class _BotSheetState extends State<BotSheet> {
           children: List.generate(
             7,
             (idx) {
-              if (idx % 2 == 0){
+              if (idx % 2 == 0) {
                 return _buildProfile(context, 4 + idx ~/ 2);
               } else {
                 return const SizedBox(width: 10);
@@ -370,7 +375,9 @@ class _BotSheetState extends State<BotSheet> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: (_profileIdx == idx) ? WakColor.lightBlue : Colors.transparent,
+              color: (_profileIdx == idx)
+                  ? WakColor.lightBlue
+                  : Colors.transparent,
               width: 2,
             ),
           ),
@@ -380,4 +387,3 @@ class _BotSheetState extends State<BotSheet> {
     );
   }
 }
-

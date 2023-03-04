@@ -32,7 +32,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
-    statusNavColor(context, ScreenType.search);
+    statusNavColor(context, ScreenType.etc);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
