@@ -21,7 +21,6 @@ class ChartsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    NavProvider botNav = Provider.of<NavProvider>(context);
     statusNavColor(context, ScreenType.etc);
     return SafeArea(
       child: TabView(

@@ -22,7 +22,6 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
-    NavProvider botNav = Provider.of<NavProvider>(context);
     statusNavColor(context, ScreenType.etc);
     return Stack(
       children: [
