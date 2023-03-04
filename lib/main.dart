@@ -140,6 +140,11 @@ class Temp extends StatelessWidget {
                   botNav.subChange(7);
                 },
                 child: Text('보관함 노래 추가')),
+            TextButton(
+                onPressed: () {
+                  botNav.subChange(8);
+                },
+                child: Text('보관함 프로필 편집'))
           ]),
     ));
   }

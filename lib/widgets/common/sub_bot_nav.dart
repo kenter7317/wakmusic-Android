@@ -34,6 +34,7 @@ class _SubBotNavState extends State<SubBotNav> {
       editBar(context, EditBarType.keepBar),
       editBar(context, EditBarType.keepDetailBar),
       editBar(context, EditBarType.keepListBar),
+      editBar(context, EditBarType.keepProfileBar)
     ];
     return barList[botNav.subIdx];
   }
@@ -283,6 +284,8 @@ class _SubBotNavState extends State<SubBotNav> {
               if (type.showDelete) editBarBtn("ic_32_delete", "삭제"),
               if (type.showEdit) editBarBtn("ic_32_edit", "편집"),
               if (type.showShare) editBarBtn("ic_32_share-1", "공유하기"),
+              if (type.showProfileChange) editBarBtn("ic_32_profile", "프로필 변경"),
+              if (type.showNicknameChange) editBarBtn("ic_32_edit", "닉네임 수정")
             ],
           ),
         ),
@@ -340,14 +343,15 @@ Widget editBarBtn(String icon, String txt, {onTap}) {
 }
 
 enum EditBarType {
-  playListBar(true, true, false, true, false, false, false),
-  chartBar(true, true, true, false, true, false, false),
-  keepBar(true, true, true, true, false, false, false),
-  keepDetailBar(false, false, false, false, false, true, true),
-  keepListBar(true, true, false, false, false, false, false);
+  playListBar(true, true, false, true, false, false, false, false, false),
+  chartBar(true, true, true, false, true, false, false, false, false),
+  keepBar(true, true, true, true, false, false, false, false, false),
+  keepDetailBar(false, false, false, false, false, true, true, false, false),
+  keepListBar(true, true, false, false, false, false, false, false, false),
+  keepProfileBar(false, false, false, false, false, false, false, true, true);
 
   const EditBarType(this.showSelect, this.showSongAdd, this.showPlayListAdd,
-      this.showDelete, this.showPlay, this.showEdit, this.showShare);
+      this.showDelete, this.showPlay, this.showEdit, this.showShare, this.showProfileChange, this.showNicknameChange);
   final bool showSelect;
   final bool showSongAdd;
   final bool showPlayListAdd;
@@ -355,6 +359,8 @@ enum EditBarType {
   final bool showPlay;
   final bool showEdit;
   final bool showShare;
+  final bool showProfileChange;
+  final bool showNicknameChange;
 }
 
 enum PlayerBarType {
