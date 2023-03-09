@@ -2,7 +2,7 @@
     package="com.example.wakmusic">
     <uses-permission android:name="android.permission.VIBRATE" />
     <application
-        android:label="왁타버스뮤직"
+        android:label="왁타버스 뮤직"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
