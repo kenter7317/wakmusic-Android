@@ -45,6 +45,7 @@ class _PDFViewState extends State<PDFView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -87,7 +88,6 @@ class _PDFViewState extends State<PDFView> {
   Widget _buildButton(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      color: Colors.white,
       child: GestureDetector(
         onTap: () => Navigator.pop(context),
         child: Container(
