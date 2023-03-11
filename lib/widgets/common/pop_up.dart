@@ -61,8 +61,8 @@ class PopUp extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          if (onTap != null) onTap();
           Navigator.pop(context, result);
+          if (onTap != null) onTap();
         },
         child: Container(
           height: 56,

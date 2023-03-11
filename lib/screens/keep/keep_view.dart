@@ -11,6 +11,7 @@ import 'package:wakmusic/screens/suggestions.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/widgets/common/btn_with_icon.dart';
 import 'package:wakmusic/widgets/common/error_info.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
@@ -30,15 +31,17 @@ class KeepView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
-    return SafeArea(
-      child: () {
-        switch (viewModel.loginStatus) {
-          case LoginStatus.before:
-            return _buildBefore(context);
-          case LoginStatus.after:
-            return _buildAfter(context);
-        }
-      }(),
+    return Scaffold(
+      body: SafeArea(
+        child: () {
+          switch (viewModel.loginStatus) {
+            case LoginStatus.before:
+              return _buildBefore(context);
+            case LoginStatus.after:
+              return _buildAfter(context);
+          }
+        }(),
+      ),
     );
   }
 
@@ -87,39 +90,14 @@ class KeepView extends StatelessWidget {
             itemCount: Login.values.length,
             itemBuilder: (_, idx) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GestureDetector(
+              child: BtnWithIcon(
                 onTap: () {
                   viewModel.getUser();
                   viewModel.updateLoginStatus(LoginStatus.after);
                 },
-                child: Container(
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.4),
-                    border: Border.all(color: WakColor.grey200.withOpacity(0.4)),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 31,
-                        top: 17,
-                        child: SvgPicture.asset(
-                          'assets/icons/ic_32_${Login.values[idx].name}.svg',
-                          width: 24,
-                          height: 24,
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          '${Login.values[idx].locale}로 로그인하기',
-                          style: WakText.txt16M.copyWith(color: WakColor.grey900),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                type: BtnSizeType.big,
+                iconName: Login.values[idx].name,
+                btnText: '${Login.values[idx].locale}로 로그인하기',
               ),
             ),
             separatorBuilder: (_, __) => const SizedBox(height: 8),
@@ -333,25 +311,33 @@ class KeepView extends StatelessWidget {
               height: 108,
               child: Column(
                 children: [
-                  _buildPlaylistBtn(
-                    () async {
+                  BtnWithIcon(
+                    onTap: () async {
                       viewModel.createList(await showModal(
                         context: context, 
                         builder: (_) => const BotSheet(
                           type: BotSheetType.createList,
                         ),
                       ));
-                    }, 'playadd_900', '플레이리스트 만들기'),
+                    }, 
+                    type: BtnSizeType.small, 
+                    iconName: 'playadd_900',
+                    btnText: '플레이리스트 만들기',
+                  ),
                   const SizedBox(height: 4),
-                  _buildPlaylistBtn(
-                    () async { 
+                  BtnWithIcon(
+                    onTap: () async { 
                       viewModel.loadList(await showModal(
                         context: context,
                         builder: (_) => const BotSheet(
                           type: BotSheetType.loadList,
                         ),
                       ));
-                    }, 'share', '플레이리스트 가져오기'),
+                    }, 
+                    type: BtnSizeType.small, 
+                    iconName: 'share',
+                    btnText: '플레이리스트 가져오기',
+                  ),
                 ],
               ),
             ),
@@ -387,42 +373,6 @@ class KeepView extends StatelessWidget {
                 ),
         ),
       ],
-    );
-  }
-
-  Widget _buildPlaylistBtn(void Function() onTap, String iconName, String btnName) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 52,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.4),
-            border: Border.all(color: WakColor.grey200.withOpacity(0.4)),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                left: 31,
-                top: 9,
-                child: SvgPicture.asset(
-                  'assets/icons/ic_32_$iconName.svg',
-                  width: 32,
-                  height: 32,
-                ),
-              ),
-              Center(
-                child: Text(
-                  btnName,
-                  style: WakText.txt14MH.copyWith(color: WakColor.grey900),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 

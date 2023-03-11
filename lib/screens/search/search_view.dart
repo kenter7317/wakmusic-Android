@@ -131,6 +131,7 @@ class SearchView extends StatelessWidget {
                 ),
               )
             : null,
+          suffixIconConstraints: const BoxConstraints(maxWidth: 53),
         ),
       ),
     );

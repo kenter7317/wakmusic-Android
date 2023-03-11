@@ -36,7 +36,11 @@ class FAQView extends StatelessWidget {
       child: SafeArea(
         child: Column(
           children: [
-            Header(onTap: () => viewModel.collapseAll(), headerTxt: '자주 묻는 질문'),
+            Header(
+              type: HeaderType.back,
+              onTap: () => viewModel.collapseAll(), 
+              headerTxt: '자주 묻는 질문',
+            ),
             Expanded(
               child: TabView(
                 type: TabType.minTab,

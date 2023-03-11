@@ -48,13 +48,14 @@ class _PDFViewState extends State<PDFView> {
       body: SafeArea(
         child: Column(
           children: [
-            Header(isBtnLeft: false, headerTxt: widget.type.str),
+            Header(
+              type: HeaderType.close, 
+              headerTxt: widget.type.str,
+            ),
             Expanded(
               child: Stack(
                 children: [
-                  Container(
-                    color: Colors.black.withOpacity(0.4),
-                  ),
+                  Container(color: Colors.black.withOpacity(0.4)),
                   Scrollbar(
                     child: PdfView(
                       controller: _pdfController,

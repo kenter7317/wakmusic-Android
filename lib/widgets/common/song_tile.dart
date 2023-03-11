@@ -4,14 +4,22 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/screens/keep/keep_view.dart';
+import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wakmusic/widgets/common/keep_song_pop_up.dart';
+import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wakmusic/widgets/page_route_builder.dart';
+import 'package:wakmusic/widgets/show_modal.dart';
 
 enum TileType {
+  baseTile(false, false, false, false,
+    {'start': 20, 'middle': 0, 'end': 20}, {}),
   editTile(false, false, false, true,
     {'start': 20, 'middle': 16, 'end': 20}, 
     {'icon': 'ic_32_move', 'size': 32.0}),
@@ -66,6 +74,7 @@ class SongTile extends StatelessWidget {
       return _buildSkeleton(context);
     } else {
       SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
+      KeepViewModel viewModel = Provider.of<KeepViewModel>(context); /* for test */
       bool isSelected = selectedList.list.contains(song);
       return GestureDetector(
         onTap: () {
@@ -74,6 +83,30 @@ class SongTile extends StatelessWidget {
               selectedList.removeSong(song!);
             } else {
               selectedList.addSong(song!);
+            }
+            /* for test */
+            if (viewModel.loginStatus == LoginStatus.before) {
+              showModal(
+                context: context, 
+                builder: (context) => PopUp(
+                  type: PopUpType.txtOneBtn,
+                  msg: '로그인이 필요한 기능입니다.',
+                  posFunc: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const KeepView(),
+                    ),
+                  ),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                pageRouteBuilder(
+                  page: const KeepSongPopUp(),
+                  offset: const Offset(0.0, 1.0),
+                ),
+              );
             }
           } else if (tileType != TileType.nowPlayTile){
             /* play song */
@@ -160,7 +193,7 @@ class SongTile extends StatelessWidget {
                     style: WakText.txt12L.copyWith(color: WakColor.grey900),
                     textAlign: TextAlign.right,
                   ),
-                if (!tileType.canSelect)
+                if (!tileType.canSelect && tileType != TileType.baseTile)
                   (tileType != TileType.nowPlayTile)
                     ? GestureDetector(
                         onTap: () {

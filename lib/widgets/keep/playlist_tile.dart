@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
@@ -11,6 +12,7 @@ import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
+import 'package:wakmusic/widgets/common/toast_msg.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 
 class PlaylistTile extends StatelessWidget {
@@ -41,6 +43,19 @@ class PlaylistTile extends StatelessWidget {
             } else {
               selectedList.addPlaylist(playlist!);
             }
+          } else if (tileType == TileType.baseTile) {
+            /* put songs in playlist */
+            showToastWidget(
+              context: context,
+              position: const StyledToastPosition(
+                align: Alignment.bottomCenter,
+                offset: 56,
+              ),
+              animation: StyledToastAnimation.slideFromBottomFade,
+              reverseAnimation: StyledToastAnimation.fade,
+              const ToastMsg(msg: '00곡을 플레이리스트에 담았습니다.'),
+            );
+            Navigator.pop(context);
           } else {
             Navigator.push(
               context,
