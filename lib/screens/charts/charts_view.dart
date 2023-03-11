@@ -19,17 +19,6 @@ class ChartsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: WakColor.grey100,
-      body: _buildBody(context),
-      bottomNavigationBar: Container(
-        height: 56,
-        color: Colors.white,
-      ),
-    );
-  }
-
-  Widget _buildBody(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white,
@@ -38,12 +27,14 @@ class ChartsView extends StatelessWidget {
         statusBarIconBrightness: Brightness.dark,
       ),
     );
-    return SafeArea(
-      child: TabView(
-        type: TabType.maxTab,
-        tabBarList: List.generate(5, (idx) => ChartType.values[idx].str),
-        tabViewList: List.generate(5, (idx) => _buildTab(context, ChartType.values[idx])),
-      )
+    return Scaffold(
+      body: SafeArea(
+        child: TabView(
+          type: TabType.maxTab,
+          tabBarList: List.generate(5, (idx) => ChartType.values[idx].str),
+          tabViewList: List.generate(5, (idx) => _buildTab(context, ChartType.values[idx])),
+        )
+      ),
     );
   }
 

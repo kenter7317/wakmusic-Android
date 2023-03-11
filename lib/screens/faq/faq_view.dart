@@ -20,9 +20,7 @@ class FAQView extends StatelessWidget {
         viewModel.collapseAll();
         Navigator.pop(context);
       },
-      child: Scaffold(
-        body: _buildBody(context),
-      ),
+      child: Scaffold(body: _buildBody(context)),
     );
   }
 
