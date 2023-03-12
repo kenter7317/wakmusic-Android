@@ -136,6 +136,7 @@ class _KeepTabViewState extends State<KeepTabView> with TickerProviderStateMixin
           ),
           Expanded(
             child: TabBarView(
+              key: UniqueKey(),
               controller: _controller,
               physics: const NeverScrollableScrollPhysics(),
               children: widget.tabViewList,

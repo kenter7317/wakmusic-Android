@@ -347,6 +347,7 @@ class KeepView extends StatelessWidget {
             ? const ErrorInfo(errorMsg: '내 리스트가 없습니다.')
             : (viewModel.editStatus == EditStatus.playlists)
               ? ReorderableListView.builder(
+                  key: const PageStorageKey(0),
                   proxyDecorator: proxyDecorator,
                   buildDefaultDragHandles: false,
                   physics: const BouncingScrollPhysics(),
@@ -363,6 +364,7 @@ class KeepView extends StatelessWidget {
                   onReorderStart: (_) => HapticFeedback.lightImpact(),
                 )
               : ListView.builder(
+                  key: const PageStorageKey(0),
                   physics: const BouncingScrollPhysics(),
                   itemCount: viewModel.playlists.length,
                   itemBuilder: (_, idx) => PlaylistTile(
@@ -382,6 +384,7 @@ class KeepView extends StatelessWidget {
       ? const ErrorInfo(errorMsg: '좋아요 한 곡이 없습니다.')
       : (viewModel.editStatus == EditStatus.likes)
         ? ReorderableListView.builder(
+            key: const PageStorageKey(1),
             proxyDecorator: proxyDecorator,
             buildDefaultDragHandles: false,
             physics: const BouncingScrollPhysics(),
@@ -398,6 +401,7 @@ class KeepView extends StatelessWidget {
             onReorderStart: (_) => HapticFeedback.lightImpact(),
           )
         : ListView.builder(
+            key: const PageStorageKey(1),
             physics: const BouncingScrollPhysics(),
             itemCount: viewModel.likes.length,
             itemBuilder: (_, idx) => SongTile(
