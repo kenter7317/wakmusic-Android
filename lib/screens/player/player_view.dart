@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:subtitle/subtitle.dart';
+import 'package:wakmusic/screens/player/player_playlist_view.dart';
 import 'package:wakmusic/screens/player/player_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/widgets/player/player_button.dart';
@@ -184,48 +185,11 @@ class Player extends StatelessWidget {
     PlayerViewModel viewModel = Provider.of<PlayerViewModel>(context);
     var height = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
-    return FutureBuilder<SubtitleController>(
-      future: viewModel.lyrics,
-      builder: (context, snapshot){
-        if(snapshot.hasData) {
-          if(snapshot.data!.subtitles.isEmpty){
-            return Container(
-              alignment: Alignment.center,
-              height: height >= 732 ? 120 : 72,
-              width: 270,
-              child: Text(
-                '가사가 존재하지 않습니다',
-                style: WakText.txt14MH.copyWith(color: WakColor.grey500),
-                textAlign: TextAlign.center,
-              ),
-            );
-          }else{
-            return Container(
-              alignment: Alignment.center,
-              height: height >= 732 ? 120 : 72,
-              width: 270,
-              child: ScrollSnapList(
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                onItemFocus: (int) => {},
-                itemSize: 24,
-                itemBuilder: (context, index) {
-                  return Text(
-                    snapshot.data!.subtitles[index].data,
-                    style: WakText.txt14MH.copyWith(color: WakColor.grey500),
-                    textAlign: TextAlign.center,
-                  );
-                },
-                itemCount: snapshot.data!.subtitles.length,
-              ),
-            );
-          }
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
+    return Container(
+      alignment: Alignment.center,
+      height: height >= 732 ? 120 : 72,
+      width: 270,
+      child: viewModel.listView,
     );
   }
 
@@ -339,7 +303,7 @@ class Player extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             InkWell(
-              onTap: () => {},
+              onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => PlayerPlayList())) },
               child: SizedBox(
                 width: 74,
                 child: Column(
