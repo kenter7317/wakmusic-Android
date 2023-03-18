@@ -59,14 +59,13 @@ class KeepSongPopUp extends StatelessWidget {
                   },
                   type: BtnSizeType.small,
                   iconName: 'playadd_900',
-                  btnText: '새 플레이리스트에 담기',
+                  btnText: '새 플레이리스트 만들기',
                 ),
               ),
               Expanded(
                 child: (viewModel.playlists.isEmpty)
                   ? const ErrorInfo(errorMsg: '내 리스트가 없습니다.')
                   : ListView.builder(
-                      physics: const BouncingScrollPhysics(),
                       itemCount: viewModel.playlists.length,
                       itemBuilder: (_, idx) => PlaylistTile(
                         playlist: viewModel.playlists[idx],

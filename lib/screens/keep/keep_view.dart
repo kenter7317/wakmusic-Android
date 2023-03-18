@@ -72,7 +72,7 @@ class KeepView extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'WAKTAVERSE MUSIC',
+          '왁타버스 뮤직',
           style: WakText.txt20M.copyWith(color: WakColor.grey900),
           textAlign: TextAlign.center,
         ),
@@ -189,13 +189,19 @@ class KeepView extends StatelessWidget {
         Expanded(
           child: Stack(
             children: [
-              KeepTabView(
-                type: TabType.minTab,
-                tabBarList: const ['내 리스트', '좋아요'],
-                tabViewList: [_buildPlaylistTab(context), _buildLikeTab(context)],
-                onPause: (viewModel.editStatus != EditStatus.none)
-                  ? () => _canTap(context, viewModel, selectedPlaylist, selectedLike)
-                  : null,
+              NotificationListener<OverscrollIndicatorNotification>(
+                onNotification: (overscroll) {
+                  overscroll.disallowIndicator();
+                  return true;
+                },
+                child: KeepTabView(
+                  type: TabType.minTab,
+                  tabBarList: const ['내 리스트', '좋아요'],
+                  tabViewList: [_buildPlaylistTab(context), _buildLikeTab(context)],
+                  onPause: (viewModel.editStatus != EditStatus.none)
+                    ? () => _canTap(context, viewModel, selectedPlaylist, selectedLike)
+                    : null,
+                ),
               ),
             ],
           ),
@@ -350,7 +356,6 @@ class KeepView extends StatelessWidget {
                   key: const PageStorageKey(0),
                   proxyDecorator: proxyDecorator,
                   buildDefaultDragHandles: false,
-                  physics: const BouncingScrollPhysics(),
                   itemCount: viewModel.tempPlaylists.length,
                   itemBuilder: (_, idx) => PlaylistTile(
                     key: Key(idx.toString()),
@@ -365,7 +370,6 @@ class KeepView extends StatelessWidget {
                 )
               : ListView.builder(
                   key: const PageStorageKey(0),
-                  physics: const BouncingScrollPhysics(),
                   itemCount: viewModel.playlists.length,
                   itemBuilder: (_, idx) => PlaylistTile(
                     playlist: viewModel.playlists[idx],
@@ -387,7 +391,6 @@ class KeepView extends StatelessWidget {
             key: const PageStorageKey(1),
             proxyDecorator: proxyDecorator,
             buildDefaultDragHandles: false,
-            physics: const BouncingScrollPhysics(),
             itemCount: viewModel.tempLikes.length,
             itemBuilder: (_, idx) => SongTile(
               key: Key(idx.toString()),
@@ -402,7 +405,6 @@ class KeepView extends StatelessWidget {
           )
         : ListView.builder(
             key: const PageStorageKey(1),
-            physics: const BouncingScrollPhysics(),
             itemCount: viewModel.likes.length,
             itemBuilder: (_, idx) => SongTile(
               song: viewModel.likes[idx], 
