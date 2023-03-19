@@ -15,14 +15,14 @@ enum BtnType {
 }
 
 class EditBtn extends StatelessWidget {
-  const EditBtn({super.key, required this.type});
+  const EditBtn({super.key, required this.type, this.btnText});
   final BtnType type;
+  final String? btnText;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 45,
-      height: 24,
+      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 11),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: type.bgColor,
@@ -30,7 +30,7 @@ class EditBtn extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        type.btnText,
+        btnText ?? type.btnText,
         style: WakText.txt12B.copyWith(color: type.txtColor),
       ),
     );

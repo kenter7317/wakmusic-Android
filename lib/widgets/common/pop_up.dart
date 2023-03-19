@@ -14,6 +14,7 @@ class PopUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -26,7 +27,7 @@ class PopUp extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(40, 60, 40, 32),
                 child: Text(
                   msg ?? '',
-                  maxLines: 2,
+                  maxLines: 4,
                   style: WakText.txt18M.copyWith(color: WakColor.grey900),
                   textAlign: TextAlign.center,
                 ),
@@ -39,66 +40,43 @@ class PopUp extends StatelessWidget {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                 ),
               ),
-          _buildButtons(context),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                if (type != PopUpType.txtOneBtn)
+                  _buildButton(context, negFunc, false, (type == PopUpType.contentBtn) ? '다시보지 않기' : '취소'),
+                if (type != PopUpType.txtOneBtn)
+                  const SizedBox(width: 8),
+                _buildButton(context, posFunc, true, (type == PopUpType.contentBtn) ? '닫기' : '확인'),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildButtons(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          if (type != PopUpType.txtOneBtn)
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: GestureDetector(
-                  onTap: () {
-                    if (negFunc != null) negFunc!();
-                    Navigator.pop(context, false);
-                  },
-                  child: Container(
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: WakColor.grey400,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        (type == PopUpType.contentBtn) ? '다시보지 않기' : '취소',
-                        style: WakText.txt18M.copyWith(color: WakColor.grey25),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                if (posFunc != null) posFunc!();
-                Navigator.pop(context, true);
-              },
-              child: Container(
-                height: 56,
-                decoration: BoxDecoration(
-                  color: WakColor.lightBlue,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    (type == PopUpType.contentBtn) ? '닫기' : '확인',
-                    style: WakText.txt18M.copyWith(color: WakColor.grey25),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
+  Widget _buildButton(BuildContext context, void Function()? onTap, bool result, String btnText) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pop(context, result);
+          if (onTap != null) onTap();
+        },
+        child: Container(
+          height: 56,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: (result) ? WakColor.lightBlue : WakColor.grey400,
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
+          child: Text(
+            btnText,
+            style: WakText.txt18M.copyWith(color: WakColor.grey25),
+            textAlign: TextAlign.center,
+          ),
+        ),
       ),
     );
   }

@@ -1,5 +1,7 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
+import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/models/playlist.dart';
@@ -100,10 +102,27 @@ class RecPlaylist extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                Image.asset(
-                  'assets/icons/ic_48_${playlist.iconName}.png',
+                ExtendedImage.network(
+                  '$staticBaseUrl/playlist/icon/round/${playlist.image}.png',
+                  fit: BoxFit.cover,
+                  shape: BoxShape.circle,
                   width: 48,
                   height: 48,
+                  loadStateChanged: (state) {
+                    if (state.extendedImageLoadState != LoadState.completed) {
+                      return SkeletonBox(
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: const BoxDecoration(
+                            color: WakColor.grey200,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      );
+                    } 
+                    return null;
+                  },
                 ),
               ],
             ),
