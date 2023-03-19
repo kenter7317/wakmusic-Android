@@ -9,11 +9,13 @@ enum SearchStatus { before, during, after }
 class SearchViewModel extends ChangeNotifier {
   SearchStatus _status = SearchStatus.before;
   List<String> _history = [];
+  String _text = '';
   late final API _api;
   late Map<SearchType, Future<List<Song>>> _resultLists;
   
   SearchStatus get curStatus => _status;
   List<String> get history => _history;
+  String get text => _text;
   Map<SearchType, Future<List<Song>>> get resultLists => _resultLists;
 
   SearchViewModel() {
@@ -23,6 +25,7 @@ class SearchViewModel extends ChangeNotifier {
   }
 
   Future<void> search(String keyword) async {
+    _text = keyword;
     for (SearchType type in SearchType.values) {
       if (type == SearchType.ids) continue;
       _resultLists[type] = _api.search(keyword: keyword, type: type);
@@ -33,6 +36,12 @@ class SearchViewModel extends ChangeNotifier {
 
   void updateStatus(SearchStatus status) {
     _status = status;
+    if (_status == SearchStatus.before) _text = '';
+    notifyListeners();
+  }
+
+  void updateText(String text) {
+    _text = text;
     notifyListeners();
   }
   

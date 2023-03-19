@@ -6,26 +6,22 @@ class RecPlaylistProvider extends ChangeNotifier {
   final List<Reclist> _list = [
     const Reclist(
       title: '고멤가요제',
-      image: '고멤가요제',
-      iconName: 'GomemSongFestival',
+      image: 'test',
       songlist: ['', ''],
     ),
     const Reclist(
       title: '연말공모전',
-      image: '연말공모전',
-      iconName: 'Competition',
+      image: 'test',
       songlist: ['', 'mLLvBeyKIUI', '0D7GPhsrXYo'],
     ),
     const Reclist(
       title: '상콘 OST',
-      image: '상콘OST',
-      iconName: 'situationalplay_OST',
+      image: 'test',
       songlist: ['', 'mLLvBeyKIUI', '0D7GPhsrXYo', 'HXA9ZL8K5Js'],
     ),
     const Reclist(
       title: '힙합 SWAG',
-      image: '힙합',
-      iconName: 'Hiphop',
+      image: 'test',
       songlist: [
         '',
         'mLLvBeyKIUI',
@@ -36,8 +32,7 @@ class RecPlaylistProvider extends ChangeNotifier {
     ),
     const Reclist(
       title: '캐롤',
-      image: '캐롤',
-      iconName: 'carol',
+      image: 'test',
       songlist: [
         '',
         'mLLvBeyKIUI',
@@ -49,8 +44,7 @@ class RecPlaylistProvider extends ChangeNotifier {
     ),
     const Reclist(
       title: '노동요',
-      image: '노동요',
-      iconName: 'worksong',
+      image: 'test',
       songlist: [
         '',
         'mLLvBeyKIUI',
