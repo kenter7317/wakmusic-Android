@@ -27,7 +27,6 @@ class AudioMethodCallHandler(
     fun init(messenger: BinaryMessenger) {
         channel = MethodChannel(messenger, url)
         channel.setMethodCallHandler(this)
-        Log.d("tqadinit", "tlzzzvcv")
     }
 
     fun dispose() {
@@ -47,7 +46,6 @@ class AudioMethodCallHandler(
 //                        title = map["title"] as String,
 //                        artist = map["artist"] as String,
 //                        duration = map["duration"] as Int)
-//                Log.d("tqtrz", "$metadata, ${AudioService.instance}")
 //                AudioService.instance?.setMetadata(metadata)
 //                result.success(null)
                 Executors.newSingleThreadExecutor().execute {
@@ -58,7 +56,6 @@ class AudioMethodCallHandler(
                                 title = map["title"] as String,
                                 artist = map["artist"] as String,
                                 duration = map["duration"] as Int)
-                        Log.d("tqtrz", "$metadata, ${AudioService.instance}")
                         AudioService.instance?.setMetadata(metadata)
                         handler.post { result.success(null) }
                     } catch (e: Exception) {
@@ -79,7 +76,6 @@ class AudioMethodCallHandler(
                         prevPlayable = map["prevPlayable"] as Boolean,
                 )
                 var currentTime = System.currentTimeMillis()
-                Log.d("tqts", "$state, ${AudioService.instance}")
                 AudioService.instance?.setState(state, currentTime - AudioServicePlugin.bootTime)
                 result.success(null)
             }
@@ -91,7 +87,6 @@ class AudioMethodCallHandler(
     }
 
     private fun invokeMethod(method: String, args: Any?) {
-        Log.d("tqllinvk", method)
         channel.invokeMethod(method, args)
     }
 

@@ -11,10 +11,10 @@ class MediaButtonReceiver : androidx.media.session.MediaButtonReceiver() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
+        Log.d("WakMusic!", "onReceive: ${intent?.action}")
         if (intent != null
-                && ACTION_NOTIFICATION_DELETE == intent.action
-                && AudioService.instance != null) {
-            AudioService.instance!!.handleDeleteNotification()
+                && ACTION_NOTIFICATION_DELETE == intent.action) {
+            AudioService.instance?.handleDeleteNotification()
             return
         }
         super.onReceive(context, intent)

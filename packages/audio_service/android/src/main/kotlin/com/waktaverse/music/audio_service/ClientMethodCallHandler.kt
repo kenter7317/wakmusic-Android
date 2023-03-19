@@ -23,7 +23,6 @@ class ClientMethodCallHandler(
     fun init(messenger: BinaryMessenger) {
         channel = MethodChannel(messenger, url)
         channel.setMethodCallHandler(this)
-        Log.d("tqclinit", "tlzzzvcv")
     }
 
     fun dispose() {
@@ -38,7 +37,6 @@ class ClientMethodCallHandler(
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         val args = call.arguments
-        Log.d("tqccxv", "onMethodCall called")
 
         when (call.method) {
             "getPlatformVersion" -> result.success("${android.os.Build.VERSION.RELEASE}")
@@ -57,7 +55,6 @@ class ClientMethodCallHandler(
                         PrefsKey.ACTIVITY_CLASS_NAME to AudioService::class.java.name,
                         PrefsKey.BROWSABLE_ROOT_EXTRAS to null
                 ))
-                Log.d("tqconf", "${NotificationOptions.getData(context)}, ${AudioService.instance}")
                 AudioService.instance?.configure()
                 result.success(null)
             }

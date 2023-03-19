@@ -32,7 +32,7 @@ class PlayBtns extends StatelessWidget {
                 override: true,
                 autoplay: true,
               );
-              log(audioProvider.queue.first.title);
+              log(audioProvider.currentSong?.title ?? 'null');
               audioProvider.nextLoopMode(v: LoopMode.all);
             },
           ),

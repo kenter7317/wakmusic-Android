@@ -48,19 +48,17 @@ class AudioService : MediaBrowserServiceCompat() {
         private const val AUTO_ENABLED_ACTIONS: Long = PlaybackStateCompat.ACTION_PLAY or
                 PlaybackStateCompat.ACTION_PAUSE or
                 PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
-                PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+                PlaybackStateCompat.ACTION_SEEK_TO
 
 
         var instance: AudioService? = null
         var contentIntent: PendingIntent? = null
-        var isRunningService = false
-            private set
 
         private var audioHandler: AudioHandler? = null
 
         fun init(handler: AudioHandler) {
             audioHandler = handler
-            Log.d("tqas", "inited $handler")
         }
     }
 
@@ -110,7 +108,7 @@ class AudioService : MediaBrowserServiceCompat() {
 //    @Synchronized
     fun setMetadata(metadata: AudioMetadata) {
         audioMetadata = metadata
-        Log.d("tqts", "$metadata")
+        Log.d("WakMusic!", "setMetadata: $metadata")
         val imageUrl = "https://i.ytimg.com/vi/${metadata.id}/hqdefault.jpg"
         imageBitmap = loadImageBitmap(imageUrl)
         mediaMetadata = MediaMetadataCompat.Builder()
@@ -164,10 +162,11 @@ class AudioService : MediaBrowserServiceCompat() {
         var notificationChanged: Boolean = false
         var actions = arrayListOf(
                 MediaControl("drawable/to_previous", "Previous",  4),
-                if (state.playbackState == PlaybackState.playing)
-                    MediaControl("drawable/pause", "Pause", 1)
-                else
-                    MediaControl("drawable/play", "Play", 2),
+                when (state.playbackState) {
+                    PlaybackState.playing -> MediaControl("drawable/pause", "Pause", 1)
+                    PlaybackState.ended -> MediaControl("drawable/replay", "Replay", 2)
+                    else -> MediaControl("drawable/play", "Play", 2)
+                },
                 MediaControl("drawable/to_next", "Next", 5),
                 MediaControl("drawable/stop", "Stop", 0)
         )
@@ -202,28 +201,32 @@ class AudioService : MediaBrowserServiceCompat() {
 
         if (previousState != PlaybackState.playing
                 && playbackState == PlaybackState.playing) {
+            Log.i("WakMusic!", "setState->enterPlayingState")
             enterPlayingState()
         } else if (previousState == PlaybackState.playing
                 && playbackState != PlaybackState.playing) {
+            Log.i("WakMusic!", "setState->exitPlayingState")
             exitPlayingState()
         }
 
-        if (previousState.isPlaying() && playbackState.isNotPlaying()) {
+        if (playbackState.isEmpty()) {
+            Log.i("WakMusic!", "setState->stop")
             stop()
         } else /*if (playbackState.isPlaying() && notificationChanged)*/ {
+            Log.i("WakMusic!", "setState->updateNotation()")
             updateNotification()
         }
     }
 
     fun stop() {
-        Log.d("tqzzz", "tlqkf")
+        Log.d("WakMusic!", "STOPPPPP")
         deactivateMediaSession()
         stopSelf()
     }
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("tqtzzv", "onCreate")
+        Log.d("WakMusic!", "ON CREATE")
         instance = this
         notificationCreated = false
         mediaSession = MediaSessionCompat(this, "media-session")
@@ -245,14 +248,13 @@ class AudioService : MediaBrowserServiceCompat() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("tqpppl", "onStartCommand called")
         androidx.media.session.MediaButtonReceiver.handleIntent(mediaSession, intent)
         return START_NOT_STICKY
     }
 
     override fun onDestroy() {
+        Log.d("WakMusic!", "ON DESTROY")
         super.onDestroy()
-        Log.d("tqppzl", "onDestroy called")
 //        audioHandler?.onDestroy()
         audioHandler = null
         mediaMetadata = null
@@ -290,12 +292,12 @@ class AudioService : MediaBrowserServiceCompat() {
         return PendingIntent.getBroadcast(this, keyCode, intent, flags)
     }
 
-//    private fun buildDeletePendingIntent(): PendingIntent? {
-//        val intent = Intent(this, MediaButtonReceiver::class.java)
-//        intent.action = MediaButtonReceiver.ACTION_NOTIFICATION_DELETE
-//
-//        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-//    }
+    private fun buildDeletePendingIntent(): PendingIntent? {
+        val intent = Intent(this, MediaButtonReceiver::class.java)
+        intent.action = MediaButtonReceiver.ACTION_NOTIFICATION_DELETE
+
+        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+    }
 
     private fun buildNotification(): Notification {
         var builder = getNotificationBuilder()
@@ -343,9 +345,9 @@ class AudioService : MediaBrowserServiceCompat() {
             notificationBuilder = NotificationCompat.Builder(this, notificationChannelId!!)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setShowWhen(false)
-//                    .setDeleteIntent(buildDeletePendingIntent())
+                    .setDeleteIntent(buildDeletePendingIntent())
         }
-        val iconId: Int = getResourceId(config?.notificationIcon ?: "")
+        val iconId: Int = getResourceId("drawable/ic_launcher")
         notificationBuilder.setSmallIcon(iconId)
         return notificationBuilder
     }
@@ -361,6 +363,7 @@ class AudioService : MediaBrowserServiceCompat() {
             mediaSession?.isActive = false
         }
         getNotificationManager().cancel(NOTIFICATION_ID)
+        Log.d("WakMusic!", "de activeMediaSession() is called")
     }
 
     private fun updateNotification() {
@@ -416,6 +419,7 @@ class AudioService : MediaBrowserServiceCompat() {
 
     fun handleDeleteNotification() {
         audioHandler?.onNotiDeleted()
+        stop()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -423,6 +427,7 @@ class AudioService : MediaBrowserServiceCompat() {
         val nm = getNotificationManager()
         var channel = nm.getNotificationChannel(notificationChannelId)
         if (channel == null) {
+            Log.d("WakMusic!::createChannel", "${channel == null}")
             channel = NotificationChannel(notificationChannelId,
                     config?.notificationChannelName,
                     NotificationManager.IMPORTANCE_LOW)
@@ -434,6 +439,7 @@ class AudioService : MediaBrowserServiceCompat() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         audioHandler?.onTaskRemoved()
+        stop()
         super.onTaskRemoved(rootIntent)
     }
 

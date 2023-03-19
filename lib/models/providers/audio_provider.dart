@@ -27,7 +27,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       }
     });
     AudioService.position.listen((pos) {
-      //   dev.log('$pos');
+      dev.log('$pos');
     });
   }
 
@@ -128,12 +128,19 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
 
   @override
   Future<void> stop() async {
+    (await _player.webViewController).android.resume();
+    // (await _player.webViewController).android.pause();
     await _player.stopVideo();
     clear();
   }
 
   @override
   Future<void> load(Song song) async {
+    if (!_player.headlessInAppWebView.isRunning()) {
+      await _player.headlessInAppWebView.run();
+    }
+    (await _player.webViewController).android.resume();
+    (await _player.webViewController).android.pause();
     if (shuffle) _shuffledQueue.add(song);
     await _player.loadVideoById(
       id: song.id,
@@ -149,7 +156,8 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       return loadRandom();
     }
     final playable = _queue.where((s) => !_shuffledQueue.contains(s)).toList();
-    await load(playable[Random().nextInt(playable.length)]);
+    _index = Random().nextInt(playable.length);
+    await load(playable[_index]);
   }
 
   @override
@@ -226,7 +234,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
     final list = songs.where((s) => !_queue.contains(s)).toList();
     if (randomize) list.shuffle();
     _queue.addAll(list);
-    if (autoplay) load(_queue.first);
+    if (autoplay && !isEmpty) load(currentSong!);
     notifyListeners();
   }
 

@@ -40,7 +40,6 @@ class MediaSessionCallback(private val audioHandler: AudioHandler?): MediaSessio
         } else {
             mediaButtonEvent?.extras?.getParcelable(Intent.EXTRA_KEY_EVENT)
         }
-        Log.d("tqmedbev", "zzz ${event?.keyCode}")
 
         if (event?.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {

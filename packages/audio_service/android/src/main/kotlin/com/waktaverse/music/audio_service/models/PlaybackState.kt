@@ -22,6 +22,10 @@ enum class PlaybackState(val code: Int) {
     }
 
     fun isNotPlaying(): Boolean {
-        return listOf(unknown, unStarted, cued).contains(this)
+        return this == unStarted || isEmpty()
+    }
+
+    fun isEmpty(): Boolean {
+        return listOf(unknown, cued).contains(this)
     }
 }

@@ -88,8 +88,11 @@ class AudioService {
     }
 
     void yieldPosition(Timer? timer) async {
+      final currentTime = player.headlessInAppWebView.isRunning()
+          ? await player.currentTime
+          : 0;
       Duration time = Duration(
-        milliseconds: (await player.currentTime * 1000).truncate(),
+        milliseconds: (currentTime * 1000).truncate(),
       );
       if (last != time) {
         controller.add(last = time);
@@ -120,6 +123,7 @@ class AudioService {
   }
 
   static Future<void> stop() async {
+    print("WakMusicFlutter: AudioService.stop() called");
     await AudioServicePlatform.instance.stopService();
   }
 }
@@ -158,10 +162,18 @@ class _HandlerCallbacks extends AudioHandlerCallbacks {
   Future<void> onNotiClicked() async {}
 
   @override
-  Future<void> onNotiDeleted() async => (await handlerFuture).stop();
+  Future<void> onNotiDeleted() async {
+    print("WakMusicFlutter: onNotiDeleted() called");
+    (await handlerFuture).stop();
+    AudioService.stop();
+  }
 
   @override
-  Future<void> onTaskRemoved() async => (await handlerFuture).stop();
+  Future<void> onTaskRemoved() async {
+    print("WakMusicFlutter: onTaskRemoved() called");
+    (await handlerFuture).stop();
+    AudioService.stop();
+  }
 }
 
 

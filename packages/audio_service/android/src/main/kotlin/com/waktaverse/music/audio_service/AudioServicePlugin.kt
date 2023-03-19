@@ -80,7 +80,6 @@ class AudioServicePlugin : FlutterPlugin, ActivityAware {
     private val connectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
             try {
-                Log.d("tqtrzxcv", "connection")
                 val token: MediaSessionCompat.Token = mediaBrowser!!.sessionToken
                 mediaController = MediaControllerCompat(applicationContext, token)
                 val activity: Activity? = clientMethodCallHandler?.activity
@@ -104,7 +103,6 @@ class AudioServicePlugin : FlutterPlugin, ActivityAware {
     }
 
     private fun connect() {
-        Log.d("tqzzxcsdf", "connect()")
         if (mediaBrowser == null) {
             mediaBrowser = MediaBrowserCompat(applicationContext,
                     ComponentName(applicationContext!!, AudioService::class.java),
@@ -136,24 +134,23 @@ class AudioServicePlugin : FlutterPlugin, ActivityAware {
         audioMethodCallHandler = AudioMethodCallHandler(binding.applicationContext)
         audioMethodCallHandler!!.init(binding.binaryMessenger)
         AudioService.init(audioMethodCallHandler!!)
-        Log.d("tqzvbb", "onAttachedToEngine called")
 
         if (mediaBrowser == null) {
             connect()
         }
+        Log.i("WakMusic!!", "onAttachedToEngine")
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-        Log.d("tqzvbb", "onDetachedFromEngine called")
         if (clientMethodCallHandler != null) {
             disconnect()
         }
         clientMethodCallHandler?.dispose()
         audioMethodCallHandler?.dispose()
+        Log.i("WakMusic!!", "onDetachedFromEngine")
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        Log.d("tqzvbb", "onAttachedToActivity called")
         activityBinding = binding
         clientMethodCallHandler?.activity = binding.activity
         clientMethodCallHandler?.context = binding.activity
@@ -171,28 +168,28 @@ class AudioServicePlugin : FlutterPlugin, ActivityAware {
             activity?.intent = Intent(Intent.ACTION_MAIN)
         }
         sendNotificationClicked()
+        Log.i("WakMusic!!", "onAttachedToActivity")
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        Log.d("tqzvbb", "onDetachedFromActivityForConfigChanges called")
         newIntentListener?.let { activityBinding?.removeOnNewIntentListener(it) }
         activityBinding = null
         clientMethodCallHandler?.activity = null
         if (flutterBinding != null) {
             clientMethodCallHandler?.context = flutterBinding!!.applicationContext
         }
+        Log.i("WakMusic!!", "onDetachedFromActivityForConfigChanges")
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        Log.d("tqzvbb", "onReattachedToActivityForConfigChanges called")
         activityBinding = binding
         clientMethodCallHandler?.activity = binding.activity
         clientMethodCallHandler?.context = binding.activity
         registerOnNewIntentListener()
+        Log.i("WakMusic!!", "onReattachedToActivityForConfigChanges")
     }
 
     override fun onDetachedFromActivity() {
-        Log.d("tqzvbb", "onDetachedFromActivity called")
         newIntentListener?.let { activityBinding?.removeOnNewIntentListener(it) }
         activityBinding = null
         newIntentListener = null
@@ -203,6 +200,7 @@ class AudioServicePlugin : FlutterPlugin, ActivityAware {
         if (clientMethodCallHandler != null) {
             disconnect()
         }
+        Log.i("WakMusic!!", "onDetachedFromActivity")
     }
 
     private fun registerOnNewIntentListener() {

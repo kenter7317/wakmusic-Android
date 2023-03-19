@@ -72,7 +72,7 @@ class MethodChannelAudioService extends AudioServicePlatform {
         await callbacks.toNext();
         return null;
       case 'seek':
-        await callbacks.seek((call.arguments['position'] as int).toDouble());
+        await callbacks.seek((call.arguments['position'] as int) / 1000);
         return null;
       case 'onButtonClicked':
         await callbacks.onButtonClicked(
