@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
+import 'package:subtitle/subtitle.dart';
 
 enum ChartType {
   hourly('시간순'),
@@ -24,8 +26,10 @@ enum SearchType {
   final String str;
 }
 
+const baseUrl = 'https://wakmusic.xyz/api';
+const staticBaseUrl = 'https://static.wakmusic.xyz/static';
+
 class API {
-  final String baseUrl = 'https://wakmusic.xyz/api';
 
   Future<http.Response> getResponse(String url) async {
     try {
@@ -61,6 +65,12 @@ class API {
     } else {
       throw Exception('Search failed :(');
     }
+  }
+
+  Future<SubtitleController> getLyrics({required String id}) async {
+    var controller = SubtitleController(provider: SubtitleProvider.fromNetwork(Uri.parse('https://wakmusic.xyz/static/lyrics/$id.vtt')));
+    await controller.initial();
+    return controller;
   }
 
   Future<Playlist> fetchPlaylist({required String key}) async {

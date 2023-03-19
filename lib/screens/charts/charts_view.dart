@@ -22,11 +22,14 @@ class ChartsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     statusNavColor(context, ScreenType.etc);
-    return SafeArea(
-      child: TabView(
-        tabBarList: List.generate(5, (idx) => ChartType.values[idx].str),
-        tabViewList: List.generate(5, (idx) => _buildTab(context, ChartType.values[idx])),
-      )
+    return Scaffold(
+      body: SafeArea(
+        child: TabView(
+          type: TabType.maxTab,
+          tabBarList: List.generate(5, (idx) => ChartType.values[idx].str),
+          tabViewList: List.generate(5, (idx) => _buildTab(context, ChartType.values[idx])),
+        )
+      ),
     );
   }
 

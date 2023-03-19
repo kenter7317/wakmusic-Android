@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/screens/charts/charts_view.dart';
@@ -6,14 +7,20 @@ import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/main_bot_nav.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/style/theme.dart';
 import 'package:wakmusic/models/providers/providers.dart';
 import 'package:wakmusic/screens/splash.dart';
 import 'package:wakmusic/screens/home/home_view.dart';
 import 'package:wakmusic/screens/search/search_view.dart';
+import 'package:wakmusic/screens/keep/keep_view.dart';
+import 'package:wakmusic/screens/charts/charts_view.dart';
+import 'package:wakmusic/screens/charts/charts_view_model.dart';
+import 'package:wakmusic/widgets/audio_player_tester.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -24,11 +31,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Providers(
       child: MaterialApp(
-        title: '왁타버스뮤직',
+        title: '왁타버스 뮤직',
         builder: (context, child) {
           return MediaQuery(
-              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-              child: child!);
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            child: child!,
+          );
         },
         theme: WakTheme.wakTheme,
         home: const Splash(),
@@ -50,7 +58,7 @@ class _MainState extends State<Main> {
     ChartsView(),
     SearchView(),
     Temp(),
-    Keep(),
+    KeepView(),
   ];
 
   final navKeyList = List.generate(5, (index) => GlobalKey<NavigatorState>());
@@ -147,58 +155,5 @@ class Temp extends StatelessWidget {
                 child: Text('보관함 프로필 편집'))
           ]),
     ));
-  }
-}
-
-class Artist extends StatelessWidget {
-  const Artist({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(child: Text("Artist")),
-    );
-  }
-}
-
-class Keep extends StatelessWidget {
-  const Keep({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => NaviTemp()));
-                },
-                child: Text("무의식적인 모시깽이")),
-            Text("Chart"),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class NaviTemp extends StatelessWidget {
-  const NaviTemp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        color: Colors.black,
-        child: Center(
-          child: TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('의식적으로 모시깽이'),
-          ),
-        ));
   }
 }
