@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/rec_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/home/home_view_model.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/screens/search/search_view_model.dart';
 
 class Providers extends StatelessWidget {
@@ -15,8 +17,10 @@ class Providers extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => HomeViewModel()),
         ChangeNotifierProvider(create: (_) => SearchViewModel()),
+        ChangeNotifierProvider(create: (_) => PlaylistViewModel()),
         ChangeNotifierProvider(create: (_) => SelectSongProvider()),
         ChangeNotifierProvider(create: (_) => RecPlaylistProvider()),
+        ChangeNotifierProvider(create: (_) => AudioProvider()),
       ],
       child: child,
     );
