@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/screens/charts/charts_view_model.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/play_btns.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
@@ -19,14 +21,7 @@ class ChartsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
+    statusNavColor(context, ScreenType.etc);
     return Scaffold(
       body: SafeArea(
         child: TabView(
@@ -57,7 +52,7 @@ class ChartsView extends StatelessWidget {
                   return Row(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/ic_16_Check.svg',
+                        'assets/icons/ic_16_check.svg',
                         width: 16,
                         height: 16,
                       ),

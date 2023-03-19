@@ -74,7 +74,10 @@ class _BotSheetState extends State<BotSheet> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: EdgeInsets.only(bottom: max(MediaQuery.of(context).viewInsets.bottom, MediaQuery.of(context).viewPadding.bottom)),
+          padding: EdgeInsets.only(
+            bottom: max(MediaQuery.of(context).viewInsets.bottom,
+                MediaQuery.of(context).viewPadding.bottom),
+          ),
           child: Container(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
             decoration: const BoxDecoration(
@@ -201,7 +204,8 @@ class _BotSheetState extends State<BotSheet> {
       style: WakText.txt20M.copyWith(height: 1.0, color: WakColor.grey800),
       cursorColor: WakColor.grey900,
       maxLength: maxLength,
-      buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
+      buildCounter:
+          (_, {required currentLength, required isFocused, maxLength}) => null,
       onChanged: onChanged,
       decoration: InputDecoration(
         isDense: true,
@@ -244,12 +248,12 @@ class _BotSheetState extends State<BotSheet> {
                 _type = FormType.none;
               }/* else if (value == 'test') { /* error condition */
                 _type = FormType.error;
-              }*/ else {
-                _type = FormType.enable;
-              }
-            });
-          }
-        ),
+              }*/
+            else {
+              _type = FormType.enable;
+            }
+          });
+        }),
         const SizedBox(height: 4),
         Row(
           children: [
@@ -510,4 +514,3 @@ class _BotSheetState extends State<BotSheet> {
     );
   }
 }
-

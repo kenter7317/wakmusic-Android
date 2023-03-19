@@ -36,7 +36,9 @@ class PlaylistView extends StatelessWidget {
       },
       maxTransformValue: 0.1,
       dismissThresholds: const { DismissiblePageDismissDirection.startToEnd: 0.1 },
-      child: Scaffold(body: _buildBody(context)),
+      child: Scaffold(
+        body: _buildBody(context),
+      ),
     );
   }
 

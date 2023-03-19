@@ -3,9 +3,11 @@ import 'dart:ui';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/common/rec_playlist.dart';
 import 'package:wakmusic/screens/home/home_view_model.dart';
@@ -20,14 +22,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
+    statusNavColor(context, ScreenType.etc);
     return Stack(
       children: [
         Positioned(

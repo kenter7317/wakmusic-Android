@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/main.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 
 class Splash extends StatefulWidget {
@@ -19,15 +20,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
-
     _controller = AnimationController(vsync: this);
 
     Provider.of<AudioProvider>(context, listen: false).init();
@@ -41,6 +33,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    statusNavColor(context, ScreenType.etc);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
