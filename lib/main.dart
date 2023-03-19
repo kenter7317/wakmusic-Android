@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Providers(
       child: MaterialApp(
-        title: '왁타버스뮤직',
+        title: '왁타버스 뮤직',
         builder: (context, child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
@@ -44,18 +44,13 @@ class Main extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AudioPlayerTester(
-      enabled: true,
-      child: Scaffold(
-        body: SearchView(),
-        bottomNavigationBar: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewPadding.bottom,
-          ),
-          child: Container(
-            height: 56,
-            color: Colors.white,
-          ),
+    return Scaffold(
+      body: SearchView(),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
+        child: Container(
+          height: 56,
+          color: Colors.white,
         ),
       ),
     );
