@@ -1,11 +1,21 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:wakmusic/screens/home/home_view.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/style/theme.dart';
 import 'package:wakmusic/models/providers/providers.dart';
 import 'package:wakmusic/screens/splash.dart';
+import 'package:wakmusic/screens/home/home_view.dart';
+import 'package:wakmusic/screens/search/search_view.dart';
 import 'package:wakmusic/screens/keep/keep_view.dart';
+import 'package:wakmusic/screens/charts/charts_view.dart';
+import 'package:wakmusic/screens/charts/charts_view_model.dart';
+import 'package:wakmusic/widgets/audio_player_tester.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -16,11 +26,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Providers(
       child: MaterialApp(
-        title: '왁타버스뮤직',
+        title: '왁타버스 뮤직',
         builder: (context, child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-            child: child!
+            child: child!,
           );
         },
         theme: WakTheme.wakTheme,

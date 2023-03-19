@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:wakmusic/main.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -10,8 +12,7 @@ class Splash extends StatefulWidget {
   State<Splash> createState() => _SplashState();
 }
 
-class _SplashState extends State<Splash> with TickerProviderStateMixin{
-
+class _SplashState extends State<Splash> with TickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -28,14 +29,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin{
     );
 
     _controller = AnimationController(vsync: this);
-    
-    /*Future.delayed(
-      const Duration(seconds: 5), 
-      () => Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Main()),
-      ),
-    );*/
+
+    Provider.of<AudioProvider>(context, listen: false).init();
   }
 
   @override

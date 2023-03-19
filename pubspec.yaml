@@ -48,6 +48,9 @@ dependencies:
   dismissible_page: ^1.0.1
   pdfx: ^2.3.0
   internet_file: ^1.2.0
+  audio_service:
+    path: packages/audio_service
+  flutter_inappwebview: ^5.7.2+3
 
 dev_dependencies:
   flutter_test:
