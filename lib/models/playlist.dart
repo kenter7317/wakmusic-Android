@@ -1,3 +1,5 @@
+import 'package:wakmusic/utils/json.dart';
+
 class Playlist {
   final String? key;
   final String title;
@@ -13,7 +15,7 @@ class Playlist {
     required this.songlist,
   });
 
-  factory Playlist.fromJson(Map<String, dynamic> json) => Playlist(
+  factory Playlist.fromJson(JSON json) => Playlist(
     key: json['key'],
     title: json['title'],
     creator: json['creator'],

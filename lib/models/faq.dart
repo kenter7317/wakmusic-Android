@@ -1,3 +1,5 @@
+import 'package:wakmusic/utils/json.dart';
+
 class FAQ {
   final String category;
   final String question;
@@ -12,7 +14,7 @@ class FAQ {
     required this.createAt,
   });
 
-  factory FAQ.fromJson(Map<String, dynamic> json) => FAQ(
+  factory FAQ.fromJson(JSON json) => FAQ(
     category: json['category'],
     question: json['question'],
     description: json['description'],

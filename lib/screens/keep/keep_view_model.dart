@@ -5,15 +5,7 @@ import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/user.dart';
 import 'package:wakmusic/services/api.dart';
-
-enum Login {
-  naver('네이버'),
-  google('구글'),
-  apple('애플');
-
-  const Login(this.locale);
-  final String locale;
-}
+import 'package:wakmusic/services/login.dart';
 
 enum LoginStatus { before, after }
 
@@ -56,21 +48,23 @@ class KeepViewModel with ChangeNotifier {
   }
 
   Future<void> getVersion() async {
-    _version = PackageInfo.fromPlatform().then((packageInfo) => packageInfo.version);
+    _version = PackageInfo.fromPlatform().then(
+      (packageInfo) => packageInfo.version,
+    );
     notifyListeners();
   }
 
-  void getUser() {
-    /* call api */
-    _user = User(
-      id: '', 
-      platform: '', 
-      profile: 'panchi', 
-      displayName: '😀😀😀😀😀이모지를 사용한 긴 닉네임', 
-      firstLoginTime: DateTime(1999), 
-      first: true,
-    );
-    getLists();
+  void getUser({required Login platform}) async {
+    try {
+      final token = await _api.getToken(platform); // cancelled by user
+      _user = await _api.getUser(token: token); // other err
+      print('TOKEN ::: $token, USER ::: ${user.displayName}');
+      updateLoginStatus(LoginStatus.after);
+      getLists();
+    } catch (e) {
+      print('getUser exception: $e');
+      return;
+    }
   }
 
   Future<void> updateUserProfile(String? profile) async {
@@ -95,7 +89,26 @@ class KeepViewModel with ChangeNotifier {
   }
 
   Future<void> getLists() async {
-    String keyword = ["fgSXAKsq-Vo","DPEtmqvaKqY","l8e1Byk1Dx0","K8WC6uWyC9I","6hEvgKL0ClA","JY-gJkMuJ94","08meo6qrhFc","K-5WdjbCYnk","Empfi8q0aas","rFxJjpSeXHI","OTkFJyn4mvc","YmELthNomns","1UbyyaDc8x0","fU8picIMbSk","kra0f71EIgc","-ZFDUHgF48U","--Go33WYnqw","21qpkx17fUw"].join(',');
+    String keyword = [
+      "fgSXAKsq-Vo",
+      "DPEtmqvaKqY",
+      "l8e1Byk1Dx0",
+      "K8WC6uWyC9I",
+      "6hEvgKL0ClA",
+      "JY-gJkMuJ94",
+      "08meo6qrhFc",
+      "K-5WdjbCYnk",
+      "Empfi8q0aas",
+      "rFxJjpSeXHI",
+      "OTkFJyn4mvc",
+      "YmELthNomns",
+      "1UbyyaDc8x0",
+      "fU8picIMbSk",
+      "kra0f71EIgc",
+      "-ZFDUHgF48U",
+      "--Go33WYnqw",
+      "21qpkx17fUw"
+    ].join(',');
     if (keyword != _prevKeyword) {
       clear();
       _prevKeyword = keyword;
@@ -114,10 +127,10 @@ class KeepViewModel with ChangeNotifier {
     if (title == null) return;
     /* call api */
     _playlists.add(Playlist(
-      key: '', 
+      key: '',
       title: title,
       creator: '',
-      image: (Random().nextInt(11) + 1).toString(), 
+      image: (Random().nextInt(11) + 1).toString(),
       songlist: [],
     ));
     _tempPlaylists = [..._playlists];

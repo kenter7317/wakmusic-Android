@@ -9,6 +9,7 @@ import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/suggestions.dart';
 import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/login.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/btn_with_icon.dart';
@@ -92,8 +93,8 @@ class KeepView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: BtnWithIcon(
                 onTap: () {
-                  viewModel.getUser();
-                  viewModel.updateLoginStatus(LoginStatus.after);
+                  viewModel.getUser(platform: Login.values[idx]);
+                  // viewModel.updateLoginStatus(LoginStatus.after);
                 },
                 type: BtnSizeType.big,
                 iconName: Login.values[idx].name,
@@ -111,9 +112,9 @@ class KeepView extends StatelessWidget {
   }
 
   Future<bool> _canTap(
-    BuildContext context, 
-    KeepViewModel viewModel, 
-    SelectPlaylistProvider selectedPlaylist, 
+    BuildContext context,
+    KeepViewModel viewModel,
+    SelectPlaylistProvider selectedPlaylist,
     SelectSongProvider selectedLike,
   ) async {
     bool? result;
@@ -163,8 +164,8 @@ class KeepView extends StatelessWidget {
 
   GestureDetector tabDetector(
     BuildContext context, {
-    required void Function() onTap,  
-    HitTestBehavior? behavior, 
+    required void Function() onTap,
+    HitTestBehavior? behavior,
     required Widget child,
   }) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
@@ -266,12 +267,15 @@ class KeepView extends StatelessWidget {
                   style: WakText.txt16M.copyWith(color: WakColor.grey900),
                 ),
               ],
-            ),            
+            ),
           ),
           const SizedBox(width: 2),
           tabDetector(
             context,
-            onTap: () => viewModel.updateLoginStatus(LoginStatus.before),
+            onTap: () {
+              Login.naver.service.logout();
+              viewModel.updateLoginStatus(LoginStatus.before);
+            },
             child: SvgPicture.asset(
               'assets/icons/ic_32_logout.svg',
               width: 32,
@@ -320,27 +324,27 @@ class KeepView extends StatelessWidget {
                   BtnWithIcon(
                     onTap: () async {
                       viewModel.createList(await showModal(
-                        context: context, 
+                        context: context,
                         builder: (_) => const BotSheet(
                           type: BotSheetType.createList,
                         ),
                       ));
-                    }, 
-                    type: BtnSizeType.small, 
+                    },
+                    type: BtnSizeType.small,
                     iconName: 'playadd_900',
                     btnText: '플레이리스트 만들기',
                   ),
                   const SizedBox(height: 4),
                   BtnWithIcon(
-                    onTap: () async { 
+                    onTap: () async {
                       viewModel.loadList(await showModal(
                         context: context,
                         builder: (_) => const BotSheet(
                           type: BotSheetType.loadList,
                         ),
                       ));
-                    }, 
-                    type: BtnSizeType.small, 
+                    },
+                    type: BtnSizeType.small,
                     iconName: 'share',
                     btnText: '플레이리스트 가져오기',
                   ),

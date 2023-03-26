@@ -54,6 +54,8 @@ dependencies:
   audio_service:
     path: packages/audio_service
   flutter_inappwebview: ^5.7.2+3
+  flutter_naver_login: ^1.7.0
+  flutter_secure_storage: ^8.0.0
 
 dev_dependencies:
   flutter_test:
