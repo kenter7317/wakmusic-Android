@@ -1,5 +1,6 @@
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 enum Login {
   naver('네이버', NaverLoginService()),
@@ -9,6 +10,9 @@ enum Login {
   const Login(this.locale, this.service);
   final String locale;
   final LoginService service;
+
+  factory Login.byName(String name) =>
+      Login.values.singleWhere((e) => e.name == name);
 }
 
 const _storage = FlutterSecureStorage();
@@ -37,9 +41,8 @@ class NaverLoginService implements LoginService {
   }
 
   @override
-  Future<String> logout() async {
-    final NaverLoginResult res = await FlutterNaverLogin.logOut();
-    return res.account.id;
+  Future<void> logout() async {
+    await FlutterNaverLogin.logOut();
   }
 }
 
@@ -52,13 +55,22 @@ class GoogleLoginService implements LoginService {
   Login get platform => _platform;
 
   @override
-  Future<String> login() async {
-    return '';
+  Future<String?> login() async {
+    final sign = GoogleSignIn();
+    if (await sign.isSignedIn()) {
+      await sign.signInSilently();
+      return sign.currentUser?.id;
+    }
+
+    final res = await sign.signIn();
+    return res?.id;
   }
 
   @override
-  Future<String> logout() async {
-    return '';
+  Future<void> logout() async {
+    final sign = GoogleSignIn();
+
+    await sign.signOut();
   }
 }
 
@@ -85,5 +97,5 @@ abstract class LoginService {
   Login get platform;
 
   Future<String?> login();
-  Future<String?> logout();
+  Future<void> logout();
 }

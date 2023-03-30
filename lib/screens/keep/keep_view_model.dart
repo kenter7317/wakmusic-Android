@@ -59,12 +59,13 @@ class KeepViewModel with ChangeNotifier {
       final token = await _api.getToken(platform); // cancelled by user
       _user = await _api.getUser(token: token); // other err
       print('TOKEN ::: $token, USER ::: ${user.displayName}');
-      updateLoginStatus(LoginStatus.after);
-      getLists();
     } catch (e) {
       print('getUser exception: $e');
+      
       return;
     }
+    updateLoginStatus(LoginStatus.after);
+    getLists();
   }
 
   Future<void> updateUserProfile(String? profile) async {
