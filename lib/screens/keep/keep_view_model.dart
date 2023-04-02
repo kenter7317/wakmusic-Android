@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/models/song.dart';
@@ -54,18 +55,30 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> initUser() async {
+    const storage = FlutterSecureStorage();
+    try {
+      final token = await storage.read(key: 'token');
+      if (token != null) {
+        _user = await _api.getUser(token: token);
+        updateLoginStatus(LoginStatus.after);
+        getLists();
+      }
+    } catch (e) {
+      storage.delete(key: 'token');
+      return;
+    }
+  }
+
   void getUser({required Login platform}) async {
     try {
       final token = await _api.getToken(platform); // cancelled by user
       _user = await _api.getUser(token: token); // other err
-      print('TOKEN ::: $token, USER ::: ${user.displayName}');
+      updateLoginStatus(LoginStatus.after);
+      getLists();
     } catch (e) {
-      print('getUser exception: $e');
-      
       return;
     }
-    updateLoginStatus(LoginStatus.after);
-    getLists();
   }
 
   Future<void> updateUserProfile(String? profile) async {

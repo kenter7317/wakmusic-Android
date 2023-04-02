@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
@@ -118,6 +119,7 @@ class API {
 
     if (response.statusCode == 201) {
       final token = (jsonDecode(response.body) as JSON)['token'];
+      const FlutterSecureStorage().write(key: 'token', value: token);
       return token;
     } else {
       throw Exception('getToken failed :( ${response.statusCode}');

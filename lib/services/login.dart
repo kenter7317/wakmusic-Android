@@ -36,6 +36,10 @@ class NaverLoginService implements LoginService {
 
     if (res.status == NaverLoginStatus.cancelledByUser) {
       return null;
+    } else if (res.status == NaverLoginStatus.error) {
+      print(res);
+      await FlutterNaverLogin.logOutAndDeleteToken();
+      return null;
     }
     return res.account.id;
   }
@@ -43,6 +47,7 @@ class NaverLoginService implements LoginService {
   @override
   Future<void> logout() async {
     await FlutterNaverLogin.logOut();
+    _storage.delete(key: 'token');
   }
 }
 
@@ -71,6 +76,7 @@ class GoogleLoginService implements LoginService {
     final sign = GoogleSignIn();
 
     await sign.signOut();
+    _storage.delete(key: 'token');
   }
 }
 
@@ -88,8 +94,8 @@ class AppleLoginService implements LoginService {
   }
 
   @override
-  Future<String> logout() async {
-    return '';
+  Future<void> logout() async {
+    _storage.delete(key: 'token');
   }
 }
 
