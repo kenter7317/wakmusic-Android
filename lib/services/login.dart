@@ -27,21 +27,24 @@ class NaverLoginService implements LoginService {
 
   @override
   Future<String?> login() async {
-    if (await FlutterNaverLogin.isLoggedIn) {
-      final res = await FlutterNaverLogin.currentAccount();
-      return res.id;
-    }
+    try {
+      if (await FlutterNaverLogin.isLoggedIn) {
+        final res = await FlutterNaverLogin.currentAccount();
+        return res.id;
+      }
 
-    final NaverLoginResult res = await FlutterNaverLogin.logIn();
+      final NaverLoginResult res = await FlutterNaverLogin.logIn();
 
-    if (res.status == NaverLoginStatus.cancelledByUser) {
-      return null;
-    } else if (res.status == NaverLoginStatus.error) {
-      print(res);
+      if (res.status == NaverLoginStatus.cancelledByUser) {
+        return null;
+      } else if (res.status == NaverLoginStatus.error) {
+        throw Exception();
+      }
+      return res.account.id;
+    } catch (e) {
       await FlutterNaverLogin.logOutAndDeleteToken();
       return null;
     }
-    return res.account.id;
   }
 
   @override
