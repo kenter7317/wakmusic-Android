@@ -72,8 +72,8 @@ class KeepViewModel with ChangeNotifier {
 
   void getUser({required Login platform}) async {
     try {
-      final token = await _api.getToken(platform); // cancelled by user
-      _user = await _api.getUser(token: token); // other err
+      final token = await _api.getToken(platform);
+      _user = await _api.getUser(token: token);
       updateLoginStatus(LoginStatus.after);
       getLists();
     } catch (e) {

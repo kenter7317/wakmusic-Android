@@ -22,7 +22,7 @@ class User {
     id: json['id'],
     platform: Login.byName(json['platform']),
     profile: json['profile'],
-    displayName: json['displayName'],
+    displayName: json['displayName'] ?? "이파리",
     firstLoginTime: DateTime.fromMillisecondsSinceEpoch(json['first_login_time'] * 1000),
     first: json['first'],
   );

@@ -35,10 +35,8 @@ class NaverLoginService implements LoginService {
 
       final NaverLoginResult res = await FlutterNaverLogin.logIn();
 
-      if (res.status == NaverLoginStatus.cancelledByUser) {
+      if (res.status != NaverLoginStatus.loggedIn) {
         return null;
-      } else if (res.status == NaverLoginStatus.error) {
-        throw Exception();
       }
       return res.account.id;
     } catch (e) {
