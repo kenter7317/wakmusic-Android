@@ -22,15 +22,16 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
+    double width = MediaQuery.of(context).size.width;
     statusNavColor(context, ScreenType.etc);
     return Stack(
       children: [
         Positioned(
-          top: -34,
-          right: -73,
+          top: -34 * width / 375,
+          right: -73 * width / 375,
           child: Container(
-            width: 276,
-            height: 276,
+            width: 276 * width / 375,
+            height: 276 * width / 375,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0x0038E6FF), Color(0XFF00C8D2)],
