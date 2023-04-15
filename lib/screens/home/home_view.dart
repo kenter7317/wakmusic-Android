@@ -78,7 +78,7 @@ class HomeView extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+        filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
         child: Container(
           height: 354,
           padding: const EdgeInsets.fromLTRB(19, 15, 19, 19),
