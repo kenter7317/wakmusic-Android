@@ -85,7 +85,7 @@ class PlaylistView extends StatelessWidget {
                 _buildInfo(context),
                 Expanded(
                   child: (playlist.songlist.where((songId) => songId.isNotEmpty).isEmpty)
-                    ? const ErrorInfo(errorMsg: '플레이리스트에 곡이 없습니다.')
+                    ? const ErrorInfo(errorMsg: '리스트에 곡이 없습니다.')
                     : Column(
                         children: [
                           const PlayBtns(),

@@ -12,10 +12,10 @@ import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/toast_msg.dart';
 
 enum BotSheetType {
-  createList('플레이리스트 만들기', '플레이리스트 제목', '플레이리스트 생성'),
-  editList('플레이리스트 수정하기', '플레이리스트 제목', '플레이리스트 수정'),
-  loadList('플레이리스트 가져오기', '플레이리스트 코드', '가져오기'),
-  shareList('플레이리스트 공유하기', '플레이리스트 코드', '확인'),
+  createList('리스트 만들기', '리스트 명', '리스트 생성'),
+  editList('리스트 수정하기', '리스트 명', '리스트 수정'),
+  loadList('리스트 가져오기', '리스트 코드', '가져오기'),
+  shareList('리스트 공유하기', '리스트 코드', '확인'),
   selProfile('프로필을 선택해주세요', '', '완료'),
   editName('닉네임 수정', '닉네임', '완료');
 
@@ -116,7 +116,7 @@ class _BotSheetState extends State<BotSheet> {
                             ),
                             animation: StyledToastAnimation.slideFromBottomFade,
                             reverseAnimation: StyledToastAnimation.fade,
-                            const ToastMsg(msg: '잘못된 플레이리스트 코드입니다.'),
+                            const ToastMsg(msg: '잘못된 리스트 코드입니다.'),
                           );
                           setState(() { _type = FormType.enable; });
                         }
@@ -240,7 +240,7 @@ class _BotSheetState extends State<BotSheet> {
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: _type.color),
           ),
-          hintText: '플레이리스트 제목을 입력하세요.',
+          hintText: '리스트 명을 입력하세요.',
           maxLength: _maxLength,
           onChanged: (value) {
             setState(() {
@@ -307,7 +307,7 @@ class _BotSheetState extends State<BotSheet> {
             ),
             Expanded(
               child: Text(
-                '플레이리스트 코드로 플레이리스트를 가져올 수 있습니다.',
+                '리스트 코드로 리스트를 가져올 수 있습니다.',
                 style: WakText.txt12L.copyWith(color: WakColor.grey500),
               ),
             ),
@@ -373,7 +373,7 @@ class _BotSheetState extends State<BotSheet> {
               height: 16,
             ),
             Text(
-              '플레이리스트 코드로 플레이리스트를 공유할 수 있습니다.',
+              '리스트 코드로 리스트를 가져올 수 있습니다.',
               style: WakText.txt12L.copyWith(color: WakColor.grey500),
             ),
           ],
