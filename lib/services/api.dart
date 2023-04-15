@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:wakmusic/models/errors/error.dart';
+import 'package:wakmusic/models/errors/http_error.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:subtitle/subtitle.dart';
@@ -37,10 +39,14 @@ const staticBaseUrl = 'https://static.wakmusic.xyz/static';
 class API {
   Future<http.Response> getResponse(
     String url, {
-    JSONType<String>? header,
+    String? token,
+    JSON? body,
   }) async {
     try {
-      return await http.get(Uri.parse(url), headers: header);
+      return await http.get(
+        Uri.parse(url),
+        headers: {'Authorization': 'Bearer $token'},
+      );
     } catch (e) {
       return http.Response('', 404);
     }
@@ -52,13 +58,14 @@ class API {
   }) async {
     final response =
         await getResponse('$baseUrl/charts/${type.name}?limit=$length');
+
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List)
           .map((e) => Song.fromJson(e))
           .toList();
-    } else {
-      throw Exception('Top 100 Chart API failed :(');
     }
+
+    throw HttpError.byCode(response.statusCode);
   }
 
   Future<DateTime> fetchUpdatedTime() async {
@@ -66,9 +73,9 @@ class API {
     if (response.statusCode == 200) {
       return DateTime.fromMillisecondsSinceEpoch(
           int.parse(response.body) * 1000);
-    } else {
-      throw Exception('Updated Time load failed :(');
     }
+
+    throw HttpError.byCode(response.statusCode);
   }
 
   Future<List<Song>> search({
@@ -77,13 +84,14 @@ class API {
   }) async {
     final response = await getResponse(
         '$baseUrl/search?type=${type.name}&sort=popular&keyword=$keyword');
+
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List)
           .map((e) => Song.fromJson(e))
           .toList();
-    } else {
-      throw Exception('Search failed :(');
     }
+
+    throw HttpError.byCode(response.statusCode);
   }
 
   Future<SubtitleController> getLyrics({required String id}) async {
@@ -98,15 +106,15 @@ class API {
     final response = await getResponse('$baseUrl/playlist/detail/$key');
     if (response.statusCode == 200) {
       return Playlist.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Playlist load failed :(');
     }
+
+    throw HttpError.byCode(response.statusCode);
   }
 
   Future<String> getToken(Login provider) async {
     final id = await provider.service.login();
     if (id == null) {
-      throw Exception('Login Cancelled By User :\\');
+      throw WakError.loginCancelled;
     }
 
     final response = await http.post(
@@ -118,33 +126,51 @@ class API {
     );
 
     if (response.statusCode == 201) {
-      final token = (jsonDecode(response.body) as JSON)['token'];
-      const FlutterSecureStorage().write(key: 'token', value: token);
+      final token = jsonDecode(response.body)['token'];
       return token;
-    } else {
-      throw Exception('getToken failed :( ${response.statusCode}');
     }
+
+    throw HttpError.byCode(response.statusCode);
   }
 
   Future<User> getUser({required String token}) async {
-    final header = {
-      'Authorization': 'Bearer $token',
-    };
-    final response = await getResponse('$testBaseUrl/auth', header: header);
+    final response = await getResponse('$testBaseUrl/auth', token: token);
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('getUser failed :(');
     }
 
-    // return User(
-    //   id: '',
-    //   platform: '',
-    //   profile: 'panchi',
-    //   displayName: '😀😀😀😀😀이모지를 사용한 긴 닉네임',
-    //   firstLoginTime: DateTime(1999),
-    //   first: true,
-    // );
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<JSONType<int>> getUserProfiles() async {
+    final response = await getResponse('$testBaseUrl/user/profile/list');
+
+    if (response.statusCode == 200) {
+      JSONType<int> profiles = {
+        for (var e in jsonDecode(response.body) as List)
+          e['type']: e['version'],
+      };
+      return profiles;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> setUserProfile(
+    String profile, {
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$testBaseUrl/user/profile/set'),
+      headers: {'Authorization': 'Bearer $token'},
+      body: {'image': profile},
+    );
+
+    if (response.statusCode == 201) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
   }
 }

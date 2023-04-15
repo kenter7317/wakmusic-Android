@@ -8,6 +8,7 @@ class User {
   String displayName;
   final DateTime firstLoginTime;
   final bool first;
+  int profileVersion;
 
   User({
     required this.id,
@@ -16,14 +17,16 @@ class User {
     required this.displayName,
     required this.firstLoginTime,
     required this.first,
+    required this.profileVersion,
   });
 
   factory User.fromJson(JSON json) => User(
     id: json['id'],
     platform: Login.byName(json['platform']),
     profile: json['profile'],
-    displayName: json['displayName'] ?? "이파리",
-    firstLoginTime: DateTime.fromMillisecondsSinceEpoch(json['first_login_time'] * 1000),
+    displayName: "${json['displayName']}",
+    firstLoginTime: DateTime.fromMillisecondsSinceEpoch(json['first_login_time']),
     first: json['first'],
+    profileVersion: json['profile_version'],
   );
 }

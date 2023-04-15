@@ -24,7 +24,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     _controller = AnimationController(vsync: this);
 
     Provider.of<AudioProvider>(context, listen: false).init();
-    Provider.of<KeepViewModel>(context, listen: false).initUser();
+    Provider.of<KeepViewModel>(context, listen: false).getUser();
   }
 
   @override
@@ -48,7 +48,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
               width: MediaQuery.of(context).size.width * 5 / 12,
               onLoaded: (composition) => _controller
                 ..duration = composition.duration
-                ..forward().whenComplete(() => Navigator.pushReplacement(
+                ..forward().whenComplete(
+                  () => Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const Main()),
                   ),

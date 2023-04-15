@@ -1,12 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:wakmusic/models/errors/error.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/user.dart';
+import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/services/login.dart';
+import 'package:wakmusic/utils/json.dart';
 
 enum LoginStatus { before, after }
 
@@ -18,7 +20,9 @@ class KeepViewModel with ChangeNotifier {
   EditStatus _editStatus = EditStatus.none;
   String? _prevKeyword;
   late final API _api;
+  late final UserRepository _repo;
   late final Future<String> _version;
+  late final JSONType<int> profiles;
   late List<Song?> _likes;
   late List<Song?> _tempLikes;
   late List<Playlist?> _playlists;
@@ -35,7 +39,9 @@ class KeepViewModel with ChangeNotifier {
 
   KeepViewModel() {
     _api = API();
+    _repo = UserRepository();
     getVersion();
+    getProfileList();
   }
 
   void updateLoginStatus(LoginStatus status) {
@@ -55,36 +61,41 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> initUser() async {
-    const storage = FlutterSecureStorage();
-    try {
-      final token = await storage.read(key: 'token');
-      if (token != null) {
-        _user = await _api.getUser(token: token);
-        updateLoginStatus(LoginStatus.after);
-        getLists();
-      }
-    } catch (e) {
-      storage.delete(key: 'token');
-      return;
-    }
+  Future<void> getProfileList() async {
+    profiles = await _api.getUserProfiles();
   }
 
-  void getUser({required Login platform}) async {
+  Future<bool?> getUser({Login? platform}) async {
     try {
-      final token = await _api.getToken(platform);
-      _user = await _api.getUser(token: token);
-      updateLoginStatus(LoginStatus.after);
-      getLists();
+      final repo = UserRepository();
+      if (platform == null && !await repo.isLoggedIn) {
+        return null;
+      }
+      _user = await repo.getUser(platform: platform);
     } catch (e) {
-      return;
+      switch (e) {
+        case WakError.loginCancelled:
+          return true;
+        default:
+          print(e);
+          return false;
+      }
     }
+    updateLoginStatus(LoginStatus.after);
+    getLists();
+    return null;
+  }
+
+  void logout() async {
+    _user.platform.service.logout();
+    updateLoginStatus(LoginStatus.before);
   }
 
   Future<void> updateUserProfile(String? profile) async {
     if (profile == null) return;
-    _user.profile = profile;
-    /* call api */
+    if (await _repo.setUserProfile(profile)) {
+      _user.profile = profile;
+    }
     notifyListeners();
   }
 
