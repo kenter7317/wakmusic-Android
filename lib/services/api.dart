@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
@@ -26,7 +25,18 @@ enum SearchType {
   final String str;
 }
 
+enum GroupType {
+  all('전체'),
+  woowakgood('우왁굳'),
+  isedol('이세돌'),
+  gomem('고멤');
+
+  const GroupType(this.locale);
+  final String locale;
+}
+
 const baseUrl = 'https://wakmusic.xyz/api';
+const testBaseUrl = 'https://test.wakmusic.xyz/api';
 const staticBaseUrl = 'https://static.wakmusic.xyz/static';
 
 class API {
@@ -45,6 +55,15 @@ class API {
       return (jsonDecode(response.body) as List).map((e) => Song.fromJson(e)).toList();
     } else {
       throw Exception('Top 100 Chart API failed :(');
+    }
+  }
+
+  Future<List<Song>> fetchNew({required GroupType type}) async {
+    final response = await getResponse('$testBaseUrl/songs/new/${type.name}');
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List).map((e) => Song.fromJson(e)).toList();
+    } else {
+      throw Exception('New API failed :(');
     }
   }
 

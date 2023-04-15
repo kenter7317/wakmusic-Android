@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -13,6 +12,7 @@ import 'package:wakmusic/widgets/common/rec_playlist.dart';
 import 'package:wakmusic/screens/home/home_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
+import 'package:wakmusic/services/api.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
@@ -46,7 +46,7 @@ class HomeView extends StatelessWidget {
         ),
         RefreshIndicator(
           onRefresh: () async {
-            viewModel.updateTab(TabName.total);
+            viewModel.updateTab(GroupType.all);
             _controller.jumpTo(0);
             viewModel.getList();
           },
@@ -188,7 +188,7 @@ class HomeView extends StatelessWidget {
                         ),
                       ),
                       Row(
-                        children: TabName.values.map((tabName) => _buildNewTab(context, tabName)).toList(),
+                        children: GroupType.values.map((tabName) => _buildNewTab(context, tabName)).toList(),
                       ),
                     ],
                   ),
@@ -213,7 +213,7 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildNewTab(BuildContext context, TabName tabName) {
+  Widget _buildNewTab(BuildContext context, GroupType tabName) {
     HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
     return Padding(
       padding: const EdgeInsets.only(left: 12),
