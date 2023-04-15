@@ -117,14 +117,13 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildChartTitle(BuildContext context, List<Song>? toplist) {
+    NavProvider botNav = Provider.of<NavProvider>(context);
     return SizedBox(
       height: 24,
       child: Row(
         children: [
           GestureDetector(
-            onTap: () {
-              /* go to chart page */
-            },
+            onTap: () =>botNav.update(1),
             child: Row(
               children: [
                 Text(
