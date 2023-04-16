@@ -364,8 +364,8 @@ class SearchView extends StatelessWidget {
                     textAlign: TextAlign.right,
                   ),
                   SvgPicture.asset(
-                    'assets/icons/ic_16_arrow_right.svg',
-                    width: 16,
+                    'assets/icons/ic_16_arrow_right_search.svg',
+                    width: 12,
                     height: 16,
                   ),
                 ],
