@@ -78,23 +78,48 @@ class PlaylistView extends StatelessWidget {
       child: FutureBuilder<void>(
         future: viewModel.getSongs(playlist.songlist.join(',')),
         builder: (context, _) {
-          return SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                _buildInfo(context),
-                Expanded(
-                  child: (playlist.songlist.where((songId) => songId.isNotEmpty).isEmpty)
-                    ? const ErrorInfo(errorMsg: '리스트에 곡이 없습니다.')
-                    : Column(
-                        children: [
-                          const PlayBtns(),
-                          _buildSonglist(context),
+          bool isEmpty = playlist.songlist.where((songId) => songId.isNotEmpty).isEmpty;
+          return StreamBuilder<bool>(
+            stream: viewModel.isScrolled.stream,
+            builder: (context, snapshot) {
+              return SafeArea(
+                child: Column(
+                  children: [
+                    _buildHeader(context),
+                    Expanded(
+                      child: CustomScrollView(
+                        clipBehavior: (snapshot.data ?? false) ? Clip.hardEdge : Clip.none,
+                        physics: const BouncingScrollPhysics(),
+                        slivers: [
+                          SliverPersistentHeader(
+                            delegate: MyHeaderDelegate(
+                              widget: _buildInfo(context),
+                              extent: 156,
+                            ),
+                          ),
+                          if (isEmpty)
+                            const SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: ErrorInfo(errorMsg: '리스트에 곡이 없습니다.'),
+                            ),
+                          if (!isEmpty)
+                            SliverPersistentHeader(
+                              pinned: true,
+                              delegate: MyHeaderDelegate(
+                                widget: const PlayBtns(isPlaylistView: true),
+                                extent: 72,
+                                isOpacityChange: false,
+                              ),
+                            ),
+                          if (!isEmpty)
+                            _buildSonglist(context),
                         ],
                       ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
       ),
@@ -167,7 +192,7 @@ class PlaylistView extends StatelessWidget {
   Widget _buildInfo(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Row(
         children: [
           ExtendedImage.network(
@@ -251,23 +276,21 @@ class PlaylistView extends StatelessWidget {
 
   Widget _buildSonglist(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
-    return Expanded(
-      child: (viewModel.curStatus != EditStatus.editing) 
-        ? ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: viewModel.songs.length,
-            itemBuilder: (_, idx) => SongTile(
-              song: viewModel.songs[idx],
-              tileType: (playlist is! Reclist) ? TileType.canPlayTile : TileType.dateTile,
-              onLongPress: (playlist is! Reclist)
-                ? () => viewModel.updateStatus(EditStatus.editing)                  
-                : null,
+    return (viewModel.curStatus != EditStatus.editing) 
+        ? SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (_, idx) => SongTile(
+                song: viewModel.songs[idx],
+                tileType: (playlist is! Reclist) ? TileType.canPlayTile : TileType.dateTile,
+                onLongPress: (playlist is! Reclist)
+                    ? () => viewModel.updateStatus(EditStatus.editing)                  
+                    : null,
+              ),
+              childCount: viewModel.songs.length,
             ),
           )
-        : ReorderableListView.builder(
+        : SliverReorderableList(
             proxyDecorator: proxyDecorator,
-            buildDefaultDragHandles: false,
-            physics: const BouncingScrollPhysics(),
             itemCount: viewModel.tempsongs.length,
             itemBuilder: (_, idx) => SongTile(
               key: Key(idx.toString()),
@@ -279,7 +302,36 @@ class PlaylistView extends StatelessWidget {
               viewModel.moveSong(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
             },
             onReorderStart: (_) => HapticFeedback.lightImpact(),
-          ),
-    );
+          );
   }
+}
+
+class MyHeaderDelegate extends SliverPersistentHeaderDelegate {
+  MyHeaderDelegate({required this.widget, required this.extent, this.isOpacityChange = true});
+
+  Widget widget;
+  double extent;
+  bool isOpacityChange;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
+    double progress = shrinkOffset / maxExtent;
+    if (isOpacityChange) viewModel.updateScroll((progress >= 1.0));
+    return (isOpacityChange)
+        ? AnimatedOpacity(
+            duration: Duration.zero,
+            opacity: 1 - progress,
+            child: widget,
+          )
+        : widget;
+  }
+  @override
+  double get maxExtent => extent;
+
+  @override
+  double get minExtent => extent;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
 }
