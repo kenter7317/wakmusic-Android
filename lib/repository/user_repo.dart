@@ -1,3 +1,4 @@
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakmusic/models/user.dart';
@@ -9,11 +10,12 @@ class UserRepository {
   final API _api;
 
   UserRepository({
-    FlutterSecureStorage storage = const FlutterSecureStorage(),
+    FlutterSecureStorage storage = const FlutterSecureStorage(
+        // aOptions: AndroidOptions(encryptedSharedPreferences: true),
+        ),
   })  : _storage = storage,
         _api = API();
 
-  Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
   Future<String?> get _token => _storage.read(key: 'token');
   Future<bool> get isLoggedIn async => await _token != null;
 
@@ -43,6 +45,21 @@ class UserRepository {
 
     try {
       await _api.setUserProfile(profile, token: token);
+      return true;
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<bool> setUserName(String name) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.setUserName(name, token: token);
       return true;
     } catch (e) {
       print(e);

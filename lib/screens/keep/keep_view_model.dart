@@ -101,7 +101,9 @@ class KeepViewModel with ChangeNotifier {
 
   Future<void> updateUserName(String? name) async {
     if (name == null) return;
-    _user.displayName = name;
+    if (await _repo.setUserName(name)) {
+      _user.displayName = name;
+    }
     /* call api */
     notifyListeners();
   }

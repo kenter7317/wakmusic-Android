@@ -173,4 +173,21 @@ class API {
 
     throw HttpError.byCode(response.statusCode);
   }
+
+  Future<void> setUserName(
+    String name, {
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$testBaseUrl/user/username'),
+      headers: {'Authorization': 'Bearer $token'},
+      body: {'username': name},
+    );
+
+    if (response.statusCode == 201) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
 }

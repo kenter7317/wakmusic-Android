@@ -91,7 +91,7 @@ class KeepView extends StatelessWidget {
           height: 196,
           child: ListView.separated(
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: Login.values.length,
+            itemCount: Login.on.length,
             itemBuilder: (_, idx) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: BtnWithIcon(
@@ -235,21 +235,21 @@ class KeepView extends StatelessWidget {
             context,
             behavior: HitTestBehavior.translucent,
             onTap: () async {
-              viewModel.updateUserProfile(await showModal(
-                context: context,
-                builder: (_) => BotSheet(
-                  type: BotSheetType.selProfile,
-                  initialValue: viewModel.user.profile,
-                  profiles: viewModel.profiles,
-                ),
-              ));
-              // viewModel.updateUserName(await showModal(
+              // viewModel.updateUserProfile(await showModal(
               //   context: context,
               //   builder: (_) => BotSheet(
-              //     type: BotSheetType.editName,
-              //     initialValue: viewModel.user.displayName,
+              //     type: BotSheetType.selProfile,
+              //     initialValue: viewModel.user.profile,
+              //     profiles: viewModel.profiles,
               //   ),
               // ));
+              viewModel.updateUserName(await showModal(
+                context: context,
+                builder: (_) => BotSheet(
+                  type: BotSheetType.editName,
+                  initialValue: viewModel.user.displayName,
+                ),
+              ));
             },
             child: Row(
               children: [
