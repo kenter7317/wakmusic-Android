@@ -97,9 +97,15 @@ class KeepView extends StatelessWidget {
               child: BtnWithIcon(
                 onTap: () {
                   viewModel.getUser(platform: Login.values[idx]).then((value) {
-                    // if (value) {
-                    //   로그인 취소됨
-                    // }
+                    if (value == false) {
+                      showModal(
+                        context: context,
+                        builder: (_) => const PopUp(
+                          type: PopUpType.txtOneBtn,
+                          msg: '오류가 발생했습니다. 다시 시도해주세요',
+                        ),
+                      );
+                    }
                   });
                 },
                 type: BtnSizeType.big,

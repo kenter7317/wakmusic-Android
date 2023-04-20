@@ -104,7 +104,6 @@ class KeepViewModel with ChangeNotifier {
     if (await _repo.setUserName(name)) {
       _user.displayName = name;
     }
-    /* call api */
     notifyListeners();
   }
 
