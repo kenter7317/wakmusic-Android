@@ -335,7 +335,7 @@ class SearchView extends StatelessWidget {
             const SizedBox(width: 4),
             SkeletonText(wakTxtStyle: WakText.txt16M, width: 17),
             const Spacer(),
-            SkeletonText(wakTxtStyle: WakText.txt12MH, width: 56),
+            SkeletonText(wakTxtStyle: WakText.txt12MH, width: 52),
           ],
         ),
       );
