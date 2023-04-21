@@ -14,6 +14,7 @@ enum BtnSizeType {
 }
 
 class BtnWithIcon extends StatelessWidget {
+  /// assetName for icon is 'assets/icons/$iconName.svg'
   const BtnWithIcon({
     super.key,
     required this.onTap,
