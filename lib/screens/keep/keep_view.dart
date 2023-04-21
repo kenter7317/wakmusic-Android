@@ -96,7 +96,7 @@ class KeepView extends StatelessWidget {
                   viewModel.updateLoginStatus(LoginStatus.after);
                 },
                 type: BtnSizeType.big,
-                iconName: Login.values[idx].name,
+                iconName: 'ic_32_${Login.values[idx].name}',
                 btnText: '${Login.values[idx].locale}로 로그인하기',
               ),
             ),
@@ -327,7 +327,7 @@ class KeepView extends StatelessWidget {
                       ));
                     }, 
                     type: BtnSizeType.small, 
-                    iconName: 'playadd_900',
+                    iconName: 'ic_32_playadd_900',
                     btnText: '플레이리스트 만들기',
                   ),
                   const SizedBox(height: 4),
@@ -341,7 +341,7 @@ class KeepView extends StatelessWidget {
                       ));
                     }, 
                     type: BtnSizeType.small, 
-                    iconName: 'share',
+                    iconName: 'ic_32_share',
                     btnText: '플레이리스트 가져오기',
                   ),
                 ],
