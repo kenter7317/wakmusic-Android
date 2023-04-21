@@ -1,3 +1,4 @@
+import 'package:audio_service/models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +17,10 @@ import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
+
+import '../../models/providers/audio_provider.dart';
+import '../../models/providers/nav_provider.dart';
+import '../../screens/player/player_view.dart';
 
 enum TileType {
   baseTile(false, false, false, false,
@@ -75,6 +80,8 @@ class SongTile extends StatelessWidget {
     } else {
       SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
       KeepViewModel viewModel = Provider.of<KeepViewModel>(context); /* for test */
+      AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+      NavProvider navProvider = Provider.of<NavProvider>(context);
       bool isSelected = selectedList.list.contains(song);
       return GestureDetector(
         onTap: () {
@@ -109,7 +116,11 @@ class SongTile extends StatelessWidget {
               );
             }
           } else if (tileType != TileType.nowPlayTile){
-            /* play song */
+            if(song != null){
+              audioProvider.addQueueItem(song!, autoplay: true);
+              navProvider.subChange(1);
+              navProvider.subSwitchForce(true);
+            }
           }
         },
         onLongPress: () {
