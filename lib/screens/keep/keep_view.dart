@@ -259,6 +259,7 @@ class KeepView extends StatelessWidget {
                     }
                     return null;
                   },
+                  cacheMaxAge: const Duration(days: 30),
                 ),
                 const SizedBox(width: 8),
                 Text(

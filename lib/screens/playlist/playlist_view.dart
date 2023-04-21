@@ -171,7 +171,9 @@ class PlaylistView extends StatelessWidget {
       child: Row(
         children: [
           ExtendedImage.network(
-            '$staticBaseUrl/playlist/${(playlist is! Reclist) ? playlist.image : 'icon/square/${playlist.image}'}.png',
+            '$staticBaseUrl/playlist/${(playlist is! Reclist) ? '' : 'icon/square/'}'
+            '${playlist.image}.png'
+            '?v=${playlist.imageVersion}',
             fit: BoxFit.cover,
             shape: BoxShape.rectangle,
             width: 140,
@@ -192,6 +194,7 @@ class PlaylistView extends StatelessWidget {
               } 
               return null;
             },
+            cacheMaxAge: const Duration(days: 30),
           ),
           const SizedBox(width: 8),
           Expanded(

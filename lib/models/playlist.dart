@@ -4,6 +4,7 @@ class Playlist {
   final String? creator;
   final String image;
   final List<String> songlist;
+  final int imageVersion;
 
   const Playlist({
     this.key,
@@ -11,6 +12,7 @@ class Playlist {
     this.creator,
     required this.image,
     required this.songlist,
+    this.imageVersion = 1,
   });
 
   factory Playlist.fromJson(Map<String, dynamic> json) => Playlist(
@@ -19,6 +21,7 @@ class Playlist {
     creator: json['creator'],
     image: json['image'],
     songlist: (json['songlist'] as List).map((song) => song as String).toList(),
+    imageVersion: json['image_version'],
   );
 }
 
@@ -27,5 +30,6 @@ class Reclist extends Playlist{
     required super.title,
     required super.image,
     required super.songlist,
+    super.imageVersion,
   });
 }

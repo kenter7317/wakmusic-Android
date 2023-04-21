@@ -133,6 +133,7 @@ class _SubBotNavState extends State<SubBotNav> {
                     fit: BoxFit.cover,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(4),
+                    cacheMaxAge: const Duration(days: 30),
                   ),
                 ),
               ),

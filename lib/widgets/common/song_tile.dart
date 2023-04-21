@@ -148,6 +148,7 @@ class SongTile extends StatelessWidget {
                         }
                         return null;
                       },
+                      cacheMaxAge: const Duration(days: 30),
                     ),
                   ),
                 ),
