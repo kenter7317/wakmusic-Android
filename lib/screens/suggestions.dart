@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/screens/faq/faq_view.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
+import 'package:wakmusic/screens/notice/notice_view.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/btn_with_icon.dart';
@@ -109,7 +110,12 @@ class Suggestions extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 BtnWithIcon(
-                  onTap: () {}, 
+                  onTap: () { 
+                    Navigator.push(
+                      context,
+                      pageRouteBuilder(page: const NoticeView()),
+                    );
+                  },
                   type: BtnSizeType.big, 
                   iconName: 'ic_24_noti', 
                   btnText: '공지사항',

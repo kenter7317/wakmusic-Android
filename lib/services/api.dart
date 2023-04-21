@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:wakmusic/models/notice.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:subtitle/subtitle.dart';
@@ -98,6 +99,15 @@ class API {
       return Playlist.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Playlist load failed :(');
+    }
+  }
+
+  Future<List<Notice>> fetchNotice() async {
+    final response = await getResponse('$testBaseUrl/notice/all');
+    if (response.statusCode == 200) {
+      return List.from((jsonDecode(response.body) as List).map((e) => Notice.fromJson(e)).toList().reversed);
+    } else {
+      throw Exception('Notice load failed :(');
     }
   }
 }
