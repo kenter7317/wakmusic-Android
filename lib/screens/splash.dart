@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/main.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wakmusic/repository/user_repo.dart';
+import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 
@@ -23,6 +25,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     _controller = AnimationController(vsync: this);
 
     Provider.of<AudioProvider>(context, listen: false).init();
+    Provider.of<KeepViewModel>(context, listen: false).getUser();
   }
 
   @override
@@ -46,7 +49,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
               width: MediaQuery.of(context).size.width * 5 / 12,
               onLoaded: (composition) => _controller
                 ..duration = composition.duration
-                ..forward().whenComplete(() => Navigator.pushReplacement(
+                ..forward().whenComplete(
+                  () => Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const Main()),
                   ),
