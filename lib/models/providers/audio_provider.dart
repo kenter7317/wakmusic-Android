@@ -217,9 +217,16 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
   }
 
   @override
-  Future<void> addQueueItem(Song song) async {
+  Future<void> addQueueItem(
+    Song song, {
+    bool autoplay = false,
+  }) async {
     if (_queue.contains(song)) return;
     _queue.add(song);
+    if (autoplay) {
+      _index = _queue.indexOf(song);
+      load(song);
+    }
     notifyListeners();
   }
 
@@ -234,7 +241,10 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
     final list = songs.where((s) => !_queue.contains(s)).toList();
     if (randomize) list.shuffle();
     _queue.addAll(list);
-    if (autoplay && !isEmpty) load(currentSong!);
+    if (autoplay && !isEmpty && list.isNotEmpty) {
+      _index = _queue.indexOf(list.first);
+      load(list.first);
+    }
     notifyListeners();
   }
 

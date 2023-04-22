@@ -1,19 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:wakmusic/models/errors/error.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/user.dart';
+import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/services/api.dart';
-
-enum Login {
-  naver('네이버'),
-  google('구글'),
-  apple('애플');
-
-  const Login(this.locale);
-  final String locale;
-}
+import 'package:wakmusic/services/login.dart';
+import 'package:wakmusic/utils/json.dart';
 
 enum LoginStatus { before, after }
 
@@ -25,7 +20,9 @@ class KeepViewModel with ChangeNotifier {
   EditStatus _editStatus = EditStatus.none;
   String? _prevKeyword;
   late final API _api;
+  late final UserRepository _repo;
   late final Future<String> _version;
+  late final JSONType<int> profiles;
   late List<Song?> _likes;
   late List<Song?> _tempLikes;
   late List<Playlist?> _playlists;
@@ -42,7 +39,9 @@ class KeepViewModel with ChangeNotifier {
 
   KeepViewModel() {
     _api = API();
+    _repo = UserRepository();
     getVersion();
+    getProfileList();
   }
 
   void updateLoginStatus(LoginStatus status) {
@@ -56,34 +55,55 @@ class KeepViewModel with ChangeNotifier {
   }
 
   Future<void> getVersion() async {
-    _version = PackageInfo.fromPlatform().then((packageInfo) => packageInfo.version);
+    _version = PackageInfo.fromPlatform().then(
+      (packageInfo) => packageInfo.version,
+    );
     notifyListeners();
   }
 
-  void getUser() {
-    /* call api */
-    _user = User(
-      id: '', 
-      platform: '', 
-      profile: 'panchi', 
-      displayName: '😀😀😀😀😀이모지를 사용한 긴 닉네임', 
-      firstLoginTime: DateTime(1999), 
-      first: true,
-    );
+  Future<void> getProfileList() async {
+    profiles = await _api.getUserProfiles();
+  }
+
+  Future<bool?> getUser({Login? platform}) async {
+    try {
+      final repo = UserRepository();
+      if (platform == null && !await repo.isLoggedIn) {
+        return null;
+      }
+      _user = await repo.getUser(platform: platform);
+    } catch (e) {
+      switch (e) {
+        case WakError.loginCancelled:
+          return true;
+        default:
+          print(e);
+          return false;
+      }
+    }
+    updateLoginStatus(LoginStatus.after);
     getLists();
+    return null;
+  }
+
+  void logout() async {
+    _user.platform.service.logout();
+    updateLoginStatus(LoginStatus.before);
   }
 
   Future<void> updateUserProfile(String? profile) async {
     if (profile == null) return;
-    _user.profile = profile;
-    /* call api */
+    if (await _repo.setUserProfile(profile)) {
+      _user.profile = profile;
+    }
     notifyListeners();
   }
 
   Future<void> updateUserName(String? name) async {
     if (name == null) return;
-    _user.displayName = name;
-    /* call api */
+    if (await _repo.setUserName(name)) {
+      _user.displayName = name;
+    }
     notifyListeners();
   }
 
@@ -95,7 +115,26 @@ class KeepViewModel with ChangeNotifier {
   }
 
   Future<void> getLists() async {
-    String keyword = ["fgSXAKsq-Vo","DPEtmqvaKqY","l8e1Byk1Dx0","K8WC6uWyC9I","6hEvgKL0ClA","JY-gJkMuJ94","08meo6qrhFc","K-5WdjbCYnk","Empfi8q0aas","rFxJjpSeXHI","OTkFJyn4mvc","YmELthNomns","1UbyyaDc8x0","fU8picIMbSk","kra0f71EIgc","-ZFDUHgF48U","--Go33WYnqw","21qpkx17fUw"].join(',');
+    String keyword = [
+      "fgSXAKsq-Vo",
+      "DPEtmqvaKqY",
+      "l8e1Byk1Dx0",
+      "K8WC6uWyC9I",
+      "6hEvgKL0ClA",
+      "JY-gJkMuJ94",
+      "08meo6qrhFc",
+      "K-5WdjbCYnk",
+      "Empfi8q0aas",
+      "rFxJjpSeXHI",
+      "OTkFJyn4mvc",
+      "YmELthNomns",
+      "1UbyyaDc8x0",
+      "fU8picIMbSk",
+      "kra0f71EIgc",
+      "-ZFDUHgF48U",
+      "--Go33WYnqw",
+      "21qpkx17fUw"
+    ].join(',');
     if (keyword != _prevKeyword) {
       clear();
       _prevKeyword = keyword;
@@ -114,10 +153,10 @@ class KeepViewModel with ChangeNotifier {
     if (title == null) return;
     /* call api */
     _playlists.add(Playlist(
-      key: '', 
+      key: '',
       title: title,
       creator: '',
-      image: (Random().nextInt(11) + 1).toString(), 
+      image: (Random().nextInt(11) + 1).toString(),
       songlist: [],
     ));
     _tempPlaylists = [..._playlists];

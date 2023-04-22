@@ -66,11 +66,12 @@ class Player extends StatelessWidget {
                       }
                       return null;
                     },
+                    cacheMaxAge: const Duration(days: 30),
                   ).image,
                   colorFilter: ColorFilter.mode(
                     Colors.white.withOpacity(0.6),
                     BlendMode.dstATop
-                  )
+                  ),
                 ),
               ),
               child: ClipRRect(
@@ -173,6 +174,7 @@ class Player extends StatelessWidget {
                   }
                   return null;
                 },
+                cacheMaxAge: const Duration(days: 30),
               ).image,
             ),
           ),
