@@ -208,7 +208,9 @@ class SongTile extends StatelessWidget {
                   (tileType != TileType.nowPlayTile)
                     ? GestureDetector(
                         onTap: () {
-                          /* play song */
+                          audioProvider.addQueueItem(song!, autoplay: true);
+                          navProvider.subChange(1);
+                          navProvider.subSwitchForce(true);
                         },
                         child: Container(
                           decoration: BoxDecoration(
