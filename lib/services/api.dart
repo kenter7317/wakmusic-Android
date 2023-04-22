@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:wakmusic/models/faq.dart';
 import 'package:wakmusic/models/notice.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
@@ -99,6 +100,24 @@ class API {
       return Playlist.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Playlist load failed :(');
+    }
+  }
+
+  Future<List<String>> fetchFAQCategories() async {
+    final response = await getResponse('$testBaseUrl/qna/categories');
+    if (response.statusCode == 200) {
+      return(jsonDecode(response.body) as List).map((e) => e as String).toList();
+    } else {
+      throw Exception('FAQ Categories load failed :(');
+    }
+  }
+
+  Future<List<FAQ>> fetchFAQ() async {
+    final response = await getResponse('$testBaseUrl/qna');
+    if (response.statusCode == 200) {
+      return(jsonDecode(response.body) as List).map((e) => FAQ.fromJson(e)).toList();
+    } else {
+      throw Exception('FAQ load failed :(');
     }
   }
 
