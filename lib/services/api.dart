@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:wakmusic/models/artist.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
 
@@ -24,8 +25,18 @@ enum SearchType {
   final String str;
 }
 
+enum AlbumType {
+  latest("최신순", "new"),
+  popular("인기순", "popular"),
+  old("과거순", "old");
+
+  const AlbumType(this.kor, this.eng);
+  final String kor;
+  final String eng;
+}
+
 class API {
-  final String baseUrl = 'https://wakmusic.xyz/api';
+  final String baseUrl = 'https://test.wakmusic.xyz/api';
 
   Future<http.Response> getResponse(String url) async {
     try {
@@ -69,6 +80,32 @@ class API {
       return Playlist.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Playlist load failed :(');
+    }
+  }
+
+  Future<List<Artist>> fetchArtists() async {
+    final response = await getResponse('$baseUrl/artist/list');
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List)
+          .where((e) => e['id'] != null && e['title'] != null)
+          .map((e) => Artist.fromJson(e))
+          .toList();
+    } else {
+      throw Exception('Artists API load failed :(');
+    }
+  }
+
+  Future<List<Song>> fetchAlbums(String id, String sort, int start) async {
+    final response =
+        await getResponse('$baseUrl/artist/albums?id=$id&sort=$sort&start=$start');
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Song.fromJson(e))
+          .toList();
+    } else {
+      throw Exception('Artist Album API load failed :(');
     }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/screens/artists/artists_list_view.dart';
 import 'package:wakmusic/screens/charts/charts_view.dart';
 import 'package:wakmusic/screens/charts/charts_view_model.dart';
 import 'package:wakmusic/style/theme.dart';
@@ -41,7 +42,7 @@ class Main extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SearchView(),
+      body: ArtistsListView(),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
         child: Container(
