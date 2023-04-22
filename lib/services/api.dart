@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:wakmusic/models/artist.dart'
 import 'package:wakmusic/models/faq.dart';
 import 'package:wakmusic/models/notice.dart';
 import 'package:wakmusic/models/errors/error.dart';
@@ -32,6 +33,16 @@ enum SearchType {
 
   const SearchType(this.str);
   final String str;
+}
+
+enum AlbumType {
+  latest("최신순", "new"),
+  popular("인기순", "popular"),
+  old("과거순", "old");
+
+  const AlbumType(this.kor, this.eng);
+  final String kor;
+  final String eng;
 }
 
 enum GroupType {
@@ -203,6 +214,32 @@ class API {
     }
 
     throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<List<Artist>> fetchArtists() async {
+    final response = await getResponse('$testBaseUrl/artist/list');
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List)
+          .where((e) => e['id'] != null && e['title'] != null)
+          .map((e) => Artist.fromJson(e))
+          .toList();
+    } else {
+      throw Exception('Artists API load failed :(');
+    }
+  }
+
+  Future<List<Song>> fetchAlbums(String id, String sort, int start) async {
+    final response =
+        await getResponse('$testBaseUrl/artist/albums?id=$id&sort=$sort&start=$start');
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Song.fromJson(e))
+          .toList();
+    } else {
+      throw Exception('Artist Album API load failed :(');
+    }
   }
 
   Future<List<Playlist>> getUserPlaylists({required String token}) async {
