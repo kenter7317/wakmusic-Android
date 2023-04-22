@@ -115,6 +115,7 @@ class Player extends StatelessWidget {
   }
 
   Widget _buildTitle(BuildContext context) {
+    NavProvider botNav = Provider.of<NavProvider>(context);
     return Stack(
       children: [
         Align(
@@ -123,8 +124,10 @@ class Player extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 8, 0, 0),
             child: GestureDetector(
               onTap: () {
+                botNav.mainSwitchForce(true);
+                botNav.subSwitchForce(true);
+                botNav.subChange(1);
                 Navigator.pop(context);
-                _botNavChange(context, false);
               },
               child: SvgPicture.asset(
                 'assets/icons/ic_32_arrow_bottom.svg',
@@ -332,15 +335,6 @@ class Player extends StatelessWidget {
         );
       }
     );
-  }
-
-  void _botNavChange(BuildContext context, bool openState) {
-    final NavProvider botNav = Provider.of<NavProvider>(context);
-    botNav.mainSwitchForce(!openState);
-    if (openState) {
-      botNav.subChange(1);
-    }
-    botNav.subSwitchForce(openState);
   }
 
   String _format(Duration duration) {

@@ -6,6 +6,7 @@ import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/screens/player/player_playlist_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 
+import '../../models/providers/nav_provider.dart';
 import '../../models/song.dart';
 import '../../style/text_styles.dart';
 import '../../widgets/common/edit_btn.dart';
@@ -19,7 +20,6 @@ class PlayerPlayList extends StatelessWidget {
     return Scaffold(
       backgroundColor: WakColor.grey100,
       body: _buildBody(context),
-      bottomNavigationBar: _buildPlayerPlayListBottomNav(context),
     );
   }
 
@@ -36,6 +36,7 @@ class PlayerPlayList extends StatelessWidget {
   Widget _buildTitleRow(BuildContext context) {
     PlayerPlayListViewModel viewModel = Provider.of<PlayerPlayListViewModel>(context);
     AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+    NavProvider botNav = Provider.of<NavProvider>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
@@ -44,7 +45,10 @@ class PlayerPlayList extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: GestureDetector(
-              onTap: () => { Navigator.pop(context) },
+              onTap: () {
+                botNav.subChange(0);
+                Navigator.pop(context);
+              },
               child: SvgPicture.asset(
                 'assets/icons/ic_32_arrow_bottom.svg',
                 width: 32,
@@ -142,18 +146,6 @@ class PlayerPlayList extends StatelessWidget {
                 );
               },
           )
-    );
-  }
-
-  Widget _buildPlayerPlayListBottomNav(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(
-            color: WakColor.grey100,
-          ))
-      ),
-      height: 56,
     );
   }
 }

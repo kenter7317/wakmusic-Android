@@ -4,9 +4,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/screens/player/player_playlist_view.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/utils/number_format.dart';
+
+import '../../screens/player/player_view.dart';
 
 class SubBotNav extends StatefulWidget {
   const SubBotNav({super.key});
@@ -41,6 +44,7 @@ class _SubBotNavState extends State<SubBotNav> {
 
   /* 임시 노래재생상세 바 */
   Widget playDetailBar() {
+    final botNav = Provider.of<NavProvider>(context);
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -77,7 +81,14 @@ class _SubBotNavState extends State<SubBotNav> {
             "노래담기",
           ), // 수정 (onTap 액션 필요)
           playDetailBarBtn("ic_32_play_list", "재생목록",
-              edgePadding: false), // 수정 (onTap 액션 필요)
+              edgePadding: false,
+              onTap: (){
+                botNav.subChange(2);
+                Navigator.push(
+                    botNav.pageContext,
+                    MaterialPageRoute(builder: (context) => const PlayerPlayList())
+                );
+          }),
         ],
       ),
     );
@@ -115,133 +126,147 @@ class _SubBotNavState extends State<SubBotNav> {
 
   /* 임시 노래 재생 바 */
   Widget playerBar(PlayerBarType type) {
-    return Stack(
-      children: [
-        Container(
-          height: 56,
-          color: Colors.white,
-          padding: const EdgeInsets.fromLTRB(20, 0, 16, 0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 7, 0, 8),
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: ExtendedImage.network(
-                    'https://i.ytimg.com/vi/A5Zge2ggBSA/hqdefault.jpg',
-                    fit: BoxFit.cover,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(4),
+    final botNav = Provider.of<NavProvider>(context);
+    return GestureDetector(
+      onTap: () { if(type == PlayerBarType.main)
+        {
+          botNav.mainSwitchForce(false);
+          botNav.subSwitchForce(true);
+          botNav.subChange(0);
+          Navigator.push(
+            botNav.pageContext,
+            MaterialPageRoute(builder: (context) => const Player()),
+          );
+        }
+      },
+      child: Stack(
+        children: [
+          Container(
+            height: 56,
+            color: Colors.white,
+            padding: const EdgeInsets.fromLTRB(20, 0, 16, 0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 7, 0, 8),
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: ExtendedImage.network(
+                      'https://i.ytimg.com/vi/A5Zge2ggBSA/hqdefault.jpg',
+                      fit: BoxFit.cover,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
                 ),
-              ),
-              type == PlayerBarType.main
-                  ? Expanded(
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "리와인드 (RE:WIND)",
-                                  style: WakText.txt14MH
-                                      .copyWith(color: WakColor.grey900),
-                                ), // 수정
-                                Text(
-                                  "이세계아이돌",
-                                  style: WakText.txt12L
-                                      .copyWith(color: WakColor.grey900),
-                                ), // 수정
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          tempIsPlaying
-                              ? iconBtn("ic_32_stop", edgePadding: true,
-                                  onTap: () {
-                                  setState(() {
-                                    tempIsPlaying = !tempIsPlaying;
-                                  });
-                                })
-                              : iconBtn("ic_32_play_900", edgePadding: true,
-                                  onTap: () {
-                                  setState(() {
-                                    tempIsPlaying = !tempIsPlaying;
-                                  });
-                                }), // 수정
-                          iconBtn(
-                            "ic_32_close",
-                            edgePadding: false,
-                          ), // 수정
-                        ],
-                      ),
-                    )
-                  : Expanded(
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                type == PlayerBarType.main
+                    ? Expanded(
+                        child: Row(
                           children: [
-                            () {
-                              switch (tempRepeat) {
-                                case RepeatType.all:
-                                  return iconBtn("ic_32_repeat_on_all",
-                                      onTap: () {
-                                    setState(() {
-                                      tempRepeat = RepeatType.one;
-                                    });
-                                  });
-                                case RepeatType.one:
-                                  return iconBtn("ic_32_repeat_on_1",
-                                      onTap: () {
-                                    setState(() {
-                                      tempRepeat = RepeatType.none;
-                                    });
-                                  });
-                                default:
-                                  return iconBtn("ic_32_repeat_off", onTap: () {
-                                    setState(() {
-                                      tempRepeat = RepeatType.all;
-                                    });
-                                  }); // 수정 (실제 플레이어와 연결)
-                              }
-                            }(),
-                            iconBtn("ic_32_prev_on"), // 수정 (실제 플레이어와 연결)
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "리와인드 (RE:WIND)",
+                                    style: WakText.txt14MH
+                                        .copyWith(color: WakColor.grey900),
+                                  ), // 수정
+                                  Text(
+                                    "이세계아이돌",
+                                    style: WakText.txt12L
+                                        .copyWith(color: WakColor.grey900),
+                                  ), // 수정
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
                             tempIsPlaying
-                                ? iconBtn("ic_32_stop", onTap: () {
+                                ? iconBtn("ic_32_stop", edgePadding: true,
+                                    onTap: () {
                                     setState(() {
                                       tempIsPlaying = !tempIsPlaying;
                                     });
                                   })
-                                : iconBtn("ic_32_play_900", onTap: () {
+                                : iconBtn("ic_32_play_900", edgePadding: true,
+                                    onTap: () {
                                     setState(() {
                                       tempIsPlaying = !tempIsPlaying;
                                     });
-                                  }), // 수정 (실제 플레이어와 연결)
-                            iconBtn("ic_32_next_on"), // 수정 (실제 플레이어와 연결)
-                            tempRandom
-                                ? iconBtn("ic_32_random_on", edgePadding: true,
-                                    onTap: () {
-                                    setState(() {
-                                      tempRandom = !tempRandom;
+                                  }), // 수정
+                            iconBtn(
+                              "ic_32_close",
+                              edgePadding: false,
+                            ), // 수정
+                          ],
+                        ),
+                      )
+                    : Expanded(
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              () {
+                                switch (tempRepeat) {
+                                  case RepeatType.all:
+                                    return iconBtn("ic_32_repeat_on_all",
+                                        onTap: () {
+                                      setState(() {
+                                        tempRepeat = RepeatType.one;
+                                      });
                                     });
-                                  })
-                                : iconBtn("ic_32_random_off", edgePadding: true,
-                                    onTap: () {
-                                    setState(() {
-                                      tempRandom = !tempRandom;
+                                  case RepeatType.one:
+                                    return iconBtn("ic_32_repeat_on_1",
+                                        onTap: () {
+                                      setState(() {
+                                        tempRepeat = RepeatType.none;
+                                      });
                                     });
-                                  }), // 수정 (실제 플레이어와 연결)
-                          ]),
-                    ),
-            ],
+                                  default:
+                                    return iconBtn("ic_32_repeat_off", onTap: () {
+                                      setState(() {
+                                        tempRepeat = RepeatType.all;
+                                      });
+                                    }); // 수정 (실제 플레이어와 연결)
+                                }
+                              }(),
+                              iconBtn("ic_32_prev_on"), // 수정 (실제 플레이어와 연결)
+                              tempIsPlaying
+                                  ? iconBtn("ic_32_stop", onTap: () {
+                                      setState(() {
+                                        tempIsPlaying = !tempIsPlaying;
+                                      });
+                                    })
+                                  : iconBtn("ic_32_play_900", onTap: () {
+                                      setState(() {
+                                        tempIsPlaying = !tempIsPlaying;
+                                      });
+                                    }), // 수정 (실제 플레이어와 연결)
+                              iconBtn("ic_32_next_on"), // 수정 (실제 플레이어와 연결)
+                              tempRandom
+                                  ? iconBtn("ic_32_random_on", edgePadding: true,
+                                      onTap: () {
+                                      setState(() {
+                                        tempRandom = !tempRandom;
+                                      });
+                                    })
+                                  : iconBtn("ic_32_random_off", edgePadding: true,
+                                      onTap: () {
+                                      setState(() {
+                                        tempRandom = !tempRandom;
+                                      });
+                                    }), // 수정 (실제 플레이어와 연결)
+                            ]),
+                      ),
+              ],
+            ),
           ),
-        ),
-        Container(height: 1, color: WakColor.lightBlue), // 수정 (프로그레스 바)
-      ],
+          Container(height: 1, color: WakColor.lightBlue), // 수정 (프로그레스 바)
+        ],
+      ),
     );
   }
 
