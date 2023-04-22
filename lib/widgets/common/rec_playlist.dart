@@ -8,6 +8,7 @@ import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/models/providers/rec_playlist_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/widgets/page_route_builder.dart';
 
 class RecPlaylist extends StatelessWidget {
   const RecPlaylist({super.key});
@@ -25,7 +26,7 @@ class RecPlaylist extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 12.0),
               child: Text(
-                '왁뮤팀이 추천하는 플레이리스트',
+                '왁뮤팀이 추천하는 리스트',
                 style: WakText.txt16B.copyWith(color: WakColor.grey900),
               ),
             ),
@@ -67,23 +68,7 @@ class RecPlaylist extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              PageRouteBuilder(
-                pageBuilder: (_, __, ___) => PlaylistView(playlist: playlist),
-                transitionDuration: const Duration(milliseconds: 200),
-                reverseTransitionDuration: const Duration(milliseconds: 200),
-                opaque: false,
-                transitionsBuilder: (_, animation, __, child) {
-                  return SlideTransition(
-                    position: animation.drive(
-                      Tween(
-                        begin: const Offset(1.0, 0.0),
-                        end: Offset.zero,
-                      ).chain(CurveTween(curve: Curves.ease)),
-                    ),
-                    child: child,
-                  );
-                }
-              ),
+              pageRouteBuilder(page: PlaylistView(playlist: playlist)),
             );
           },
           child: Container(
@@ -103,7 +88,8 @@ class RecPlaylist extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 ExtendedImage.network(
-                  '$staticBaseUrl/playlist/icon/round/${playlist.image}.png',
+                  '$staticBaseUrl/playlist/icon/round/${playlist.image}.png'
+                  '?v=${playlist.imageVersion}',
                   fit: BoxFit.cover,
                   shape: BoxShape.circle,
                   width: 48,
@@ -123,6 +109,7 @@ class RecPlaylist extends StatelessWidget {
                     } 
                     return null;
                   },
+                  cacheMaxAge: const Duration(days: 30),
                 ),
               ],
             ),

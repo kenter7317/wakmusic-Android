@@ -14,6 +14,7 @@ enum BtnSizeType {
 }
 
 class BtnWithIcon extends StatelessWidget {
+  /// assetName for icon is 'assets/icons/$iconName.svg'
   const BtnWithIcon({
     super.key,
     required this.onTap,
@@ -43,7 +44,7 @@ class BtnWithIcon extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 31),
               child: SvgPicture.asset(
-                'assets/icons/ic_32_$iconName.svg',
+                'assets/icons/$iconName.svg',
                 width: type.iconSize,
                 height: type.iconSize,
               ),
