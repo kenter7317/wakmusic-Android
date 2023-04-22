@@ -88,7 +88,8 @@ class RecPlaylist extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 ExtendedImage.network(
-                  '$staticBaseUrl/playlist/icon/round/${playlist.image}.png',
+                  '$staticBaseUrl/playlist/icon/round/${playlist.image}.png'
+                  '?v=${playlist.imageVersion}',
                   fit: BoxFit.cover,
                   shape: BoxShape.circle,
                   width: 48,
@@ -108,6 +109,7 @@ class RecPlaylist extends StatelessWidget {
                     } 
                     return null;
                   },
+                  cacheMaxAge: const Duration(days: 30),
                 ),
               ],
             ),
