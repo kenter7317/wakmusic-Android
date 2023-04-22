@@ -4,6 +4,9 @@ import 'package:wakmusic/screens/charts/charts_view.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/main_bot_nav.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/screens/artists/artists_list_view.dart';
 import 'package:wakmusic/style/theme.dart';
 import 'package:wakmusic/models/providers/providers.dart';
 import 'package:wakmusic/screens/splash.dart';
@@ -49,7 +52,7 @@ class _MainState extends State<Main> {
     HomeView(),
     ChartsView(),
     SearchView(),
-    Temp(),
+    ArtistsListView(),
     KeepView(),
   ];
 
