@@ -32,8 +32,18 @@ enum SearchType {
   final String str;
 }
 
-const testBaseUrl = 'https://test.wakmusic.xyz/api';
+enum GroupType {
+  all('전체'),
+  woowakgood('우왁굳'),
+  isedol('이세돌'),
+  gomem('고멤');
+
+  const GroupType(this.locale);
+  final String locale;
+}
+
 const baseUrl = 'https://wakmusic.xyz/api';
+const testBaseUrl = 'https://test.wakmusic.xyz/api';
 const staticBaseUrl = 'https://static.wakmusic.xyz/static';
 
 class API {
@@ -66,6 +76,15 @@ class API {
     }
 
     throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<List<Song>> fetchNew({required GroupType type}) async {
+    final response = await getResponse('$testBaseUrl/songs/new/${type.name}');
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List).map((e) => Song.fromJson(e)).toList();
+    } else {
+      throw Exception('New API failed :(');
+    }
   }
 
   Future<DateTime> fetchUpdatedTime() async {
