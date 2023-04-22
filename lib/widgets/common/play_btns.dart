@@ -12,14 +12,16 @@ import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class PlayBtns extends StatelessWidget {
-  const PlayBtns({super.key});
+  const PlayBtns({super.key, this.isPlaylistView = false});
+  final bool isPlaylistView;
 
   @override
   Widget build(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
     AudioProvider audioProvider = Provider.of<AudioProvider>(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+    return Container(
+      padding: EdgeInsets.fromLTRB(20, isPlaylistView ? 8 : 16, 20, 12),
+      color: isPlaylistView ? WakColor.grey100 : Colors.transparent,
       child: Row(
         children: [
           _buildBtn(

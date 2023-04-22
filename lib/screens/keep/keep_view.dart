@@ -353,7 +353,7 @@ class KeepView extends StatelessWidget {
                     },
                     type: BtnSizeType.small,
                     iconName: 'playadd_900',
-                    btnText: '플레이리스트 만들기',
+                    btnText: '리스트 만들기',
                   ),
                   const SizedBox(height: 4),
                   BtnWithIcon(
@@ -367,7 +367,7 @@ class KeepView extends StatelessWidget {
                     },
                     type: BtnSizeType.small,
                     iconName: 'share',
-                    btnText: '플레이리스트 가져오기',
+                    btnText: '리스트 가져오기',
                   ),
                 ],
               ),
