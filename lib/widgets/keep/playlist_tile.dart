@@ -53,7 +53,7 @@ class PlaylistTile extends StatelessWidget {
               ),
               animation: StyledToastAnimation.slideFromBottomFade,
               reverseAnimation: StyledToastAnimation.fade,
-              const ToastMsg(msg: '00곡을 플레이리스트에 담았습니다.'),
+              const ToastMsg(msg: '00곡을 리스트에 담았습니다.'),
             );
             Navigator.pop(context);
           } else {
@@ -81,7 +81,8 @@ class PlaylistTile extends StatelessWidget {
             child: Row(
               children: [
                 ExtendedImage.network(
-                  '$staticBaseUrl/playlist/${playlist!.image}.png',
+                  '$staticBaseUrl/playlist/${playlist!.image}.png'
+                  '?v=${playlist!.imageVersion}',
                   fit: BoxFit.cover,
                   shape: BoxShape.rectangle,
                   width: 40,
@@ -102,6 +103,7 @@ class PlaylistTile extends StatelessWidget {
                     } 
                     return null;
                   },
+                  cacheMaxAge: const Duration(days: 30),
                 ),
                 const SizedBox(width: 8),
                 Expanded(

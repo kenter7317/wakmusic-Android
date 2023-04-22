@@ -28,7 +28,7 @@ class KeepSongPopUp extends StatelessWidget {
             children: [
               const Header(
                 type: HeaderType.down,
-                headerTxt: '플레이리스트에 담기',
+                headerTxt: '보관함에 담기',
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 0, 0),
@@ -58,8 +58,8 @@ class KeepSongPopUp extends StatelessWidget {
                     ));
                   },
                   type: BtnSizeType.small,
-                  iconName: 'playadd_900',
-                  btnText: '새 플레이리스트 만들기',
+                  iconName: 'ic_32_playadd_900',
+                  btnText: '새 리스트 만들기',
                 ),
               ),
               Expanded(

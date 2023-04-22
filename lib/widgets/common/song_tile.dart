@@ -1,7 +1,9 @@
+import 'package:audio_service/models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/screens/keep/keep_view.dart';
@@ -16,6 +18,10 @@ import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
+
+import '../../models/providers/audio_provider.dart';
+import '../../models/providers/nav_provider.dart';
+import '../../screens/player/player_view.dart';
 
 enum TileType {
   baseTile(false, false, false, false,
@@ -75,6 +81,8 @@ class SongTile extends StatelessWidget {
     } else {
       SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
       KeepViewModel viewModel = Provider.of<KeepViewModel>(context); /* for test */
+      AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+      NavProvider navProvider = Provider.of<NavProvider>(context);
       bool isSelected = selectedList.list.contains(song);
       return GestureDetector(
         onTap: () {
@@ -85,31 +93,29 @@ class SongTile extends StatelessWidget {
               selectedList.addSong(song!);
             }
             /* for test */
-            if (viewModel.loginStatus == LoginStatus.before) {
-              showModal(
-                context: context, 
-                builder: (context) => PopUp(
-                  type: PopUpType.txtOneBtn,
-                  msg: '로그인이 필요한 기능입니다.',
-                  posFunc: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const KeepView(),
-                    ),
+            /*if (viewModel.loginStatus == LoginStatus.before) {
+                showModal(
+                  context: context, 
+                  builder: (context) => PopUp(
+                    type: PopUpType.txtOneBtn,
+                    msg: '로그인이 필요한 기능입니다.',
+                    posFunc: () => navProvider.update(4),
                   ),
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                pageRouteBuilder(
-                  page: const KeepSongPopUp(),
-                  offset: const Offset(0.0, 1.0),
-                ),
-              );
+                );
+              } else {
+                Navigator.of(context, rootNavigator: true).push(
+                  pageRouteBuilder(
+                    page: const KeepSongPopUp(),
+                    offset: const Offset(0.0, 1.0),
+                  ),
+                );
+              }*/
+          } else if (tileType != TileType.nowPlayTile) {
+            if(song != null){
+              audioProvider.addQueueItem(song!, autoplay: true);
+              navProvider.subChange(1);
+              navProvider.subSwitchForce(true);
             }
-          } else if (tileType != TileType.nowPlayTile){
-            /* play song */
           }
         },
         onLongPress: () {
@@ -148,6 +154,7 @@ class SongTile extends StatelessWidget {
                         }
                         return null;
                       },
+                      cacheMaxAge: const Duration(days: 30),
                     ),
                   ),
                 ),
@@ -197,7 +204,9 @@ class SongTile extends StatelessWidget {
                   (tileType != TileType.nowPlayTile)
                     ? GestureDetector(
                         onTap: () {
-                          /* play song */
+                          audioProvider.addQueueItem(song!, autoplay: true);
+                          navProvider.subChange(1);
+                          navProvider.subSwitchForce(true);
                         },
                         child: Container(
                           decoration: BoxDecoration(

@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/errors/error.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/suggestions.dart';
 import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/login.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/btn_with_icon.dart';
@@ -48,8 +50,10 @@ class KeepView extends StatelessWidget {
   Widget _buildBefore(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
     double statusBarHeight = MediaQuery.of(context).padding.top;
-    double botPadding = WidgetsBinding.instance.window.viewPadding.bottom / WidgetsBinding.instance.window.devicePixelRatio;
-    double height = MediaQuery.of(context).size.height - statusBarHeight - botPadding;
+    double botPadding = WidgetsBinding.instance.window.viewPadding.bottom /
+        WidgetsBinding.instance.window.devicePixelRatio;
+    double height =
+        MediaQuery.of(context).size.height - statusBarHeight - botPadding;
     double blankFactor;
     if (height >= 672) {
       blankFactor = (732 - height) / 3;
@@ -87,16 +91,25 @@ class KeepView extends StatelessWidget {
           height: 196,
           child: ListView.separated(
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: Login.values.length,
+            itemCount: Login.on.length,
             itemBuilder: (_, idx) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: BtnWithIcon(
                 onTap: () {
-                  viewModel.getUser();
-                  viewModel.updateLoginStatus(LoginStatus.after);
+                  viewModel.getUser(platform: Login.values[idx]).then((value) {
+                    if (value == false) {
+                      showModal(
+                        context: context,
+                        builder: (_) => const PopUp(
+                          type: PopUpType.txtOneBtn,
+                          msg: '오류가 발생했습니다. 다시 시도해주세요',
+                        ),
+                      );
+                    }
+                  });
                 },
                 type: BtnSizeType.big,
-                iconName: Login.values[idx].name,
+                iconName: 'ic_32_${Login.values[idx].name}',
                 btnText: '${Login.values[idx].locale}로 로그인하기',
               ),
             ),
@@ -111,9 +124,9 @@ class KeepView extends StatelessWidget {
   }
 
   Future<bool> _canTap(
-    BuildContext context, 
-    KeepViewModel viewModel, 
-    SelectPlaylistProvider selectedPlaylist, 
+    BuildContext context,
+    KeepViewModel viewModel,
+    SelectPlaylistProvider selectedPlaylist,
     SelectSongProvider selectedLike,
   ) async {
     bool? result;
@@ -163,16 +176,18 @@ class KeepView extends StatelessWidget {
 
   GestureDetector tabDetector(
     BuildContext context, {
-    required void Function() onTap,  
-    HitTestBehavior? behavior, 
+    required void Function() onTap,
+    HitTestBehavior? behavior,
     required Widget child,
   }) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
-    SelectPlaylistProvider selectedPlaylist = Provider.of<SelectPlaylistProvider>(context);
+    SelectPlaylistProvider selectedPlaylist =
+        Provider.of<SelectPlaylistProvider>(context);
     SelectSongProvider selectedLike = Provider.of<SelectSongProvider>(context);
     return GestureDetector(
       onTap: () async {
-        if(await _canTap(context, viewModel, selectedPlaylist, selectedLike)) onTap();
+        if (await _canTap(context, viewModel, selectedPlaylist, selectedLike))
+          onTap();
       },
       behavior: behavior,
       child: child,
@@ -181,7 +196,8 @@ class KeepView extends StatelessWidget {
 
   Widget _buildAfter(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
-    SelectPlaylistProvider selectedPlaylist = Provider.of<SelectPlaylistProvider>(context);
+    SelectPlaylistProvider selectedPlaylist =
+        Provider.of<SelectPlaylistProvider>(context);
     SelectSongProvider selectedLike = Provider.of<SelectSongProvider>(context);
     return Column(
       children: [
@@ -197,10 +213,14 @@ class KeepView extends StatelessWidget {
                 child: KeepTabView(
                   type: TabType.minTab,
                   tabBarList: const ['내 리스트', '좋아요'],
-                  tabViewList: [_buildPlaylistTab(context), _buildLikeTab(context)],
+                  tabViewList: [
+                    _buildPlaylistTab(context),
+                    _buildLikeTab(context)
+                  ],
                   onPause: (viewModel.editStatus != EditStatus.none)
-                    ? () => _canTap(context, viewModel, selectedPlaylist, selectedLike)
-                    : null,
+                      ? () => _canTap(
+                          context, viewModel, selectedPlaylist, selectedLike)
+                      : null,
                 ),
               ),
             ],
@@ -221,13 +241,14 @@ class KeepView extends StatelessWidget {
             context,
             behavior: HitTestBehavior.translucent,
             onTap: () async {
-              /*viewModel.updateUserProfile(await showModal(
-                context: context,
-                builder: (_) => BotSheet(
-                  type: BotSheetType.selProfile,
-                  initialValue: viewModel.user.profile,
-                ),
-              ));*/
+              // viewModel.updateUserProfile(await showModal(
+              //   context: context,
+              //   builder: (_) => BotSheet(
+              //     type: BotSheetType.selProfile,
+              //     initialValue: viewModel.user.profile,
+              //     profiles: viewModel.profiles,
+              //   ),
+              // ));
               viewModel.updateUserName(await showModal(
                 context: context,
                 builder: (_) => BotSheet(
@@ -239,7 +260,8 @@ class KeepView extends StatelessWidget {
             child: Row(
               children: [
                 ExtendedImage.network(
-                  '$staticBaseUrl/profile/${viewModel.user.profile}.png',
+                  '$staticBaseUrl/profile/${viewModel.user.profile}.png'
+                  '?v=${viewModel.user.profileVersion}',
                   fit: BoxFit.cover,
                   shape: BoxShape.circle,
                   width: 40,
@@ -259,6 +281,7 @@ class KeepView extends StatelessWidget {
                     }
                     return null;
                   },
+                  cacheMaxAge: const Duration(days: 30),
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -266,12 +289,14 @@ class KeepView extends StatelessWidget {
                   style: WakText.txt16M.copyWith(color: WakColor.grey900),
                 ),
               ],
-            ),            
+            ),
           ),
           const SizedBox(width: 2),
           tabDetector(
             context,
-            onTap: () => viewModel.updateLoginStatus(LoginStatus.before),
+            onTap: () {
+              viewModel.logout();
+            },
             child: SvgPicture.asset(
               'assets/icons/ic_32_logout.svg',
               width: 32,
@@ -301,7 +326,8 @@ class KeepView extends StatelessWidget {
   String _nameProcessing(String rawName) {
     Runes runes = rawName.runes;
     if (runes.length <= 8) return rawName;
-    List<String> charList = runes.map((code) => String.fromCharCode(code)).toList();
+    List<String> charList =
+        runes.map((code) => String.fromCharCode(code)).toList();
     String subString = charList.sublist(0, 8).join();
     return '$subString...';
   }
@@ -320,19 +346,19 @@ class KeepView extends StatelessWidget {
                   BtnWithIcon(
                     onTap: () async {
                       viewModel.createList(await showModal(
-                        context: context, 
+                        context: context,
                         builder: (_) => const BotSheet(
                           type: BotSheetType.createList,
                         ),
                       ));
                     }, 
                     type: BtnSizeType.small, 
-                    iconName: 'playadd_900',
-                    btnText: '플레이리스트 만들기',
+                    iconName: 'ic_32_playadd_900',
+                    btnText: '리스트 만들기',
                   ),
                   const SizedBox(height: 4),
                   BtnWithIcon(
-                    onTap: () async { 
+                    onTap: () async {
                       viewModel.loadList(await showModal(
                         context: context,
                         builder: (_) => const BotSheet(
@@ -341,8 +367,8 @@ class KeepView extends StatelessWidget {
                       ));
                     }, 
                     type: BtnSizeType.small, 
-                    iconName: 'share',
-                    btnText: '플레이리스트 가져오기',
+                    iconName: 'ic_32_share',
+                    btnText: '리스트 가져오기',
                   ),
                 ],
               ),
@@ -350,33 +376,35 @@ class KeepView extends StatelessWidget {
           ),
         Expanded(
           child: (viewModel.playlists.isEmpty)
-            ? const ErrorInfo(errorMsg: '내 리스트가 없습니다.')
-            : (viewModel.editStatus == EditStatus.playlists)
-              ? ReorderableListView.builder(
-                  key: const PageStorageKey(0),
-                  proxyDecorator: proxyDecorator,
-                  buildDefaultDragHandles: false,
-                  itemCount: viewModel.tempPlaylists.length,
-                  itemBuilder: (_, idx) => PlaylistTile(
-                    key: Key(idx.toString()),
-                    playlist: viewModel.tempPlaylists[idx],
-                    idx: idx,
-                    tileType: TileType.editTile,
-                  ),
-                  onReorder: (oldIdx, newIdx) {
-                    viewModel.movePlaylist(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
-                  },
-                  onReorderStart: (_) => HapticFeedback.lightImpact(),
-                )
-              : ListView.builder(
-                  key: const PageStorageKey(0),
-                  itemCount: viewModel.playlists.length,
-                  itemBuilder: (_, idx) => PlaylistTile(
-                    playlist: viewModel.playlists[idx],
-                    tileType: TileType.canPlayTile,
-                    onLongPress: () => viewModel.updateEditStatus(EditStatus.playlists),
-                  ),
-                ),
+              ? const ErrorInfo(errorMsg: '내 리스트가 없습니다.')
+              : (viewModel.editStatus == EditStatus.playlists)
+                  ? ReorderableListView.builder(
+                      key: const PageStorageKey(0),
+                      proxyDecorator: proxyDecorator,
+                      buildDefaultDragHandles: false,
+                      itemCount: viewModel.tempPlaylists.length,
+                      itemBuilder: (_, idx) => PlaylistTile(
+                        key: Key(idx.toString()),
+                        playlist: viewModel.tempPlaylists[idx],
+                        idx: idx,
+                        tileType: TileType.editTile,
+                      ),
+                      onReorder: (oldIdx, newIdx) {
+                        viewModel.movePlaylist(
+                            oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
+                      },
+                      onReorderStart: (_) => HapticFeedback.lightImpact(),
+                    )
+                  : ListView.builder(
+                      key: const PageStorageKey(0),
+                      itemCount: viewModel.playlists.length,
+                      itemBuilder: (_, idx) => PlaylistTile(
+                        playlist: viewModel.playlists[idx],
+                        tileType: TileType.canPlayTile,
+                        onLongPress: () =>
+                            viewModel.updateEditStatus(EditStatus.playlists),
+                      ),
+                    ),
         ),
       ],
     );
@@ -385,32 +413,34 @@ class KeepView extends StatelessWidget {
   Widget _buildLikeTab(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
     return (viewModel.likes.isEmpty)
-      ? const ErrorInfo(errorMsg: '좋아요 한 곡이 없습니다.')
-      : (viewModel.editStatus == EditStatus.likes)
-        ? ReorderableListView.builder(
-            key: const PageStorageKey(1),
-            proxyDecorator: proxyDecorator,
-            buildDefaultDragHandles: false,
-            itemCount: viewModel.tempLikes.length,
-            itemBuilder: (_, idx) => SongTile(
-              key: Key(idx.toString()),
-              song: viewModel.tempLikes[idx],
-              idx: idx,
-              tileType: TileType.editTile,
-            ),
-            onReorder: (oldIdx, newIdx) {
-              viewModel.moveSong(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
-            },
-            onReorderStart: (_) => HapticFeedback.lightImpact(),
-          )
-        : ListView.builder(
-            key: const PageStorageKey(1),
-            itemCount: viewModel.likes.length,
-            itemBuilder: (_, idx) => SongTile(
-              song: viewModel.likes[idx], 
-              tileType: TileType.canPlayTile,
-              onLongPress: () => viewModel.updateEditStatus(EditStatus.likes),
-            ),
-          );
+        ? const ErrorInfo(errorMsg: '좋아요 한 곡이 없습니다.')
+        : (viewModel.editStatus == EditStatus.likes)
+            ? ReorderableListView.builder(
+                key: const PageStorageKey(1),
+                proxyDecorator: proxyDecorator,
+                buildDefaultDragHandles: false,
+                itemCount: viewModel.tempLikes.length,
+                itemBuilder: (_, idx) => SongTile(
+                  key: Key(idx.toString()),
+                  song: viewModel.tempLikes[idx],
+                  idx: idx,
+                  tileType: TileType.editTile,
+                ),
+                onReorder: (oldIdx, newIdx) {
+                  viewModel.moveSong(
+                      oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
+                },
+                onReorderStart: (_) => HapticFeedback.lightImpact(),
+              )
+            : ListView.builder(
+                key: const PageStorageKey(1),
+                itemCount: viewModel.likes.length,
+                itemBuilder: (_, idx) => SongTile(
+                  song: viewModel.likes[idx],
+                  tileType: TileType.canPlayTile,
+                  onLongPress: () =>
+                      viewModel.updateEditStatus(EditStatus.likes),
+                ),
+              );
   }
 }

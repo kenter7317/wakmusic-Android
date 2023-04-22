@@ -20,9 +20,23 @@ class NavProvider extends IdxProvider {
   int _subIdx = 0;
   int get subIdx => _subIdx;
 
+  late BuildContext _pageContext;
+  BuildContext get pageContext => _pageContext;
+
+  void setPageContext(BuildContext context){
+    _pageContext = context;
+  }
+
   void mainSwitch() {
     _mainState = !_mainState;
     notifyListeners();
+  }
+
+  void mainSwitchForce(bool state){
+    if(_mainState != state){
+      _mainState = state;
+      notifyListeners();
+    }
   }
 
   void subSwitch() {
@@ -30,8 +44,17 @@ class NavProvider extends IdxProvider {
     notifyListeners();
   }
 
+  void subSwitchForce(bool state){
+    if(_subState != state){
+      _subState = state;
+      notifyListeners();
+    }
+  }
+
   void subChange(int idx) {
-    _subIdx = idx;
-    notifyListeners();
+    if(_subIdx != idx){
+      _subIdx = idx;
+      notifyListeners();
+    }
   }
 }

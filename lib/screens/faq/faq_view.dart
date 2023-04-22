@@ -7,6 +7,7 @@ import 'package:wakmusic/screens/faq/faq_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
+import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/tab_view.dart';
 
 class FAQView extends StatelessWidget {
@@ -40,15 +41,31 @@ class FAQView extends StatelessWidget {
               headerTxt: '자주 묻는 질문',
             ),
             Expanded(
-              child: TabView(
-                type: TabType.minTab,
-                tabBarList: viewModel.categories,
-                tabViewList: List.generate(
-                  viewModel.categories.length,
-                  (idx) => _buildTab(context, viewModel.categories[idx]),
-                ),
-                physics: const ClampingScrollPhysics(),
-                listener: () => viewModel.collapseAll(),
+              child: FutureBuilder<void>(
+                future: viewModel.getFAQ(),
+                builder: (_, __) {
+                  if (viewModel.categories[0] == '') {
+                    return TabSkeletonView(
+                      type: TabType.minTab, 
+                      tabLength: viewModel.categories.length,
+                      tabViewList: List.generate(
+                        viewModel.categories.length,
+                        (idx) => _buildTab(context, viewModel.categories[idx]),
+                      ),
+                      physics: const ClampingScrollPhysics(),
+                    );
+                  }
+                  return TabView(
+                    type: TabType.minTab,
+                    tabBarList: viewModel.categories,
+                    tabViewList: List.generate(
+                      viewModel.categories.length,
+                      (idx) => _buildTab(context, viewModel.categories[idx]),
+                    ),
+                    physics: const ClampingScrollPhysics(),
+                    listener: () => viewModel.collapseAll(),
+                  );
+                },
               ),
             ),
           ],
@@ -59,75 +76,112 @@ class FAQView extends StatelessWidget {
 
   Widget _buildTab(BuildContext context, String category) {
     FAQViewModel viewModel = Provider.of<FAQViewModel>(context);
-    List<FAQ> faqList = viewModel.faqLists[category]!;
+    List<FAQ?> faqList = viewModel.faqLists[category]!;
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: faqList.length,
-      itemBuilder: (_, idx) => GestureDetector(
-        onTap: () => viewModel.onTap(faqList[idx]),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 11),
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: WakColor.grey200),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          faqList[idx].category,
-                          style: WakText.txt12L.copyWith(color: WakColor.grey500),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          faqList[idx].question,
-                          style: WakText.txt16M.copyWith(color: WakColor.grey900),
-                          maxLines: 10,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  AnimatedRotation(
-                    turns: (faqList[idx].isExpanded) ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeIn,
-                    child: SvgPicture.asset(
-                      'assets/icons/ic_24_arrow_bottom.svg',
-                      width: 24,
-                      height: 24,
-                    ),
-                  ),
-                ],
+      itemBuilder: (_, idx) {
+        if (faqList[idx] == null) {
+          return Container(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 11),
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: WakColor.grey200),
               ),
             ),
-            ClipRect(
-              child: AnimatedAlign(
-                alignment: Alignment.bottomCenter,
-                heightFactor: (faqList[idx].isExpanded) ? 1 : 0,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeIn,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                  color: WakColor.grey200,
-                  child: Text(
-                    faqList[idx].description,
-                    style: WakText.txt14MH.copyWith(color: WakColor.grey900),
-                    maxLines: 20,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SkeletonText(wakTxtStyle: WakText.txt12L, width: 47),
+                      const SizedBox(height: 2),
+                      SkeletonText(wakTxtStyle: WakText.txt16M),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                SkeletonBox(
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: const BoxDecoration(
+                      color: WakColor.grey200,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        return GestureDetector(
+          onTap: () => viewModel.onTap(faqList[idx]!),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 11),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: WakColor.grey200),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            faqList[idx]!.category,
+                            style: WakText.txt12L.copyWith(color: WakColor.grey500),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            faqList[idx]!.question,
+                            style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                            maxLines: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    AnimatedRotation(
+                      turns: (faqList[idx]!.isExpanded) ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeIn,
+                      child: SvgPicture.asset(
+                        'assets/icons/ic_24_arrow_bottom.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ClipRect(
+                child: AnimatedAlign(
+                  alignment: Alignment.bottomCenter,
+                  heightFactor: (faqList[idx]!.isExpanded) ? 1 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                    color: WakColor.grey200,
+                    child: Text(
+                      faqList[idx]!.description,
+                      style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                      maxLines: 20,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
