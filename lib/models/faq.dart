@@ -15,17 +15,16 @@ class FAQ {
   });
 
   factory FAQ.fromJson(JSON json) => FAQ(
-    category: json['category'],
-    question: json['question'],
-    description: json['description'],
-    createAt: DateTime.fromMillisecondsSinceEpoch(
-      int.parse(json['create_at']) * 1000),
-  );
+        category: json['category'],
+        question: json['question'],
+        description: json['description'],
+        createAt: DateTime.fromMillisecondsSinceEpoch(json['create_at'] * 1000),
+      );
 
   factory FAQ.clone(FAQ faq) => FAQ(
-    category: faq.category,
-    question: faq.question,
-    description: faq.description,
-    createAt: faq.createAt,
-  );
+        category: faq.category,
+        question: faq.question,
+        description: faq.description,
+        createAt: faq.createAt,
+      );
 }

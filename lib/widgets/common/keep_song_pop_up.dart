@@ -58,7 +58,7 @@ class KeepSongPopUp extends StatelessWidget {
                     ));
                   },
                   type: BtnSizeType.small,
-                  iconName: 'playadd_900',
+                  iconName: 'ic_32_playadd_900',
                   btnText: '새 리스트 만들기',
                 ),
               ),

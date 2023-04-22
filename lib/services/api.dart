@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:wakmusic/models/faq.dart';
+import 'package:wakmusic/models/notice.dart';
 import 'package:wakmusic/models/errors/error.dart';
 import 'package:wakmusic/models/errors/http_error.dart';
 import 'package:wakmusic/models/song.dart';
@@ -130,6 +132,33 @@ class API {
     throw HttpError.byCode(response.statusCode);
   }
 
+  Future<List<String>> fetchFAQCategories() async {
+    final response = await getResponse('$testBaseUrl/qna/categories');
+    if (response.statusCode == 200) {
+      return(jsonDecode(response.body) as List).map((e) => e as String).toList();
+    } else {
+      throw Exception('FAQ Categories load failed :(');
+    }
+  }
+
+  Future<List<FAQ>> fetchFAQ() async {
+    final response = await getResponse('$testBaseUrl/qna');
+    if (response.statusCode == 200) {
+      return(jsonDecode(response.body) as List).map((e) => FAQ.fromJson(e)).toList();
+    } else {
+      throw Exception('FAQ load failed :(');
+    }
+  }
+
+  Future<List<Notice>> fetchNotice() async {
+    final response = await getResponse('$testBaseUrl/notice/all');
+    if (response.statusCode == 200) {
+      return List.from((jsonDecode(response.body) as List).map((e) => Notice.fromJson(e)).toList().reversed);
+    } else {
+      throw Exception('Notice load failed :(');
+    }
+  }
+  
   Future<String> getToken(Login provider) async {
     final id = await provider.service.login();
     if (id == null) {
