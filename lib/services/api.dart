@@ -113,7 +113,7 @@ class API {
   }
 
   Future<List<Artist>> fetchArtists() async {
-    final response = await getResponse('$baseUrl/artist/list');
+    final response = await getResponse('$testBaseUrl/artist/list');
 
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List)
@@ -127,7 +127,7 @@ class API {
 
   Future<List<Song>> fetchAlbums(String id, String sort, int start) async {
     final response =
-        await getResponse('$baseUrl/artist/albums?id=$id&sort=$sort&start=$start');
+        await getResponse('$testBaseUrl/artist/albums?id=$id&sort=$sort&start=$start');
 
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List)
