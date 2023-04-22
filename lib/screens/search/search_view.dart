@@ -335,7 +335,7 @@ class SearchView extends StatelessWidget {
             const SizedBox(width: 4),
             SkeletonText(wakTxtStyle: WakText.txt16M, width: 17),
             const Spacer(),
-            SkeletonText(wakTxtStyle: WakText.txt12MH, width: 56),
+            SkeletonText(wakTxtStyle: WakText.txt12MH, width: 52),
           ],
         ),
       );
@@ -364,8 +364,8 @@ class SearchView extends StatelessWidget {
                     textAlign: TextAlign.right,
                   ),
                   SvgPicture.asset(
-                    'assets/icons/ic_16_arrow_right.svg',
-                    width: 16,
+                    'assets/icons/ic_16_arrow_right_search.svg',
+                    width: 12,
                     height: 16,
                   ),
                 ],

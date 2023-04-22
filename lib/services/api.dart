@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:wakmusic/models/faq.dart';
+import 'package:wakmusic/models/notice.dart';
 import 'package:wakmusic/models/errors/error.dart';
 import 'package:wakmusic/models/errors/http_error.dart';
 import 'package:wakmusic/models/song.dart';
@@ -32,8 +34,18 @@ enum SearchType {
   final String str;
 }
 
-const testBaseUrl = 'https://test.wakmusic.xyz/api';
+enum GroupType {
+  all('전체'),
+  woowakgood('우왁굳'),
+  isedol('이세돌'),
+  gomem('고멤');
+
+  const GroupType(this.locale);
+  final String locale;
+}
+
 const baseUrl = 'https://wakmusic.xyz/api';
+const testBaseUrl = 'https://test.wakmusic.xyz/api';
 const staticBaseUrl = 'https://static.wakmusic.xyz/static';
 
 class API {
@@ -66,6 +78,15 @@ class API {
     }
 
     throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<List<Song>> fetchNew({required GroupType type}) async {
+    final response = await getResponse('$testBaseUrl/songs/new/${type.name}');
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List).map((e) => Song.fromJson(e)).toList();
+    } else {
+      throw Exception('New API failed :(');
+    }
   }
 
   Future<DateTime> fetchUpdatedTime() async {
@@ -111,6 +132,33 @@ class API {
     throw HttpError.byCode(response.statusCode);
   }
 
+  Future<List<String>> fetchFAQCategories() async {
+    final response = await getResponse('$testBaseUrl/qna/categories');
+    if (response.statusCode == 200) {
+      return(jsonDecode(response.body) as List).map((e) => e as String).toList();
+    } else {
+      throw Exception('FAQ Categories load failed :(');
+    }
+  }
+
+  Future<List<FAQ>> fetchFAQ() async {
+    final response = await getResponse('$testBaseUrl/qna');
+    if (response.statusCode == 200) {
+      return(jsonDecode(response.body) as List).map((e) => FAQ.fromJson(e)).toList();
+    } else {
+      throw Exception('FAQ load failed :(');
+    }
+  }
+
+  Future<List<Notice>> fetchNotice() async {
+    final response = await getResponse('$testBaseUrl/notice/all');
+    if (response.statusCode == 200) {
+      return List.from((jsonDecode(response.body) as List).map((e) => Notice.fromJson(e)).toList().reversed);
+    } else {
+      throw Exception('Notice load failed :(');
+    }
+  }
+  
   Future<String> getToken(Login provider) async {
     final id = await provider.service.login();
     if (id == null) {

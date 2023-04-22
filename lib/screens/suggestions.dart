@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/screens/faq/faq_view.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
+import 'package:wakmusic/screens/notice/notice_view.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/widgets/common/btn_with_icon.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
@@ -28,17 +30,6 @@ class Suggestions extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
-    double statusBarHeight = MediaQuery.of(context).padding.top;
-    double botPadding = WidgetsBinding.instance.window.viewPadding.bottom /
-        WidgetsBinding.instance.window.devicePixelRatio;
-    double height =
-        MediaQuery.of(context).size.height - statusBarHeight - botPadding;
-    double blankFactor;
-    if (height >= 572) {
-      blankFactor = 732 - height;
-    } else {
-      blankFactor = 160;
-    }
     return SafeArea(
       child: ListView(
         physics: const BouncingScrollPhysics(),
@@ -107,16 +98,36 @@ class Suggestions extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
             child: Column(
               children: [
-                _buildBtn(context, () {}, '버그 제보'),
+                BtnWithIcon(
+                  onTap: () {}, 
+                  type: BtnSizeType.big, 
+                  iconName: 'ic_24_question', 
+                  btnText: '문의하기',
+                ),
                 const SizedBox(height: 8),
-                _buildBtn(context, () {}, '노래 추가, 수정 요청'),
+                BtnWithIcon(
+                  onTap: () { 
+                    Navigator.push(
+                      context,
+                      pageRouteBuilder(page: const FAQView()),
+                    );
+                  }, 
+                  type: BtnSizeType.big, 
+                  iconName: 'ic_24_qna', 
+                  btnText: '자주 묻는 질문',
+                ),
                 const SizedBox(height: 8),
-                _buildBtn(context, () {
-                  Navigator.push(
-                    context,
-                    pageRouteBuilder(page: const FAQView()),
-                  );
-                }, '자주 묻는 질문'),
+                BtnWithIcon(
+                  onTap: () { 
+                    Navigator.push(
+                      context,
+                      pageRouteBuilder(page: const NoticeView()),
+                    );
+                  },
+                  type: BtnSizeType.big, 
+                  iconName: 'ic_24_noti', 
+                  btnText: '공지사항',
+                ),
               ],
             ),
           ),
@@ -140,31 +151,11 @@ class Suggestions extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 180 - blankFactor),
-          const Policy(),
-          const SizedBox(height: 10),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(0, 40, 0, 10),
+            child: Policy(),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildBtn(
-      BuildContext context, void Function()? onTap, String btnName) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 60,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.4),
-          border: Border.all(color: WakColor.grey200.withOpacity(0.4)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          btnName,
-          style: WakText.txt16M.copyWith(color: WakColor.grey900),
-          textAlign: TextAlign.center,
-        ),
       ),
     );
   }

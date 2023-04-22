@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 
 enum TabType {
   maxTab(
@@ -106,6 +107,72 @@ class TabView extends StatelessWidget {
             ],
           );
         }
+      ),
+    );
+  }
+}
+
+class TabSkeletonView extends StatelessWidget {
+  const TabSkeletonView({
+    super.key,
+    required this.type,
+    required this.tabLength,
+    required this.tabViewList,
+    this.physics = const BouncingScrollPhysics(),
+  });
+  final TabType type;
+  final int tabLength;
+  final List<Widget> tabViewList;
+  final ScrollPhysics physics;
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: tabLength,
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 52,
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: WakColor.grey200),
+                  ),
+                ),
+              ),
+              TabBar(
+                indicatorColor: WakColor.lightBlue,
+                labelStyle: WakText.txt16B,
+                unselectedLabelStyle: WakText.txt16M,
+                labelColor: WakColor.grey900,
+                unselectedLabelColor: WakColor.grey400,
+                overlayColor:
+                    MaterialStateProperty.all<Color>(Colors.transparent),
+                splashFactory: NoSplash.splashFactory,
+                indicatorSize: type.indicatorSize,
+                labelPadding: type.labelPadding,
+                padding: type.padding,
+                isScrollable: type.isScrollable,
+                tabs: List.generate(
+                  tabLength,
+                  (idx) => Container(
+                    constraints: const BoxConstraints(minWidth: 48),
+                    height: 34,
+                    padding: const EdgeInsets.fromLTRB(0, 2, 0, 8),
+                    child: Center(child: SkeletonText(wakTxtStyle: WakText.txt16M, width: (idx == 0) ? 28 : 64)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              physics: physics,
+              children: tabViewList,
+            ),
+          ),
+        ],
       ),
     );
   }

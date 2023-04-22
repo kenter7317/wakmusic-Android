@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/models/song.dart';
@@ -6,22 +7,33 @@ enum EditStatus { none, more, editing }
 
 class PlaylistViewModel with ChangeNotifier {
   EditStatus _status = EditStatus.none;
+  late StreamController<bool> _isScrolled;
+  bool _prevIsScrolled = false;
   String? _prevKeyword;
   late final API _api;
   late List<Song?> _songs;
   late List<Song?> _tempsongs;
 
   EditStatus get curStatus => _status;
+  StreamController<bool> get isScrolled => _isScrolled;
   List<Song?> get songs => _songs;
   List<Song?> get tempsongs => _tempsongs;
 
   PlaylistViewModel() {
+    _isScrolled = StreamController<bool>.broadcast();
     _api = API();
   }
 
   void updateStatus(EditStatus status) {
     _status = status;
     notifyListeners();
+  }
+
+  void updateScroll(bool isScrolled) {
+    if (isScrolled != _prevIsScrolled) {
+      _prevIsScrolled = isScrolled;
+      _isScrolled.add(isScrolled);
+    }
   }
 
   void clear() {
