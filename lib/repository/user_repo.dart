@@ -116,6 +116,52 @@ class UserRepository {
     }
   }
 
+  Future<Playlist> addToMyPlaylist(String key) async {
+    final token = await _token;
+    if (token == null) {
+      throw HttpError.unauthorized;
+    }
+
+    try {
+      if (await _api.addToMyPlaylist(key, token: token)) {
+        return await _api.fetchPlaylist(key: key);
+      }
+
+      throw HttpError.badRequest;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> editPlaylist(List<Playlist> playlists) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      final list = playlists.map((e) => e.key).whereType<String>().toList();
+      await _api.editPlaylist(list, token: token);
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> deletePlaylist(String key) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.deletePlaylist(key, token: token);
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<bool> removeUser(Login platform) async {
     final token = await _token;
     if (token == null) {

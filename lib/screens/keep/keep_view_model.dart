@@ -169,10 +169,14 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void applyPlaylists(bool? apply) {
+  void applyPlaylists(bool? apply) async {
     if (apply == null) return;
     if (apply) {
-      _playlists = [..._tempPlaylists];
+      final res = await _repo
+          .editPlaylist(_tempPlaylists.whereType<Playlist>().toList());
+      if (res) {
+        _playlists = [..._tempPlaylists];
+      }
     } else {
       _tempPlaylists = [..._playlists];
     }

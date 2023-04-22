@@ -4,7 +4,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/errors/error.dart';
 import 'package:wakmusic/models/errors/http_error.dart';
-import 'package:wakmusic/models/playlist_detail.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:subtitle/subtitle.dart';
@@ -158,6 +157,31 @@ class API {
     throw HttpError.byCode(response.statusCode);
   }
 
+  Future<List<Playlist>> getUserPlaylists({required String token}) async {
+    final response =
+        await getResponse('$testBaseUrl/user/playlists', token: token);
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Playlist.fromJson(e))
+          .toList();
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<List<Song>> getLikes({required String token}) async {
+    final response = await getResponse('$testBaseUrl/user/likes', token: token);
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Song.fromJson(e['song']))
+          .toList();
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
   Future<void> setUserProfile(
     String profile, {
     required String token,
@@ -208,6 +232,59 @@ class API {
 
     if (response.statusCode == 201) {
       return jsonDecode(response.body)['key'];
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<bool> addToMyPlaylist(
+    key, {
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$testBaseUrl/playlist/$key/addToMyPlaylist'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 201) {
+      // return jsonDecode(response.body)['key'];
+      return true;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<bool> editPlaylist(
+    List<String> playlists, {
+    required String token,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('$testBaseUrl/user/playlists/edit'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
+      },
+      body: {'"playlists"': jsonEncode(playlists)}.toString(),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> deletePlaylist(
+    key, {
+    required String token,
+  }) async {
+    final response = await http.delete(
+      Uri.parse('$testBaseUrl/playlist/$key/delete'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      return;
     }
 
     throw HttpError.byCode(response.statusCode);
