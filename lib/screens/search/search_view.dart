@@ -8,6 +8,7 @@ import 'package:wakmusic/screens/search/search_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/error_info.dart';
 import 'package:wakmusic/widgets/common/rec_playlist.dart';
@@ -25,15 +26,8 @@ class SearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
+    statusNavColor(context, ScreenType.search);
     SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: (viewModel.curStatus == SearchStatus.during) ? Brightness.light : Brightness.dark,
-      ),
-    );
     _fieldText.text = viewModel.text;
     _fieldText.selection = TextSelection.collapsed(offset: viewModel.text.length);
     return WillPopScope(
@@ -143,6 +137,7 @@ class SearchView extends StatelessWidget {
                 ),
               )
             : null,
+          suffixIconConstraints: const BoxConstraints(maxWidth: 53),
         ),
       ),
     );
@@ -237,6 +232,7 @@ class SearchView extends StatelessWidget {
 
   Widget _buildAfter(BuildContext context) {
     return TabView(
+      type: TabType.maxTab,
       tabBarList: List.generate(4, (idx) => (idx == 0) ? '전체' : SearchType.values[idx - 1].str),
       tabViewList: List.generate(
         4,

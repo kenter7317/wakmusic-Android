@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/artist.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
+import 'package:subtitle/subtitle.dart';
 
 enum ChartType {
   hourly('시간순'),
@@ -35,8 +36,21 @@ enum AlbumType {
   final String eng;
 }
 
+enum GroupType {
+  all('전체'),
+  woowakgood('우왁굳'),
+  isedol('이세돌'),
+  gomem('고멤');
+
+  const GroupType(this.locale);
+  final String locale;
+}
+
+const baseUrl = 'https://wakmusic.xyz/api';
+const testBaseUrl = 'https://test.wakmusic.xyz/api';
+const staticBaseUrl = 'https://static.wakmusic.xyz/static';
+
 class API {
-  final String baseUrl = 'https://test.wakmusic.xyz/api';
 
   Future<http.Response> getResponse(String url) async {
     try {
@@ -52,6 +66,15 @@ class API {
       return (jsonDecode(response.body) as List).map((e) => Song.fromJson(e)).toList();
     } else {
       throw Exception('Top 100 Chart API failed :(');
+    }
+  }
+
+  Future<List<Song>> fetchNew({required GroupType type}) async {
+    final response = await getResponse('$testBaseUrl/songs/new/${type.name}');
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List).map((e) => Song.fromJson(e)).toList();
+    } else {
+      throw Exception('New API failed :(');
     }
   }
 
@@ -72,6 +95,12 @@ class API {
     } else {
       throw Exception('Search failed :(');
     }
+  }
+
+  Future<SubtitleController> getLyrics({required String id}) async {
+    var controller = SubtitleController(provider: SubtitleProvider.fromNetwork(Uri.parse('https://wakmusic.xyz/static/lyrics/$id.vtt')));
+    await controller.initial();
+    return controller;
   }
 
   Future<Playlist> fetchPlaylist({required String key}) async {

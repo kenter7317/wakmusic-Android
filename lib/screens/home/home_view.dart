@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/common/rec_playlist.dart';
 import 'package:wakmusic/screens/home/home_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
+import 'package:wakmusic/services/api.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
@@ -20,22 +22,16 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
+    double width = MediaQuery.of(context).size.width;
+    statusNavColor(context, ScreenType.etc);
     return Stack(
       children: [
         Positioned(
-          top: -34,
-          right: -73,
+          top: -34 * width / 375,
+          right: -73 * width / 375,
           child: Container(
-            width: 276,
-            height: 276,
+            width: 276 * width / 375,
+            height: 276 * width / 375,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0x0038E6FF), Color(0XFF00C8D2)],
@@ -50,7 +46,7 @@ class HomeView extends StatelessWidget {
         ),
         RefreshIndicator(
           onRefresh: () async {
-            viewModel.updateTab(TabName.total);
+            viewModel.updateTab(GroupType.all);
             _controller.jumpTo(0);
             viewModel.getList();
           },
@@ -83,7 +79,7 @@ class HomeView extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+        filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
         child: Container(
           height: 354,
           padding: const EdgeInsets.fromLTRB(19, 15, 19, 19),
@@ -121,14 +117,13 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildChartTitle(BuildContext context, List<Song>? toplist) {
+    NavProvider botNav = Provider.of<NavProvider>(context);
     return SizedBox(
       height: 24,
       child: Row(
         children: [
           GestureDetector(
-            onTap: () {
-              /* go to chart page */
-            },
+            onTap: () =>botNav.update(1),
             child: Row(
               children: [
                 Text(
@@ -192,7 +187,7 @@ class HomeView extends StatelessWidget {
                         ),
                       ),
                       Row(
-                        children: TabName.values.map((tabName) => _buildNewTab(context, tabName)).toList(),
+                        children: GroupType.values.map((tabName) => _buildNewTab(context, tabName)).toList(),
                       ),
                     ],
                   ),
@@ -217,7 +212,7 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildNewTab(BuildContext context, TabName tabName) {
+  Widget _buildNewTab(BuildContext context, GroupType tabName) {
     HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
     return Padding(
       padding: const EdgeInsets.only(left: 12),
