@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/screens/faq/faq_view.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/notice/notice_view.dart';
@@ -61,16 +62,23 @@ class Suggestions extends StatelessWidget {
                   right: 20,
                   child: GestureDetector(
                     onTap: () async {
-                      List<String> msgList = ['회원탈퇴 신청을 하시겠습니까?', '정말 탈퇴하시겠습니까?', '회원탈퇴가 완료되었습니다.\n이용해 주셔서 감사합니다.'];
+                      List<String> msgList = [
+                        '회원탈퇴 신청을 하시겠습니까?',
+                        '정말 탈퇴하시겠습니까?',
+                        '회원탈퇴가 완료되었습니다.\n이용해 주셔서 감사합니다.'
+                      ];
                       for (int i = 0; i < 3; i++) {
                         if (i == 2) {
-                          viewModel.updateLoginStatus(LoginStatus.before); 
-                          /* call api */
+                          final repo = UserRepository();
+                          repo.removeUser(viewModel.user.platform);
+                          viewModel.updateLoginStatus(LoginStatus.before);
                         }
-                        bool result = await showModal(
+                        bool? result = await showModal(
                           context: context,
                           builder: (_) => PopUp(
-                            type: (i == 2) ? PopUpType.txtOneBtn : PopUpType.txtTwoBtn,
+                            type: (i == 2)
+                                ? PopUpType.txtOneBtn
+                                : PopUpType.txtTwoBtn,
                             msg: msgList[i],
                           ),
                         ).whenComplete(() {
