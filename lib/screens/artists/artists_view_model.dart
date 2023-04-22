@@ -42,8 +42,6 @@ class ArtistsViewModel with ChangeNotifier {
     if (addList.isEmpty) {
       _isLastAlbum[type.index] = true;
     } else {
-      print(addList[0].title);
-      print(_albums[type]!.length);
       curList.addAll(addList);
       _albums[type] = curList;
     }

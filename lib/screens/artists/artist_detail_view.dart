@@ -97,12 +97,6 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).viewPadding.top +
                   56 +
-                  // (_scrollController.hasClients
-                  //     ? ((_scrollController.position.pixels <
-                  //             artistImgRatio * 180 + 24)
-                  //         ? -_scrollController.position.pixels
-                  //         : (-artistImgRatio * 180 - 24))
-                  //     : (artistImgRatio * 180 + 24)),
                   (scrollControllers[tabController.index].hasClients
                       ? ((scrollControllers[tabController.index]
                                   .position
@@ -471,45 +465,6 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                         : (artistImgRatio * 180 + 24)),
                 bottom: MediaQuery.of(context).viewPadding.bottom,
               ),
-              // child: FutureBuilder(
-              //   future: viewModel.albums[AlbumType.values[index]],
-              //   builder: (context, snapshot) {
-              //     if (snapshot.hasData && snapshot.data!.isEmpty) {
-              //       return Container(height: 100);
-              //     } else {
-              //       return ListView.builder(
-              //         controller: scrollControllers[tabController.index],
-              //         physics: const BouncingScrollPhysics(),
-              //         padding: EdgeInsets.zero,
-              //         itemCount: (snapshot.hasData)
-              //             ? snapshot.data!.length +
-              //                 (viewModel.isLastAlbum[index] ? 0 : 1)
-              //             : 0,
-              //         itemBuilder: (_, idx) {
-              //           if (idx == snapshot.data!.length - 3) {
-              //             viewModel.getAlbums(
-              //                 AlbumType.values[index], snapshot.data!.length);
-              //           }
-              //           if (idx == snapshot.data!.length &&
-              //               !viewModel.isLastAlbum[index]) {
-              //             return const Center(
-              //                 child: SizedBox(
-              //                     height: 50,
-              //                     width: 50,
-              //                     child: Padding(
-              //                       padding: EdgeInsets.all(8.0),
-              //                       child: CircularProgressIndicator(),
-              //                     )));
-              //           }
-              //           return SongTile(
-              //             song: (snapshot.hasData) ? snapshot.data![idx] : null,
-              //             tileType: TileType.dateTile,
-              //           );
-              //         },
-              //       );
-              //     }
-              //   },
-              // ),
               child: ListView.builder(
                 controller: scrollControllers[tabController.index],
                 physics: const BouncingScrollPhysics(),
