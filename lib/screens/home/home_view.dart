@@ -293,8 +293,8 @@ class HomeView extends StatelessWidget {
                         }
                         return null;
                       },
+                      cacheMaxAge: const Duration(days: 30),
                     ),
-                    cacheMaxAge: const Duration(days: 30),
                   ),
                 ),
                 Positioned(

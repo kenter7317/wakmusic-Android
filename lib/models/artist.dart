@@ -52,7 +52,7 @@ class Artist {
         twitch: json['twitch'],
         instagram: json['instagram'],
         roundImgVer: json['image_round_version'],
-        squareImgVer: json['image_square_verseion'],
+        squareImgVer: json['image_square_version'],
         roundImg: 'https://static.wakmusic.xyz/static/artist/round/${json['id']}.png?v=${json['image_round_version']}',
         // background: 'https://wakmusic.xyz/static/artist/big/${json['id']}.jpg',
       );
