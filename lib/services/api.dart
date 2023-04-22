@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/errors/error.dart';
 import 'package:wakmusic/models/errors/http_error.dart';
+import 'package:wakmusic/models/playlist_detail.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:subtitle/subtitle.dart';
@@ -45,7 +46,7 @@ class API {
     try {
       return await http.get(
         Uri.parse(url),
-        headers: {'Authorization': 'Bearer $token'},
+        headers: token != null ? {'Authorization': 'Bearer $token'} : null,
       );
     } catch (e) {
       return http.Response('', 404);
@@ -185,6 +186,40 @@ class API {
     );
 
     if (response.statusCode == 201) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<String> createList(
+    String title,
+    int image, {
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$testBaseUrl/playlist/create'),
+      headers: {'Authorization': 'Bearer $token'},
+      body: {
+        'title': title,
+        'image': '$image',
+      },
+    );
+
+    if (response.statusCode == 201) {
+      return jsonDecode(response.body)['key'];
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> removeUser({required String token}) async {
+    final response = await http.delete(
+      Uri.parse('$testBaseUrl/user/remove'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
       return;
     }
 

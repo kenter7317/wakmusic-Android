@@ -115,51 +115,20 @@ class KeepViewModel with ChangeNotifier {
   }
 
   Future<void> getLists() async {
-    String keyword = [
-      "fgSXAKsq-Vo",
-      "DPEtmqvaKqY",
-      "l8e1Byk1Dx0",
-      "K8WC6uWyC9I",
-      "6hEvgKL0ClA",
-      "JY-gJkMuJ94",
-      "08meo6qrhFc",
-      "K-5WdjbCYnk",
-      "Empfi8q0aas",
-      "rFxJjpSeXHI",
-      "OTkFJyn4mvc",
-      "YmELthNomns",
-      "1UbyyaDc8x0",
-      "fU8picIMbSk",
-      "kra0f71EIgc",
-      "-ZFDUHgF48U",
-      "--Go33WYnqw",
-      "21qpkx17fUw"
-    ].join(',');
-    if (keyword != _prevKeyword) {
-      clear();
-      _prevKeyword = keyword;
-      _likes = await _api.search(keyword: keyword, type: SearchType.ids);
-      _tempLikes = [..._likes];
-      _playlists = [
-        //await _api.fetchPlaylist(key: 'HqLJwlVQ0M'),
-        //await _api.fetchPlaylist(key: 'RfQVp5JdMg'),
-      ];
-      _tempPlaylists = [..._playlists];
-      notifyListeners();
-    }
+    clear();
+    _likes = await _repo.getLikes();
+    _playlists = await _repo.getPlaylists();
+    _tempLikes = [..._likes];
+    _tempPlaylists = [..._playlists];
+    notifyListeners();
   }
 
   Future<void> createList(String? title) async {
     if (title == null) return;
-    /* call api */
-    _playlists.add(Playlist(
-      key: '',
-      title: title,
-      creator: '',
-      image: (Random().nextInt(11) + 1).toString(),
-      songlist: [],
-    ));
-    _tempPlaylists = [..._playlists];
+    if (await _repo.createList(title)) {
+      _playlists = await _repo.getPlaylists();
+      _tempPlaylists = [..._playlists];
+    }
     notifyListeners();
   }
 
