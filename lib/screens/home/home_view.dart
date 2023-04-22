@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -233,6 +234,7 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildNewListItem(BuildContext context, Song? song) {
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context, listen: false);
     if (song == null) {
       return SizedBox(
         width: 144,
@@ -273,22 +275,25 @@ class HomeView extends StatelessWidget {
           children: [
             Stack(
               children: [
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: ExtendedImage.network(
-                    'https://i.ytimg.com/vi/${song.id}/hqdefault.jpg',
-                    fit: BoxFit.cover,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(8),
-                    loadStateChanged: (state) {
-                      if (state.extendedImageLoadState != LoadState.completed) {
-                        return Image.asset(
-                          'assets/images/img_81_thumbnail.png',
-                          fit: BoxFit.cover,
-                        );
-                      }
-                      return null;
-                    },
+                GestureDetector(
+                  onTap: () { audioProvider.addQueueItem(song, autoplay: true); },
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: ExtendedImage.network(
+                      'https://i.ytimg.com/vi/${song.id}/hqdefault.jpg',
+                      fit: BoxFit.cover,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(8),
+                      loadStateChanged: (state) {
+                        if (state.extendedImageLoadState != LoadState.completed) {
+                          return Image.asset(
+                            'assets/images/img_81_thumbnail.png',
+                            fit: BoxFit.cover,
+                          );
+                        }
+                        return null;
+                      },
+                    ),
                     cacheMaxAge: const Duration(days: 30),
                   ),
                 ),
