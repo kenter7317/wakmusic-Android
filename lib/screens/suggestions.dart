@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/repository/user_repo.dart';
+import 'package:wakmusic/screens/contact/contact_view.dart';
 import 'package:wakmusic/screens/faq/faq_view.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/notice/notice_view.dart';
@@ -99,7 +100,14 @@ class Suggestions extends StatelessWidget {
             child: Column(
               children: [
                 BtnWithIcon(
-                  onTap: () {}, 
+                  onTap: () {
+                    Navigator.of(context, rootNavigator: true).push(
+                      pageRouteBuilder(
+                        page: const ContactView(),
+                        offset: const Offset(0, 1),
+                      ),
+                    );
+                  }, 
                   type: BtnSizeType.big, 
                   iconName: 'ic_24_question', 
                   btnText: '문의하기',
