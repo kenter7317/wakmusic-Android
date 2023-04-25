@@ -378,7 +378,7 @@ class API {
     throw HttpError.byCode(response.statusCode);
   }
 
-  Future<bool> editPlaylist(
+  Future<bool> editPlaylists(
     List<String> playlists, {
     required String token,
   }) async {
@@ -399,12 +399,72 @@ class API {
   }
 
   Future<void> deletePlaylist(
-    key, {
+    String key, {
     required String token,
   }) async {
     final response = await http.delete(
       Uri.parse('$testBaseUrl/playlist/$key/delete'),
       headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> addPlaylistSongs(
+    String key,
+    List<String> songs, {
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$testBaseUrl/playlist/$key/songs/add'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
+      },
+      body: {'"songs"': jsonEncode(songs)}.toString(),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> editPlaylistSongs(
+    String key,
+    List<String> songs, {
+    required String token,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('$testBaseUrl/playlist/$key/edit'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
+      },
+      body: {'"songs"': jsonEncode(songs)}.toString(),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> editPlaylistTitle(
+    String key,
+    String title, {
+    required String token,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('$testBaseUrl/playlist/$key/edit/title'),
+      headers: {'Authorization': 'Bearer $token'},
+      body: {'title': title},
     );
 
     if (response.statusCode == 200) {

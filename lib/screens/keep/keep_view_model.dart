@@ -140,9 +140,10 @@ class KeepViewModel with ChangeNotifier {
   }
 
   Future<void> removeList(Playlist playlist) async {
-    _playlists.remove(playlist);
-    _tempPlaylists = [..._playlists];
-    /* call api */
+    if (await _repo.deletePlaylist(playlist.key!)) {
+      _playlists.remove(playlist);
+      _tempPlaylists = [..._playlists];
+    }
     notifyListeners();
   }
 
@@ -172,8 +173,9 @@ class KeepViewModel with ChangeNotifier {
   void applyPlaylists(bool? apply) async {
     if (apply == null) return;
     if (apply) {
-      final res = await _repo
-          .editPlaylist(_tempPlaylists.whereType<Playlist>().toList());
+      final res = await _repo.editPlaylists(
+        _tempPlaylists.whereType<Playlist>().toList(),
+      );
       if (res) {
         _playlists = [..._tempPlaylists];
       }

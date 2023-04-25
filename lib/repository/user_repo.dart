@@ -134,7 +134,7 @@ class UserRepository {
     }
   }
 
-  Future<bool> editPlaylist(List<Playlist> playlists) async {
+  Future<bool> editPlaylists(List<Playlist> playlists) async {
     final token = await _token;
     if (token == null) {
       return false;
@@ -142,7 +142,7 @@ class UserRepository {
 
     try {
       final list = playlists.map((e) => e.key).whereType<String>().toList();
-      await _api.editPlaylist(list, token: token);
+      await _api.editPlaylists(list, token: token);
       return true;
     } catch (e) {
       rethrow;
@@ -157,6 +157,56 @@ class UserRepository {
 
     try {
       await _api.deletePlaylist(key, token: token);
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> addPlaylistSongs(String key, List<Song> songs) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.addPlaylistSongs(
+        key,
+        songs.map((song) => song.id).toList(),
+        token: token,
+      );
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> editPlaylistSongs(String key, List<Song> songs) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.editPlaylistSongs(
+        key,
+        songs.map((song) => song.id).toList(),
+        token: token,
+      );
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> editPlaylistTitle(String key, String title) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.editPlaylistTitle(key, title, token: token);
       return true;
     } catch (e) {
       rethrow;

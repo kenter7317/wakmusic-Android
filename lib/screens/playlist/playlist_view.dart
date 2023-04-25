@@ -259,8 +259,9 @@ class PlaylistView extends StatelessWidget {
                     children: [
                       Text(
                         '${viewModel.songs.length}곡',
-                        style: WakText.txt14L
-                            .copyWith(color: WakColor.grey900.withOpacity(0.6)),
+                        style: WakText.txt14L.copyWith(
+                          color: WakColor.grey900.withOpacity(0.6),
+                        ),
                       ),
                       if (viewModel.curStatus == EditStatus.editing)
                         Padding(
