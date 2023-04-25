@@ -221,8 +221,9 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
     Song song, {
     bool autoplay = false,
   }) async {
-    if (_queue.contains(song)) return;
-    _queue.add(song);
+    if (!_queue.contains(song)) {
+      _queue.add(song);
+    }
     if (autoplay) {
       _index = _queue.indexOf(song);
       load(song);

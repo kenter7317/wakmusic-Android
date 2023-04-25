@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:wakmusic/models/artist.dart';
 import 'package:wakmusic/models/faq.dart';
 import 'package:wakmusic/models/notice.dart';
 import 'package:wakmusic/models/errors/error.dart';
@@ -33,6 +32,16 @@ enum SearchType {
 
   const SearchType(this.str);
   final String str;
+}
+
+enum AlbumType {
+  latest("최신순", "new"),
+  popular("인기순", "popular"),
+  old("과거순", "old");
+
+  const AlbumType(this.kor, this.eng);
+  final String kor;
+  final String eng;
 }
 
 enum GroupType {
