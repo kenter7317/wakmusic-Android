@@ -121,7 +121,7 @@ class PlaylistTile extends StatelessWidget {
                       SizedBox(
                         height: 18,
                         child: Text(
-                          '${playlist!.songlist.where((songId) => songId.isNotEmpty).length}곡',
+                          '${playlist!.songlist!.where((songId) => songId.isNotEmpty).length}곡',
                           style: WakText.txt12L.copyWith(color: WakColor.grey900),
                         ),
                       ),

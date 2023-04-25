@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:wakmusic/models/errors/http_error.dart';
 import 'package:wakmusic/models/playlist.dart';
+import 'package:wakmusic/models/playlist_detail.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/user.dart';
 import 'package:wakmusic/services/api.dart';
@@ -116,7 +117,7 @@ class UserRepository {
     }
   }
 
-  Future<Playlist> addToMyPlaylist(String key) async {
+  Future<PlaylistDetail> addToMyPlaylist(String key) async {
     final token = await _token;
     if (token == null) {
       throw HttpError.unauthorized;
@@ -124,7 +125,7 @@ class UserRepository {
 
     try {
       if (await _api.addToMyPlaylist(key, token: token)) {
-        return await _api.fetchPlaylist(key: key);
+        return await _api.fetchPlaylistDetail(key: key);
       }
 
       throw HttpError.badRequest;

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/models/song.dart';
 
@@ -42,11 +43,16 @@ class PlaylistViewModel with ChangeNotifier {
     _tempsongs = [..._songs];
   }
 
-  Future<void> getSongs(String keyword) async {
+  Future<void> getSongs(Playlist playlist) async {
+    final keyword = playlist is! Reclist ? playlist.key : playlist.id;
     if (keyword != _prevKeyword) {
       clear();
       _prevKeyword = keyword;
-      _songs = await _api.search(keyword: keyword, type: SearchType.ids);
+      if (playlist is! Reclist) {
+        _songs = (await _api.fetchPlaylistDetail(key: keyword!)).songs;
+      } else {
+        _songs = (await _api.fetchReclistDetail(key: keyword!)).songs;
+      }
       _tempsongs = [..._songs];
       notifyListeners();
     }
