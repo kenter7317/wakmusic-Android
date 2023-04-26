@@ -267,14 +267,18 @@ class PlaylistView extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(left: 4),
                           child: GestureDetector(
-                            onTap: () {
-                              showModal(
+                            onTap: () async {
+                              await showModal(
                                 context: context,
                                 builder: (_) => BotSheet(
                                   type: BotSheetType.editList,
                                   initialValue: playlist.title,
                                 ),
-                              );
+                              ).then((title) {
+                                if (title != null) {
+                                  viewModel.title = title;
+                                }
+                              });
                             },
                             child: SvgPicture.asset(
                               'assets/icons/ic_24_edit.svg',

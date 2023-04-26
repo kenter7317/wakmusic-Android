@@ -147,6 +147,23 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> addSongs(Playlist playlist, List<Song> songs) async {
+    if (playlist is Reclist || songs.isEmpty) {
+      return false;
+    }
+
+    if (await _repo.addPlaylistSongs(playlist.key!, songs)) {
+      final list = songs
+          .map((song) => song.id)
+          .where((e) => !playlist.songlist!.contains(e));
+      playlist.songlist!.addAll(list);
+      notifyListeners();
+      return true;
+    }
+
+    return false;
+  }
+
   void moveSong(int oldIdx, int newIdx) {
     Song? song = _tempLikes.removeAt(oldIdx);
     _tempLikes.insert(newIdx, song);

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:wakmusic/models/playlist.dart';
+import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/models/song.dart';
 
@@ -11,7 +12,9 @@ class PlaylistViewModel with ChangeNotifier {
   late StreamController<bool> _isScrolled;
   bool _prevIsScrolled = false;
   String? _prevKeyword;
+  String? title;
   late final API _api;
+  late final UserRepository _repo;
   late List<Song?> _songs;
   late List<Song?> _tempsongs;
 
@@ -23,6 +26,7 @@ class PlaylistViewModel with ChangeNotifier {
   PlaylistViewModel() {
     _isScrolled = StreamController<bool>.broadcast();
     _api = API();
+    _repo = UserRepository();
   }
 
   void updateStatus(EditStatus status) {
@@ -64,14 +68,28 @@ class PlaylistViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void applySongs(bool? apply) {
+  Future<void> applySongs(bool? apply) async {
     if (apply == null) return;
     if (apply) {
-      _songs = [..._tempsongs];
+      final res = await _repo.editPlaylistSongs(
+        _prevKeyword!,
+        _tempsongs.whereType<Song>().toList(),
+      );
+      if (res) {
+        _songs = [..._tempsongs];
+      }
     } else {
       _tempsongs = [..._songs];
     }
     _status = EditStatus.none;
+    notifyListeners();
+  }
+
+  Future<void> updateTitle(String? title) async {
+    if (title == null) return;
+    if (await _repo.editPlaylistTitle(_prevKeyword!, title)) {
+      this.title = title;
+    }
     notifyListeners();
   }
 }

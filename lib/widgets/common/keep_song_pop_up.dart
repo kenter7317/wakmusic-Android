@@ -1,6 +1,7 @@
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -41,13 +42,15 @@ class KeepSongPopUp extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       '00곡',
-                      style: WakText.txt14MH.copyWith(color: WakColor.lightBlue),
+                      style:
+                          WakText.txt14MH.copyWith(color: WakColor.lightBlue),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 child: BtnWithIcon(
                   onTap: () async {
                     viewModel.createList(await showModal(
@@ -64,14 +67,14 @@ class KeepSongPopUp extends StatelessWidget {
               ),
               Expanded(
                 child: (viewModel.playlists.isEmpty)
-                  ? const ErrorInfo(errorMsg: '내 리스트가 없습니다.')
-                  : ListView.builder(
-                      itemCount: viewModel.playlists.length,
-                      itemBuilder: (_, idx) => PlaylistTile(
-                        playlist: viewModel.playlists[idx],
-                        tileType: TileType.baseTile,
+                    ? const ErrorInfo(errorMsg: '내 리스트가 없습니다.')
+                    : ListView.builder(
+                        itemCount: viewModel.playlists.length,
+                        itemBuilder: (_, idx) => PlaylistTile(
+                          playlist: viewModel.playlists[idx],
+                          tileType: TileType.baseTile,
+                        ),
                       ),
-                    ),
               ),
             ],
           ),
