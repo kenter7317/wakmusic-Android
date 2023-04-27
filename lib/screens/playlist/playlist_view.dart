@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/models/playlist_detail.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -37,7 +38,17 @@ class PlaylistView extends StatelessWidget {
         viewModel,
         selectedList,
         dismissible: false,
-      ).whenComplete(() => Navigator.pop(context)),
+      ).whenComplete(() {
+        Navigator.pop(
+          context,
+          playlist.copyWith(
+            title: viewModel.title,
+            songlist:
+                viewModel.songs.whereType<Song>().map((e) => e.id).toList(),
+          ),
+        );
+        viewModel.title = null;
+      }),
       maxTransformValue: 0.1,
       dismissThresholds: const {
         DismissiblePageDismissDirection.startToEnd: 0.1,
@@ -191,7 +202,8 @@ class PlaylistView extends StatelessWidget {
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            viewModel.applySongs(true);
+                            viewModel.applySongs(!listEquals(
+                                viewModel.songs, viewModel.tempsongs));
                             selectedList.clearList();
                           },
                           child: const EditBtn(type: BtnType.done),
@@ -250,7 +262,7 @@ class PlaylistView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    playlist.title,
+                    viewModel.title ?? playlist.title,
                     style: WakText.txt20B.copyWith(color: WakColor.grey900),
                     maxLines: 2,
                   ),
@@ -268,17 +280,15 @@ class PlaylistView extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 4),
                           child: GestureDetector(
                             onTap: () async {
-                              await showModal(
-                                context: context,
-                                builder: (_) => BotSheet(
-                                  type: BotSheetType.editList,
-                                  initialValue: playlist.title,
+                              viewModel.updateTitle(
+                                await showModal(
+                                  context: context,
+                                  builder: (_) => BotSheet(
+                                    type: BotSheetType.editList,
+                                    initialValue: playlist.title,
+                                  ),
                                 ),
-                              ).then((title) {
-                                if (title != null) {
-                                  viewModel.title = title;
-                                }
-                              });
+                              );
                             },
                             child: SvgPicture.asset(
                               'assets/icons/ic_24_edit.svg',

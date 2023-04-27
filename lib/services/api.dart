@@ -398,6 +398,26 @@ class API {
     throw HttpError.byCode(response.statusCode);
   }
 
+  Future<bool> deletePlaylists(
+    List<String> playlists, {
+    required String token,
+  }) async {
+    final response = await http.delete(
+      Uri.parse('$testBaseUrl/user/playlists/delete'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
+      },
+      body: {'"playlists"': jsonEncode(playlists)}.toString(),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
   Future<void> deletePlaylist(
     String key, {
     required String token,
@@ -444,7 +464,7 @@ class API {
       Uri.parse('$testBaseUrl/playlist/$key/edit'),
       headers: {
         'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: {'"songs"': jsonEncode(songs)}.toString(),
     );
@@ -465,6 +485,46 @@ class API {
       Uri.parse('$testBaseUrl/playlist/$key/edit/title'),
       headers: {'Authorization': 'Bearer $token'},
       body: {'title': title},
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> editUserLikeSongs(
+    List<String> songs, {
+    required String token,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('$testBaseUrl/user/likes/edit'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: {'"songs"': jsonEncode(songs)}.toString(),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> deleteUserLikeSongs(
+    List<String> songs, {
+    required String token,
+  }) async {
+    final response = await http.delete(
+      Uri.parse('$testBaseUrl/user/likes/delete'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: {'"songs"': jsonEncode(songs)}.toString(),
     );
 
     if (response.statusCode == 200) {

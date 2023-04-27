@@ -14,9 +14,7 @@ class UserRepository {
   final API _api;
 
   UserRepository({
-    FlutterSecureStorage storage = const FlutterSecureStorage(
-        // aOptions: AndroidOptions(encryptedSharedPreferences: true),
-        ),
+    FlutterSecureStorage storage = const FlutterSecureStorage(),
   })  : _storage = storage,
         _api = API();
 
@@ -207,6 +205,40 @@ class UserRepository {
 
     try {
       await _api.editPlaylistTitle(key, title, token: token);
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> editLikeSongs(List<Song> songs) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.editUserLikeSongs(
+        songs.map((song) => song.id).toList(),
+        token: token,
+      );
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteLikeSongs(List<Song> songs) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.editUserLikeSongs(
+        songs.map((song) => song.id).toList(),
+        token: token,
+      );
       return true;
     } catch (e) {
       rethrow;

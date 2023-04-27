@@ -187,7 +187,7 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void applyPlaylists(bool? apply) async {
+  Future<void> applyPlaylists(bool? apply) async {
     if (apply == null) return;
     if (apply) {
       final res = await _repo.editPlaylists(
@@ -200,6 +200,12 @@ class KeepViewModel with ChangeNotifier {
       _tempPlaylists = [..._playlists];
     }
     _editStatus = EditStatus.none;
+    notifyListeners();
+  }
+
+  Future<void> updatePlaylist(Playlist old, Playlist updated) async {
+    if (old == updated) return;
+    _playlists[_playlists.indexOf(old)] = updated;
     notifyListeners();
   }
 }

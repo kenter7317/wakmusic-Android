@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:wakmusic/utils/json.dart';
 
 class Playlist {
@@ -30,6 +31,41 @@ class Playlist {
       imageVersion: json['image_version'],
     );
   }
+
+  Playlist copyWith({
+    String? id,
+    String? key,
+    String? title,
+    String? creator,
+    String? image,
+    List<String>? songlist,
+    int? imageVersion,
+  }) {
+    return Playlist(
+      id: id ?? this.id,
+      key: key ?? this.key,
+      title: title ?? this.title,
+      creator: creator ?? this.creator,
+      image: image ?? this.image,
+      songlist: songlist ?? this.songlist,
+      imageVersion: imageVersion ?? this.imageVersion,
+    );
+  }
+
+  @override
+  bool operator ==(covariant Playlist other) {
+    return id == other.id &&
+        key == other.key &&
+        title == other.title &&
+        creator == other.creator &&
+        image == other.image &&
+        listEquals(songlist, other.songlist) &&
+        imageVersion == other.imageVersion;
+  }
+
+  // @override
+  // int get hashCode =>
+  //     Object.hash(id, key, title, creator, image, songlist, imageVersion);
 }
 
 class Reclist extends Playlist {

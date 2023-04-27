@@ -85,11 +85,11 @@ class PlaylistViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateTitle(String? title) async {
-    if (title == null) return;
-    if (await _repo.editPlaylistTitle(_prevKeyword!, title)) {
-      this.title = title;
+  Future<void> updateTitle(String? newTitle) async {
+    if (newTitle == null) return;
+    if (await _repo.editPlaylistTitle(_prevKeyword!, newTitle)) {
+      title = newTitle;
+      notifyListeners();
     }
-    notifyListeners();
   }
 }

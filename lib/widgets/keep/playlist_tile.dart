@@ -69,10 +69,12 @@ class PlaylistTile extends StatelessWidget {
               Navigator.pop(context);
             });
           } else {
+            final viewModel =
+                Provider.of<KeepViewModel>(context, listen: false);
             Navigator.push(
               context,
               pageRouteBuilder(page: PlaylistView(playlist: playlist!)),
-            );
+            ).then((changed) => viewModel.updatePlaylist(playlist!, changed));
           }
         },
         onLongPress: () {
