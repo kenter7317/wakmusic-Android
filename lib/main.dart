@@ -15,7 +15,6 @@ import 'package:wakmusic/screens/search/search_view.dart';
 import 'package:wakmusic/screens/keep/keep_view.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
