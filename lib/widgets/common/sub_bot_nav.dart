@@ -1,7 +1,10 @@
+import 'package:audio_service/models/enums.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/player/player_playlist_view.dart';
@@ -28,6 +31,7 @@ class _SubBotNavState extends State<SubBotNav> {
   @override
   Widget build(BuildContext context) {
     final botNav = Provider.of<NavProvider>(context);
+
     final List<Widget> barList = [
       playDetailBar(),
       playerBar(PlayerBarType.main),
@@ -45,6 +49,7 @@ class _SubBotNavState extends State<SubBotNav> {
   /* 임시 노래재생상세 바 */
   Widget playDetailBar() {
     final botNav = Provider.of<NavProvider>(context);
+    final audioProvider = Provider.of<AudioProvider>(context);
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -60,34 +65,42 @@ class _SubBotNavState extends State<SubBotNav> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           tempLike == true
-              ? playDetailBarBtn("ic_32_heart_on", koreanNumberFormater(1217),
+              ? playDetailBarBtn(
+                  "ic_32_heart_on",
+                  koreanNumberFormater(audioProvider.currentSong == null
+                      ? 0
+                      : audioProvider.currentSong!.last),
                   txtColor: WakColor.pink, onTap: () {
                   setState(() {
                     tempLike = !tempLike;
                   });
                 })
-              : playDetailBarBtn("ic_32_heart_off", koreanNumberFormater(1217),
-                  onTap: () {
+              : playDetailBarBtn(
+                  "ic_32_heart_off",
+                  koreanNumberFormater(audioProvider.currentSong == null
+                      ? 0
+                      : audioProvider.currentSong!.last), onTap: () {
                   setState(() {
                     tempLike = !tempLike;
                   });
                 }), // 수정 (좋아요 상태 연결)
           playDetailBarBtn(
             "ic_32_views",
-            koreanNumberFormater(10000),
+            koreanNumberFormater(audioProvider.currentSong == null
+                ? 0
+                : audioProvider.currentSong!.views),
           ), // 수정 (조회수 연결)
           playDetailBarBtn(
             "ic_32_playadd_900",
             "노래담기",
           ), // 수정 (onTap 액션 필요)
-          playDetailBarBtn("ic_32_play_list", "재생목록",
-              edgePadding: false,
-              onTap: (){
-                botNav.subChange(2);
-                Navigator.push(
-                    botNav.pageContext,
-                    MaterialPageRoute(builder: (context) => const PlayerPlayList())
-                );
+          playDetailBarBtn("ic_32_play_list", "재생목록", edgePadding: false,
+              onTap: () {
+            botNav.subChange(2);
+            Navigator.push(
+                botNav.pageContext,
+                MaterialPageRoute(
+                    builder: (context) => const PlayerPlayList()));
           }),
         ],
       ),
@@ -127,9 +140,10 @@ class _SubBotNavState extends State<SubBotNav> {
   /* 임시 노래 재생 바 */
   Widget playerBar(PlayerBarType type) {
     final botNav = Provider.of<NavProvider>(context);
+    final audioProvider = Provider.of<AudioProvider>(context);
     return GestureDetector(
-      onTap: () { if(type == PlayerBarType.main)
-        {
+      onTap: () {
+        if (type == PlayerBarType.main) {
           botNav.mainSwitchForce(false);
           botNav.subSwitchForce(true);
           botNav.subChange(0);
@@ -152,12 +166,28 @@ class _SubBotNavState extends State<SubBotNav> {
                   padding: const EdgeInsets.fromLTRB(0, 7, 0, 8),
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
-                    child: ExtendedImage.network(
-                      'https://i.ytimg.com/vi/A5Zge2ggBSA/hqdefault.jpg',
-                      fit: BoxFit.cover,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
+                    child: audioProvider.currentSong == null
+                        ? Image.asset(
+                            'assets/images/img_81_thumbnail.png',
+                            fit: BoxFit.cover,
+                          )
+                        : ExtendedImage.network(
+                            'https://i.ytimg.com/vi/${audioProvider.currentSong!.id}/hqdefault.jpg',
+                            fit: BoxFit.cover,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(4),
+                            loadStateChanged: (state) {
+                              if (state.extendedImageLoadState !=
+                                  LoadState.completed) {
+                                return Image.asset(
+                                  'assets/images/img_81_thumbnail.png',
+                                  fit: BoxFit.cover,
+                                );
+                              }
+                              return null;
+                            },
+                            cacheMaxAge: const Duration(days: 30),
+                          ),
                   ),
                 ),
                 type == PlayerBarType.main
@@ -171,35 +201,43 @@ class _SubBotNavState extends State<SubBotNav> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "리와인드 (RE:WIND)",
+                                    audioProvider.currentSong == null
+                                        ? "노래 없음"
+                                        : audioProvider.currentSong!.title,
                                     style: WakText.txt14MH
                                         .copyWith(color: WakColor.grey900),
-                                  ), // 수정
+                                  ), 
                                   Text(
-                                    "이세계아이돌",
+                                    audioProvider.currentSong == null
+                                        ? "노래 없음"
+                                        : audioProvider.currentSong!.artist,
                                     style: WakText.txt12L
                                         .copyWith(color: WakColor.grey900),
-                                  ), // 수정
+                                  ), 
                                 ],
                               ),
                             ),
                             const SizedBox(width: 12),
-                            tempIsPlaying
+                            audioProvider.playbackState == PlaybackState.playing
                                 ? iconBtn("ic_32_stop", edgePadding: true,
                                     onTap: () {
                                     setState(() {
-                                      tempIsPlaying = !tempIsPlaying;
+                                      audioProvider.pause();
                                     });
                                   })
                                 : iconBtn("ic_32_play_900", edgePadding: true,
                                     onTap: () {
                                     setState(() {
-                                      tempIsPlaying = !tempIsPlaying;
+                                      audioProvider.play();
                                     });
                                   }), // 수정
                             iconBtn(
                               "ic_32_close",
                               edgePadding: false,
+                              onTap: () {
+                                botNav.subSwitch();
+                                audioProvider.clear();
+                              }
                             ), // 수정
                           ],
                         ),
@@ -226,7 +264,8 @@ class _SubBotNavState extends State<SubBotNav> {
                                       });
                                     });
                                   default:
-                                    return iconBtn("ic_32_repeat_off", onTap: () {
+                                    return iconBtn("ic_32_repeat_off",
+                                        onTap: () {
                                       setState(() {
                                         tempRepeat = RepeatType.all;
                                       });
@@ -247,14 +286,14 @@ class _SubBotNavState extends State<SubBotNav> {
                                     }), // 수정 (실제 플레이어와 연결)
                               iconBtn("ic_32_next_on"), // 수정 (실제 플레이어와 연결)
                               tempRandom
-                                  ? iconBtn("ic_32_random_on", edgePadding: true,
-                                      onTap: () {
+                                  ? iconBtn("ic_32_random_on",
+                                      edgePadding: true, onTap: () {
                                       setState(() {
                                         tempRandom = !tempRandom;
                                       });
                                     })
-                                  : iconBtn("ic_32_random_off", edgePadding: true,
-                                      onTap: () {
+                                  : iconBtn("ic_32_random_off",
+                                      edgePadding: true, onTap: () {
                                       setState(() {
                                         tempRandom = !tempRandom;
                                       });
@@ -264,7 +303,25 @@ class _SubBotNavState extends State<SubBotNav> {
               ],
             ),
           ),
-          Container(height: 1, color: WakColor.lightBlue), // 수정 (프로그레스 바)
+          StreamBuilder(
+            initialData: const Duration(),
+            stream: audioProvider.position,
+            builder: (context, snapshot) {
+              return ProgressBar(
+                progress: snapshot.data ?? const Duration(),
+                total: audioProvider.duration,
+                barHeight: 1,
+                baseBarColor: WakColor.grey300,
+                progressBarColor: WakColor.lightBlue,
+                thumbRadius: 0,
+                thumbColor: WakColor.lightBlue,
+                timeLabelLocation: TimeLabelLocation.none,
+                onSeek: (duration) {
+                  audioProvider.seek(duration.inSeconds.toDouble());
+                },
+              );
+            },
+          ),
         ],
       ),
     );
@@ -375,8 +432,16 @@ enum EditBarType {
   keepListBar(true, true, false, false, false, false, false, false, false),
   keepProfileBar(false, false, false, false, false, false, false, true, true);
 
-  const EditBarType(this.showSelect, this.showSongAdd, this.showPlayListAdd,
-      this.showDelete, this.showPlay, this.showEdit, this.showShare, this.showProfileChange, this.showNicknameChange);
+  const EditBarType(
+      this.showSelect,
+      this.showSongAdd,
+      this.showPlayListAdd,
+      this.showDelete,
+      this.showPlay,
+      this.showEdit,
+      this.showShare,
+      this.showProfileChange,
+      this.showNicknameChange);
   final bool showSelect;
   final bool showSongAdd;
   final bool showPlayListAdd;
