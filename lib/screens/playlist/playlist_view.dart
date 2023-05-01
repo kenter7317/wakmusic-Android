@@ -43,8 +43,7 @@ class PlaylistView extends StatelessWidget {
           context,
           playlist.copyWith(
             title: viewModel.title,
-            songlist:
-                viewModel.songs.whereType<Song>().map((e) => e.id).toList(),
+            songlist: viewModel.songs.map((e) => e?.id ?? '').toList(),
           ),
         );
         viewModel.title = null;
@@ -163,7 +162,14 @@ class PlaylistView extends StatelessWidget {
             child: GestureDetector(
               onTap: () async {
                 if (await _canPop(context, viewModel, selectedList)) {
-                  Navigator.pop(context);
+                  Navigator.pop(
+                    context,
+                    playlist.copyWith(
+                      title: viewModel.title,
+                      songlist:
+                          viewModel.songs.map((e) => e?.id ?? '').toList(),
+                    ),
+                  );
                 }
               },
               child: SvgPicture.asset(

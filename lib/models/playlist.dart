@@ -47,7 +47,9 @@ class Playlist {
       title: title ?? this.title,
       creator: creator ?? this.creator,
       image: image ?? this.image,
-      songlist: songlist ?? this.songlist,
+      songlist: (songlist != null && songlist.where((s) => s == '').isEmpty)
+          ? songlist
+          : this.songlist,
       imageVersion: imageVersion ?? this.imageVersion,
     );
   }
