@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
+import 'package:wakmusic/repository/notice_repo.dart';
 import 'package:wakmusic/screens/charts/charts_view.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/main_bot_nav.dart';
@@ -13,6 +14,8 @@ import 'package:wakmusic/screens/splash.dart';
 import 'package:wakmusic/screens/home/home_view.dart';
 import 'package:wakmusic/screens/search/search_view.dart';
 import 'package:wakmusic/screens/keep/keep_view.dart';
+import 'package:wakmusic/widgets/common/pop_up.dart';
+import 'package:wakmusic/widgets/show_modal.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +62,26 @@ class _MainState extends State<Main> {
   final navKeyList = List.generate(5, (index) => GlobalKey<NavigatorState>());
 
   @override
+  void initState() {
+    super.initState();
+    final repo = NoticeRepository();
+
+    repo.getNoticeAll().then((notices) async {
+      for (final n in notices) {
+        await showModal(
+          context: context,
+          builder: (_) => PopUp(
+            type: PopUpType.contentBtn,
+            msg: n.images.isNotEmpty ? n.images[0] : null,
+            negFunc: () => repo.hideNotice(n),
+          ),
+        );
+        await Future.delayed(const Duration(milliseconds: 300));
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     NavProvider botNav = Provider.of<NavProvider>(context);
     statusNavColor(context, ScreenType.etc);
@@ -70,7 +93,8 @@ class _MainState extends State<Main> {
             key: navKeyList[navList.indexOf(page)],
             onGenerateRoute: (_) {
               return MaterialPageRoute(builder: (context) {
-                if(page == navList[botNav.curIdx]) botNav.setPageContext(context);
+                if (page == navList[botNav.curIdx])
+                  botNav.setPageContext(context);
                 return page;
               });
             },
