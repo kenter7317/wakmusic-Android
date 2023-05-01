@@ -66,7 +66,7 @@ class _MainState extends State<Main> {
     super.initState();
     final repo = NoticeRepository();
 
-    repo.getNoticeAll().then((notices) async {
+    repo.getNoticeDisplay().then((notices) async {
       for (final n in notices) {
         await showModal(
           context: context,
