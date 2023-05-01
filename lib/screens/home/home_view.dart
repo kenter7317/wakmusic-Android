@@ -119,6 +119,8 @@ class HomeView extends StatelessWidget {
 
   Widget _buildChartTitle(BuildContext context, List<Song>? toplist) {
     NavProvider botNav = Provider.of<NavProvider>(context);
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+    HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
     return SizedBox(
       height: 24,
       child: Row(
@@ -147,10 +149,17 @@ class HomeView extends StatelessWidget {
                   /* play all the songs */
                 }
               },
-              child: Text(
-                '전체듣기',
-                style: WakText.txt14MH.copyWith(color: WakColor.grey25),
-                textAlign: TextAlign.right,
+              child: GestureDetector(
+                onTap: () async {
+                  botNav.subChange(1);
+                  botNav.subSwitchForce(true);
+                  audioProvider.addQueueItems(await viewModel.topList, override: true, autoplay: true);
+                },
+                child: Text(
+                  '전체듣기',
+                  style: WakText.txt14MH.copyWith(color: WakColor.grey25),
+                  textAlign: TextAlign.right,
+                ),
               ),
             ),
           ),
