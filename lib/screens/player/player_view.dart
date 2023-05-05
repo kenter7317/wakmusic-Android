@@ -46,7 +46,7 @@ class Player extends StatelessWidget {
           child: Align(
             alignment: Alignment.topCenter,
             child: Selector<AudioProvider, String>(
-              selector: (context, audioProvider) => audioProvider.currentSong?.id ?? '',
+              selector: (context, provider) => provider.currentSong?.id ?? '',
               builder: (context, id, _) {
                 //print("back id : $id");
                 return Container(
@@ -171,171 +171,182 @@ class Player extends StatelessWidget {
 
   Widget _buildAlbumImage(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: AspectRatio(
-          aspectRatio: 16 / 9,
-          child: Selector<AudioProvider, String>(
-            selector: (context, audioProvider) => audioProvider.currentSong?.id ?? '',
-            builder: (context, id, _) {
-              print("song img : $id");
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: Selector<AudioProvider, String>(
+          selector: (context, provider) => provider.currentSong?.id ?? '',
+          builder: (context, id, _) {
+            print("song img : $id");
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: ExtendedImage.network(
+                    'https://i.ytimg.com/vi/$id/hqdefault.jpg',
                     fit: BoxFit.cover,
-                    image: ExtendedImage.network(
-                      'https://i.ytimg.com/vi/$id/hqdefault.jpg',
-                      fit: BoxFit.cover,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(8),
-                      loadStateChanged: (state) {
-                        if (state.extendedImageLoadState !=
-                            LoadState.completed) {
-                          return Image.asset(
-                            'assets/images/img_81_thumbnail.png',
-                            fit: BoxFit.cover,
-                          );
-                        }
-                        return null;
-                      },
-                      cacheMaxAge: const Duration(days: 30),
-                    ).image,
-                  ),
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(8),
+                    loadStateChanged: (state) {
+                      if (state.extendedImageLoadState != LoadState.completed) {
+                        return Image.asset(
+                          'assets/images/img_81_thumbnail.png',
+                          fit: BoxFit.cover,
+                        );
+                      }
+                      return null;
+                    },
+                    cacheMaxAge: const Duration(days: 30),
+                  ).image,
                 ),
-              );
-            },
-          ),
-        ));
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Widget _buildLyrics(BuildContext context) {
-    var height = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
+    final height =
+        MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
     return Container(
-        alignment: Alignment.center,
-        height: height >= 732 ? 120 : 72,
-        width: 270,
-        child:Selector<AudioProvider, Song>(
+      alignment: Alignment.center,
+      height: height >= 732 ? 120 : 72,
+      width: 270,
+      child: Selector<AudioProvider, Song>(
         selector: (context, audioProvider) => audioProvider.currentSong!,
         builder: (context, currentSong, _) {
           PlayerViewModel viewModel = Provider.of<PlayerViewModel>(context);
-          viewModel.getLyrics(currentSong.id);
           final ScrollController controller = ScrollController();
-          controller.addListener((){
-            if(controller.position.userScrollDirection == ScrollDirection.forward
-                || controller.position.userScrollDirection == ScrollDirection.reverse){
+          controller.addListener(() {
+            if (controller.position.userScrollDirection !=
+                ScrollDirection.idle) {
               viewModel.updateScrollState(ScrollState.scrolling);
-            }else{
+            } else {
               viewModel.updateScrollState(ScrollState.notScrolling);
             }
           });
 
-          return FutureBuilder<SubtitleController>(
-            future: viewModel.lyrics,
-            builder: (context, snapshot){
-              if(snapshot.connectionState == ConnectionState.waiting){
+          return FutureBuilder<void>(
+            future: viewModel.getLyrics(currentSong.id),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
               }
-              else if(snapshot.connectionState == ConnectionState.done && (snapshot.data?.subtitles.isNotEmpty ?? false)){
-                final GlobalKey<ScrollSnapListState> scrollSnapListKey = GlobalKey<ScrollSnapListState>();
-                return Consumer<AudioProvider>(
-                    builder: (context, audioProvider, child) {
-                      return StreamBuilder(
-                        initialData: const Duration(),
-                        stream: audioProvider.position,
-                        builder: (context, position){
-                          var nowIndex = snapshot.data?.durationSearch(position.data ?? Duration.zero)?.index ?? 0;
-                          if(position.hasData && snapshot.hasData){
-                            if(viewModel.scrollState == ScrollState.notScrolling){
-                              Future.microtask(() {
-                                scrollSnapListKey.currentState!.focusToItem(snapshot.data!.durationSearch(position.data ?? Duration.zero)!.index);
-                              });
-                            }
-                          }
 
-                          return ScrollSnapList(
-                            key: scrollSnapListKey,
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            onItemFocus: (index) {
-                              if(nowIndex != index){
-                                audioProvider.seek(snapshot.data?.subtitles[index].start.inSeconds.toDouble() ?? 0);
-                              }
-                            },
-                            itemSize: 24,
-                            itemBuilder: (context, index) {
-                              return Text(
-                                snapshot.data!.subtitles[index].data ?? '',
-                                style: WakText.txt14MH.copyWith(color: index == nowIndex ? WakColor.lightBlue : WakColor.grey500),
-                                textAlign: TextAlign.center,
-                              );
-                            },
-                            itemCount: snapshot.data!.subtitles.length,
-                            listController: controller,
-                          );
+              if (snapshot.connectionState == ConnectionState.done &&
+                  (viewModel.lyrics.subtitles.isNotEmpty)) {
+                final audioProvider = Provider.of<AudioProvider>(context);
+                final scrollSnapListKey = GlobalKey<ScrollSnapListState>();
+                final data = viewModel.lyrics;
+                return StreamBuilder(
+                  initialData: const Duration(),
+                  stream: audioProvider.position,
+                  builder: (context, position) {
+                    var current =
+                        data.durationSearch(position.data ?? Duration.zero);
+                    // var nowIndex = (current?.index ?? 1) - 1;
+                    var nowIndex =
+                        (current != null) ? data.subtitles.indexOf(current) : 0;
+                    print('Search Result: ${current?.props}');
+                    if (position.hasData &&
+                        viewModel.scrollState == ScrollState.notScrolling) {
+                      Future.microtask(() {
+                        if (current == null &&
+                            position.data! > data.subtitles[0].start) {
+                          return;
                         }
-                      );
+                        scrollSnapListKey.currentState?.focusToItem(nowIndex);
+                      });
                     }
-                );
-              }else{
-                return Text(
-                  '가사가 존재하지 않습니다',
-                  style: WakText.txt14MH.copyWith(color: WakColor.grey500),
-                  textAlign: TextAlign.center,
+
+                    return ScrollSnapList(
+                      key: scrollSnapListKey,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      onItemFocus: (idx) {
+                        if (nowIndex != idx) {
+                          audioProvider.seek(
+                              data.subtitles[idx].start.inSeconds.toDouble());
+                        }
+                      },
+                      itemSize: 24,
+                      itemBuilder: (context, index) {
+                        // if (index == nowIndex) {
+                        // print('from NowIndex: ${data!.subtitles[current?.index ?? 0].props}');
+                        // }
+                        return Text(
+                          data.subtitles[index].data,
+                          style: WakText.txt14MH.copyWith(
+                              color: index == nowIndex
+                                  ? WakColor.lightBlue
+                                  : WakColor.grey500),
+                          textAlign: TextAlign.center,
+                        );
+                      },
+                      itemCount: data.subtitles.length,
+                      listController: controller,
+                    );
+                  },
                 );
               }
+
+              return Text(
+                '가사가 존재하지 않습니다',
+                style: WakText.txt14MH.copyWith(color: WakColor.grey500),
+                textAlign: TextAlign.center,
+              );
             },
           );
-        })
+        },
+      ),
     );
   }
 
   Widget _buildAudioProgressBar(BuildContext context) {
-    return Consumer<AudioProvider>(
-      builder: (context, audioProvider, child) {
-        return StreamBuilder(
-          initialData: const Duration(),
-          stream: audioProvider.position,
-          builder: (context, snapshot) {
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
+    final audioProvider = Provider.of<AudioProvider>(context);
+    return StreamBuilder(
+      initialData: const Duration(),
+      stream: audioProvider.position,
+      builder: (context, snapshot) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              ProgressBar(
+                progress: snapshot.data ?? const Duration(),
+                total: audioProvider.duration,
+                barHeight: 2,
+                baseBarColor: WakColor.grey300,
+                progressBarColor: WakColor.lightBlue,
+                thumbRadius: 4,
+                thumbColor: WakColor.lightBlue,
+                timeLabelLocation: TimeLabelLocation.none,
+                onSeek: (duration) {
+                  audioProvider.seek(duration.inSeconds.toDouble());
+                },
+              ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ProgressBar(
-                    progress: snapshot.data ?? const Duration(),
-                    total: audioProvider.duration,
-                    barHeight: 2,
-                    baseBarColor: WakColor.grey300,
-                    progressBarColor: WakColor.lightBlue,
-                    thumbRadius: 4,
-                    thumbColor: WakColor.lightBlue,
-                    timeLabelLocation: TimeLabelLocation.none,
-                    onSeek: (duration) {
-                      audioProvider.seek(duration.inSeconds.toDouble());
-                    },
+                  Text(
+                    _format(snapshot.data ?? Duration.zero),
+                    style: WakText.txt12MH.copyWith(color: WakColor.lightBlue),
                   ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _format(snapshot.data ?? Duration.zero),
-                        style: WakText.txt12MH.copyWith(color: WakColor.lightBlue),
-                      ),
-                      Text(
-                        _format(audioProvider.duration),
-                        style: WakText.txt12MH.copyWith(color: WakColor.grey400),
-                      ),
-                    ],
+                  Text(
+                    _format(audioProvider.duration),
+                    style: WakText.txt12MH.copyWith(color: WakColor.grey400),
                   ),
                 ],
               ),
-            );
-          },
+            ],
+          ),
         );
-      }
+      },
     );
   }
 
