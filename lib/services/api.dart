@@ -92,7 +92,9 @@ class API {
   Future<List<Song>> fetchNew({required GroupType type}) async {
     final response = await getResponse('$testBaseUrl/songs/new/${type.name}');
     if (response.statusCode == 200) {
-      return (jsonDecode(response.body) as List).map((e) => Song.fromJson(e)).toList();
+      return (jsonDecode(response.body) as List)
+          .map((e) => Song.fromJson(e))
+          .toList();
     } else {
       throw Exception('New API failed :(');
     }
@@ -144,7 +146,9 @@ class API {
   Future<List<String>> fetchFAQCategories() async {
     final response = await getResponse('$testBaseUrl/qna/categories');
     if (response.statusCode == 200) {
-      return(jsonDecode(response.body) as List).map((e) => e as String).toList();
+      return (jsonDecode(response.body) as List)
+          .map((e) => e as String)
+          .toList();
     } else {
       throw Exception('FAQ Categories load failed :(');
     }
@@ -153,7 +157,9 @@ class API {
   Future<List<FAQ>> fetchFAQ() async {
     final response = await getResponse('$testBaseUrl/qna');
     if (response.statusCode == 200) {
-      return(jsonDecode(response.body) as List).map((e) => FAQ.fromJson(e)).toList();
+      return (jsonDecode(response.body) as List)
+          .map((e) => FAQ.fromJson(e))
+          .toList();
     } else {
       throw Exception('FAQ load failed :(');
     }
@@ -162,12 +168,27 @@ class API {
   Future<List<Notice>> fetchNotice() async {
     final response = await getResponse('$testBaseUrl/notice/all');
     if (response.statusCode == 200) {
-      return List.from((jsonDecode(response.body) as List).map((e) => Notice.fromJson(e)).toList().reversed);
+      return List.from((jsonDecode(response.body) as List)
+          .map((e) => Notice.fromJson(e))
+          .toList()
+          .reversed);
     } else {
       throw Exception('Notice load failed :(');
     }
   }
-  
+
+  Future<List<Notice>> fetchNoticeDisplay() async {
+    final response = await getResponse('$testBaseUrl/notice');
+    if (response.statusCode == 200) {
+      return List.from((jsonDecode(response.body) as List)
+          .map((e) => Notice.fromJson(e))
+          .toList()
+          .reversed);
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
   Future<String> getToken(Login provider) async {
     final id = await provider.service.login();
     if (id == null) {
@@ -228,8 +249,8 @@ class API {
   }
 
   Future<List<Song>> fetchAlbums(String id, String sort, int start) async {
-    final response =
-        await getResponse('$testBaseUrl/artist/albums?id=$id&sort=$sort&start=$start');
+    final response = await getResponse(
+        '$testBaseUrl/artist/albums?id=$id&sort=$sort&start=$start');
 
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List)
