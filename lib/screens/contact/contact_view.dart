@@ -253,23 +253,7 @@ class _ContactViewState extends State<ContactView> {
                     )
                   ],
                 )
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SvgPicture.asset(
-                      'assets/icons/ic_16_dot.svg',
-                      width: 16,
-                      height: 16,
-                    ),
-                    Expanded(
-                      child: Text(
-                        '조회수가 이상한 경우는 반응 영상이 포함되어 있을 수 있습니다.',
-                        style: WakText.txt12L.copyWith(color: WakColor.grey500),
-                        maxLines: 5,
-                      ),
-                    )
-                  ],
-                ),
+              : const TextWithDot(text: '조회수가 이상한 경우는 반응 영상이 포함되어 있을 수 있습니다.'),
         ),
         _buildForm(
           formIdx: 0,

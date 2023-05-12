@@ -12,6 +12,7 @@ import 'package:wakmusic/widgets/common/btn_with_icon.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
+import 'package:wakmusic/widgets/common/text_with_dot.dart';
 import 'package:wakmusic/widgets/keep/policy.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
@@ -139,25 +140,9 @@ class Suggestions extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SvgPicture.asset(
-                  'assets/icons/ic_16_dot.svg',
-                  width: 16,
-                  height: 16,
-                ),
-                Expanded(
-                  child: Text(
-                    '왁타버스 뮤직 팀에 속한 모든 팀원들은 부아내비 (부려먹는 게 아니라 내가 비빈거다)라는 모토를 가슴에 새기고 일하고 있습니다.',
-                    style: WakText.txt12L.copyWith(color: WakColor.grey500),
-                    maxLines: 5,
-                  ),
-                )
-              ],
-            ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: TextWithDot(text: '왁타버스 뮤직 팀에 속한 모든 팀원들은 부아내비 (부려먹는 게 아니라 내가 비빈거다)라는 모토를 가슴에 새기고 일하고 있습니다.'),
           ),
           const Padding(
             padding: EdgeInsets.fromLTRB(0, 40, 0, 10),

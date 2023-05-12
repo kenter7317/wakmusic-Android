@@ -11,6 +11,7 @@ import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:wakmusic/utils/json.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
+import 'package:wakmusic/widgets/common/text_with_dot.dart';
 import 'package:wakmusic/widgets/common/toast_msg.dart';
 
 enum BotSheetType {
@@ -319,21 +320,7 @@ class _BotSheetState extends State<BotSheet> {
               });
             }),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            SvgPicture.asset(
-              'assets/icons/ic_16_dot.svg',
-              width: 16,
-              height: 16,
-            ),
-            Expanded(
-              child: Text(
-                '리스트 코드로 리스트를 가져올 수 있습니다.',
-                style: WakText.txt12L.copyWith(color: WakColor.grey500),
-              ),
-            ),
-          ],
-        )
+        const TextWithDot(text: '리스트 코드로 리스트를 가져올 수 있습니다.'),
       ],
     );
   }
@@ -386,19 +373,7 @@ class _BotSheetState extends State<BotSheet> {
           ),
         ),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            SvgPicture.asset(
-              'assets/icons/ic_16_dot.svg',
-              width: 16,
-              height: 16,
-            ),
-            Text(
-              '리스트 코드로 리스트를 가져올 수 있습니다.',
-              style: WakText.txt12L.copyWith(color: WakColor.grey500),
-            ),
-          ],
-        )
+        const TextWithDot(text: '리스트 코드로 리스트를 가져올 수 있습니다.'),
       ],
     );
   }
