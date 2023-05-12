@@ -101,7 +101,7 @@ class _ContactViewState extends State<ContactView> {
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+                    padding: const EdgeInsets.only(bottom: 20),
                     child: widgetMap[_about]!,
                   ),
                 ),
@@ -116,84 +116,87 @@ class _ContactViewState extends State<ContactView> {
 
   Widget _buildSelect() {
     final int length = ContactAbout.values.length;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '어떤 것 관련해서 문의주셨나요?',
-          style: WakText.txt20M.copyWith(color: WakColor.grey900),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 48.0 * ((length + 1) ~/ 2) + 8.0 * ((length - 1) ~/ 2),
-          child: GridView.builder(
-            itemCount: length - 1,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              mainAxisExtent: 48,
-            ),
-            itemBuilder: (_, idx) => (_selectIdx == idx)
-                ? GestureDetector(
-                    onTap: () => setState(() {
-                      _enable = false;
-                      _selectIdx = ContactAbout.values.length - 1;
-                    }),
-                    child: Container(
-                      padding: const EdgeInsets.all(11),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: WakColor.blue),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: WakColor.dark.withOpacity(0.08),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              ContactAbout.values.elementAt(idx).btnName,
-                              style:
-                                  WakText.txt16M.copyWith(color: WakColor.blue),
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          SvgPicture.asset(
-                            'assets/icons/ic_24_checkbox.svg',
-                            width: 24,
-                            height: 24,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : GestureDetector(
-                    onTap: () => setState(() {
-                      _enable = true;
-                      _selectIdx = idx;
-                    }),
-                    child: Container(
-                      padding: const EdgeInsets.all(11),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: WakColor.grey200),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        ContactAbout.values.elementAt(idx).btnName,
-                        style: WakText.txt16L.copyWith(color: WakColor.grey900),
-                      ),
-                    ),
-                  ),
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '어떤 것 관련해서 문의주셨나요?',
+            style: WakText.txt20M.copyWith(color: WakColor.grey900),
           ),
-        ),
-      ],
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 48.0 * ((length + 1) ~/ 2) + 8.0 * ((length - 1) ~/ 2),
+            child: GridView.builder(
+              itemCount: length - 1,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                mainAxisExtent: 48,
+              ),
+              itemBuilder: (_, idx) => (_selectIdx == idx)
+                  ? GestureDetector(
+                      onTap: () => setState(() {
+                        _enable = false;
+                        _selectIdx = ContactAbout.values.length - 1;
+                      }),
+                      child: Container(
+                        padding: const EdgeInsets.all(11),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: WakColor.blue),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: WakColor.dark.withOpacity(0.08),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                ContactAbout.values.elementAt(idx).btnName,
+                                style:
+                                    WakText.txt16M.copyWith(color: WakColor.blue),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            SvgPicture.asset(
+                              'assets/icons/ic_24_checkbox.svg',
+                              width: 24,
+                              height: 24,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () => setState(() {
+                        _enable = true;
+                        _selectIdx = idx;
+                      }),
+                      child: Container(
+                        padding: const EdgeInsets.all(11),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: WakColor.grey200),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          ContactAbout.values.elementAt(idx).btnName,
+                          style: WakText.txt16L.copyWith(color: WakColor.grey900),
+                        ),
+                      ),
+                    ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -206,7 +209,49 @@ class _ContactViewState extends State<ContactView> {
   }
 
   Widget _buildSong(bool isAdd) {
-    return Column();
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          color: WakColor.grey100,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SvgPicture.asset(
+                'assets/icons/ic_16_dot.svg',
+                width: 16,
+                height: 16,
+              ),
+              Expanded(
+                child: Text(
+                  '조회수가 이상한 경우는 반응 영상이 포함되어 있을 수 있습니다.',
+                  style: WakText.txt12L.copyWith(color: WakColor.grey500),
+                  maxLines: 5,
+                ),
+              )
+            ],
+          ),
+        ),
+        _buildForm(
+          formIdx: 0,
+          title: '아티스트',
+        ),
+        _buildForm(
+          formIdx: 1,
+          title: '노래 제목',
+        ),
+        _buildForm(
+          formIdx: 2,
+          title: '유튜브 링크',
+        ),
+        _buildForm(
+          formIdx: 3,
+          title: '내용',
+          hasMaxLine: false,
+          maxHeight: 104,
+        ),
+      ],
+    );
   }
 
   Widget _buildChart() {
@@ -227,72 +272,75 @@ class _ContactViewState extends State<ContactView> {
     bool hasMaxLine = true,
     double maxHeight = 152,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (title != null)
-          Text(
-            title,
-            style: WakText.txt18M.copyWith(color: WakColor.grey900),
-          ),
-        ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: maxHeight),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Scrollbar(
-              thickness: hasMaxLine ? 0 : null,
-              child: TextFormField(
-                controller: _fieldTexts[formIdx],
-                focusNode: _focusNodes[formIdx],
-                textInputAction: (hasMaxLine)
-                    ? ((formIdx == _about.checkN - 1)
-                        ? TextInputAction.done
-                        : TextInputAction.next)
-                    : TextInputAction.newline,
-                style: WakText.txt16M.copyWith(color: WakColor.grey600),
-                cursorColor: WakColor.grey900,
-                maxLines: (hasMaxLine) ? 1 : null,
-                autofocus: (formIdx == 0),
-                onTap: () {
-                  setState(() {
-                    _focusNodes[formIdx].requestFocus();
-                  });
-                },
-                onChanged: (value) {
-                  setState(() {
-                    _checkList[formIdx] = value.isNotEmpty;
-                    _enable = _checkList
-                        .sublist(0, _about.checkN)
-                        .every((check) => check);
-                  });
-                },
-                onFieldSubmitted: (value) {
-                  setState(() {
-                    _focusNodes[formIdx].unfocus();
-                    if (formIdx < _about.checkN - 1) {
-                      _focusNodes[formIdx + 1].requestFocus();
-                    }
-                  });
-                },
-                decoration: InputDecoration(
-                  isDense: true,
-                  isCollapsed: true,
-                  border: InputBorder.none,
-                  hintText: '내 답변',
-                  hintStyle: WakText.txt16M.copyWith(color: WakColor.grey400),
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title != null)
+            Text(
+              title,
+              style: WakText.txt18M.copyWith(color: WakColor.grey900),
+            ),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxHeight),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Scrollbar(
+                thickness: hasMaxLine ? 0 : null,
+                child: TextFormField(
+                  controller: _fieldTexts[formIdx],
+                  focusNode: _focusNodes[formIdx],
+                  textInputAction: (hasMaxLine)
+                      ? ((formIdx == _about.checkN - 1)
+                          ? TextInputAction.done
+                          : TextInputAction.next)
+                      : TextInputAction.newline,
+                  style: WakText.txt16M.copyWith(color: WakColor.grey600),
+                  cursorColor: WakColor.grey900,
+                  maxLines: (hasMaxLine) ? 1 : null,
+                  autofocus: (formIdx == 0),
+                  onTap: () {
+                    setState(() {
+                      _focusNodes[formIdx].requestFocus();
+                    });
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      _checkList[formIdx] = value.isNotEmpty;
+                      _enable = _checkList
+                          .sublist(0, _about.checkN)
+                          .every((check) => check);
+                    });
+                  },
+                  onFieldSubmitted: (value) {
+                    setState(() {
+                      _focusNodes[formIdx].unfocus();
+                      if (formIdx < _about.checkN - 1) {
+                        _focusNodes[formIdx + 1].requestFocus();
+                      }
+                    });
+                  },
+                  decoration: InputDecoration(
+                    isDense: true,
+                    isCollapsed: true,
+                    border: InputBorder.none,
+                    hintText: '내 답변',
+                    hintStyle: WakText.txt16M.copyWith(color: WakColor.grey400),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        Divider(
-          indent: 0,
-          endIndent: 0,
-          color: (_focusNodes[formIdx].hasFocus)
-              ? WakColor.blue
-              : WakColor.grey200,
-        ),
-      ],
+          Divider(
+            indent: 0,
+            endIndent: 0,
+            color: (_focusNodes[formIdx].hasFocus)
+                ? WakColor.blue
+                : WakColor.grey200,
+          ),
+        ],
+      ),
     );
   }
 
