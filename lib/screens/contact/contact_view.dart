@@ -139,63 +139,17 @@ class _ContactViewState extends State<ContactView> {
                 crossAxisSpacing: 8,
                 mainAxisExtent: 48,
               ),
-              itemBuilder: (_, idx) => (_selectIdx == idx)
-                  ? GestureDetector(
-                      onTap: () => setState(() {
-                        _enable = false;
-                        _selectIdx = ContactAbout.values.length - 1;
-                      }),
-                      child: Container(
-                        padding: const EdgeInsets.all(11),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: WakColor.blue),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: WakColor.dark.withOpacity(0.08),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                ContactAbout.values.elementAt(idx).btnName,
-                                style: WakText.txt16M
-                                    .copyWith(color: WakColor.blue),
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            SvgPicture.asset(
-                              'assets/icons/ic_24_checkbox.svg',
-                              width: 24,
-                              height: 24,
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : GestureDetector(
-                      onTap: () => setState(() {
-                        _enable = true;
-                        _selectIdx = idx;
-                      }),
-                      child: Container(
-                        padding: const EdgeInsets.all(11),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: WakColor.grey200),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          ContactAbout.values.elementAt(idx).btnName,
-                          style:
-                              WakText.txt16L.copyWith(color: WakColor.grey900),
-                        ),
-                      ),
-                    ),
+              itemBuilder: (_, idx) {
+                bool isSelected = (_selectIdx == idx);
+                return _buildCheckButton(
+                  onTap: () => setState(() {
+                    _enable = !isSelected;
+                    _selectIdx = (isSelected) ? -1 : idx;
+                  }),
+                  isSelected: isSelected,
+                  btnText: ContactAbout.values.elementAt(idx).btnName,
+                );
+              },
             ),
           ),
         ],
@@ -208,7 +162,56 @@ class _ContactViewState extends State<ContactView> {
   }
 
   Widget _buildFeature() {
-    return Column();
+    return Column(
+      children: [
+        _buildForm(
+          formIdx: 0,
+          title: '제안해 주고 싶은 기능에 대해 설명해 주세요.',
+          hasMaxLine: false,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '어떤 플랫폼과 관련된 기능인가요?',
+                style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                maxLines: 5,
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 48,
+                child: GridView.builder(
+                  itemCount: 2,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    mainAxisExtent: 48,
+                  ),
+                  itemBuilder: (_, idx) {
+                    bool isSelected = (_selectIdx == idx);
+                    return _buildCheckButton(
+                      onTap: () => setState(() {
+                        _checkList[1] = !isSelected;
+                        _enable = _checkList
+                            .sublist(0, _about.checkN)
+                            .every((check) => check);
+                        _selectIdx = (isSelected) ? -1 : idx;
+                      }),
+                      isSelected: isSelected,
+                      btnText: ['모바일 앱', 'PC 웹'][idx],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
   }
 
   Widget _buildSong(bool isAdd) {
@@ -304,6 +307,7 @@ class _ContactViewState extends State<ContactView> {
             Text(
               title,
               style: WakText.txt18M.copyWith(color: WakColor.grey900),
+              maxLines: 5,
             ),
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: maxHeight),
@@ -367,6 +371,59 @@ class _ContactViewState extends State<ContactView> {
     );
   }
 
+  Widget _buildCheckButton({
+    void Function()? onTap,
+    required bool isSelected,
+    required String btnText,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: (isSelected)
+          ? Container(
+              padding: const EdgeInsets.all(11),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: WakColor.blue),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: WakColor.dark.withOpacity(0.08),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      btnText,
+                      style: WakText.txt16M.copyWith(color: WakColor.blue),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  SvgPicture.asset(
+                    'assets/icons/ic_24_checkbox.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                ],
+              ),
+            )
+          : Container(
+              padding: const EdgeInsets.all(11),
+              decoration: BoxDecoration(
+                border: Border.all(color: WakColor.grey200),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                btnText,
+                style: WakText.txt16L.copyWith(color: WakColor.grey900),
+              ),
+            ),
+    );
+  }
+
   Widget _buildButton() {
     if (_about == ContactAbout.select) {
       return Padding(
@@ -376,6 +433,7 @@ class _ContactViewState extends State<ContactView> {
             if (_enable) {
               setState(() {
                 _about = ContactAbout.values.elementAt(_selectIdx);
+                _selectIdx = -1;
                 for (int i = 0; i < _maxFields; i++) {
                   _fieldTexts[i].clear();
                 }
@@ -409,6 +467,7 @@ class _ContactViewState extends State<ContactView> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
+                  _selectIdx = ContactAbout.values.indexOf(_about);
                   _about = ContactAbout.select;
                   _enable = true;
                 });
