@@ -4,7 +4,9 @@ import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
+import 'package:wakmusic/widgets/common/text_with_dot.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum ContactAbout {
   bug('버그 제보', 2),
@@ -162,8 +164,8 @@ class _ContactViewState extends State<ContactView> {
                             Expanded(
                               child: Text(
                                 ContactAbout.values.elementAt(idx).btnName,
-                                style:
-                                    WakText.txt16M.copyWith(color: WakColor.blue),
+                                style: WakText.txt16M
+                                    .copyWith(color: WakColor.blue),
                               ),
                             ),
                             const SizedBox(width: 4),
@@ -189,7 +191,8 @@ class _ContactViewState extends State<ContactView> {
                         ),
                         child: Text(
                           ContactAbout.values.elementAt(idx).btnName,
-                          style: WakText.txt16L.copyWith(color: WakColor.grey900),
+                          style:
+                              WakText.txt16L.copyWith(color: WakColor.grey900),
                         ),
                       ),
                     ),
@@ -214,23 +217,59 @@ class _ContactViewState extends State<ContactView> {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
           color: WakColor.grey100,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SvgPicture.asset(
-                'assets/icons/ic_16_dot.svg',
-                width: 16,
-                height: 16,
-              ),
-              Expanded(
-                child: Text(
-                  '조회수가 이상한 경우는 반응 영상이 포함되어 있을 수 있습니다.',
-                  style: WakText.txt12L.copyWith(color: WakColor.grey500),
-                  maxLines: 5,
+          child: (isAdd)
+              ? Column(
+                  children: [
+                    const TextWithDot(
+                        text:
+                            '이세돌 분들이 부르신걸 이파리분들이 개인소장용으로 일부공개한 영상을 올리길 원하시면 ‘은수저’님에게 왁물원 채팅으로 부탁드립니다.'),
+                    const SizedBox(height: 4),
+                    const TextWithDot(
+                        text: '왁뮤에 들어갈 수 있는 기준을 충족하는지 꼭 확인하시고 추가 요청해 주세요.'),
+                    const SizedBox(height: 4),
+                    GestureDetector(
+                      onTap: () {
+                        launchUrl(
+                          Uri.parse(
+                              'https://whimsical.com/E3GQxrTaafVVBrhm55BNBS'),
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            '왁뮤 노래 포함 기준',
+                            style:
+                                WakText.txt12MH.copyWith(color: WakColor.blue),
+                          ),
+                          SvgPicture.asset(
+                            'assets/icons/ic_16_arrow_right.svg',
+                            width: 16,
+                            height: 16,
+                            color: WakColor.blue,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/ic_16_dot.svg',
+                      width: 16,
+                      height: 16,
+                    ),
+                    Expanded(
+                      child: Text(
+                        '조회수가 이상한 경우는 반응 영상이 포함되어 있을 수 있습니다.',
+                        style: WakText.txt12L.copyWith(color: WakColor.grey500),
+                        maxLines: 5,
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
         ),
         _buildForm(
           formIdx: 0,
