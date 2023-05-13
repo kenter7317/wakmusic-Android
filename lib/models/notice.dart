@@ -1,4 +1,5 @@
 class Notice {
+  final int id;
   final String category;
   final String title;
   final String mainText;
@@ -8,6 +9,7 @@ class Notice {
   final DateTime endAt;
 
   Notice({
+    required this.id,
     required this.category,
     required this.title,
     required this.mainText,
@@ -18,6 +20,7 @@ class Notice {
   });
 
   factory Notice.fromJson(Map<String, dynamic> json) => Notice(
+        id: json['id'],
         category: json['category'],
         title: json['title'],
         mainText: json['main_text'] ??

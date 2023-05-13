@@ -9,20 +9,25 @@ class PlayerViewModel with ChangeNotifier {
   late final API _api;
   ScrollState _scrollState = ScrollState.notScrolling;
 
-  late Future<SubtitleController> _lyrics;
+  late SubtitleController _lyrics;
+  String _id = '';
 
   ScrollState get scrollState => _scrollState;
-  Future<SubtitleController> get lyrics => _lyrics;
+  SubtitleController get lyrics => _lyrics;
 
   PlayerViewModel() {
     _api = API();
   }
 
-  void updateScrollState(ScrollState state){
+  void updateScrollState(ScrollState state) {
     _scrollState = state;
   }
 
   Future<void> getLyrics(String id) async {
-    _lyrics = _api.getLyrics(id: id);
+    if (id != _id) {
+      _id = id;
+      _lyrics = await _api.getLyrics(id: id);
+      notifyListeners();
+    }
   }
 }

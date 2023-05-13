@@ -209,6 +209,18 @@ class API {
     }
   }
 
+  Future<List<Notice>> fetchNoticeDisplay() async {
+    final response = await getResponse('$testBaseUrl/notice');
+    if (response.statusCode == 200) {
+      return List.from((jsonDecode(response.body) as List)
+          .map((e) => Notice.fromJson(e))
+          .toList()
+          .reversed);
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
   Future<String> getToken(Login provider) async {
     final id = await provider.service.login();
     if (id == null) {
