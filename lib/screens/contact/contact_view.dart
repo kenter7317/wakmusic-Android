@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/text_with_dot.dart';
+import 'package:wakmusic/widgets/common/toast_msg.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 enum ContactAbout {
   bug('버그 제보', 2),
@@ -31,8 +35,9 @@ class ContactView extends StatefulWidget {
 class _ContactViewState extends State<ContactView> {
   ContactAbout _about = ContactAbout.select;
   bool _enable = false;
-  int _selectIdx = -1;
+  static late int _selectIdx;
   final int _maxFields = 4;
+  late List<String> _files; /* string -> for test */
   late final List<TextEditingController> _fieldTexts;
   late final List<ScrollController> _scrolls;
   late final List<FocusNode> _focusNodes;
@@ -41,6 +46,8 @@ class _ContactViewState extends State<ContactView> {
   @override
   void initState() {
     super.initState();
+    _selectIdx = -1;
+    _files = [];
     _fieldTexts = List.generate(_maxFields, (_) => TextEditingController());
     _scrolls = List.generate(_maxFields, (_) => ScrollController());
     _focusNodes = List.generate(
@@ -158,7 +165,191 @@ class _ContactViewState extends State<ContactView> {
   }
 
   Widget _buildBug() {
-    return Column();
+    List<String> nickname = ['알려주기', '비공개', '가입안함'];
+    return Column(
+      children: [
+        _buildForm(
+          formIdx: 0,
+          title: '겪으신 버그에 대해 설명해 주세요.',
+          hasMaxLine: false,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  '버그와 관련된 사진이나 영상을 첨부해 주세요.',
+                  style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                  maxLines: 5,
+                ),
+              ),
+              if (_files.isNotEmpty)
+                Container(
+                  height: 92,
+                  padding: const EdgeInsets.only(top: 12),
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: _files.length,
+                    itemBuilder: (context, idx) => Stack(
+                      children: [
+                        Container(
+                          width: 80,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: WakColor.grey100),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        Positioned(
+                          top: 2,
+                          right: 2,
+                          child: GestureDetector(
+                            onTap: () => setState(() {
+                              _files.removeAt(idx);
+                            }),
+                            child: SvgPicture.asset(
+                              'assets/icons/ic_24_close_900.svg',
+                              width: 24,
+                              height: 24,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    separatorBuilder: (_, __) => const SizedBox(width: 4),
+                  ),
+                ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: GestureDetector(
+                  onTap: () {
+                    if (_files.length == 5) {
+                      setState(() {
+                        for (int i = 0; i < _maxFields; i++) {
+                          _focusNodes[i].unfocus();
+                        }
+                      });
+                      showToastWidget(
+                        context: context,
+                        position: const StyledToastPosition(
+                          align: Alignment.bottomCenter,
+                          offset: 56,
+                        ),
+                        animation: StyledToastAnimation.slideFromBottomFade,
+                        reverseAnimation: StyledToastAnimation.fade,
+                        const ToastMsg(msg: '최대 5개까지 첨부 가능합니다.'),
+                      );
+                    } else {
+                      /* attach file */
+                      setState(() {
+                        _files.add('test'); // for test
+                      });
+                    }
+                  },
+                  child: Container(
+                    height: 52,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: WakColor.blue),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        const Spacer(flex: 23),
+                        SvgPicture.asset(
+                          'assets/icons/ic_32_camera.svg',
+                          width: 32,
+                          height: 32,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '첨부하기',
+                          style: WakText.txt16M.copyWith(color: WakColor.blue),
+                          textAlign: TextAlign.center,
+                        ),
+                        const Spacer(flex: 26),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '왁물원 닉네임을 알려주세요.',
+                style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                maxLines: 5,
+              ),
+              const SizedBox(height: 12),
+              GestureDetector(
+                onTap: () {
+                  showModal(
+                    context: context,
+                    builder: (_) => ChoiceModal(
+                      choices: nickname,
+                      initialChoice: _selectIdx,
+                    ),
+                  ).whenComplete(() => setState(() {
+                        _fieldTexts[1].text =
+                            (_selectIdx > 0) ? nickname[_selectIdx] : '';
+                        _checkList[1] = (_selectIdx > 0);
+                        _enable = _checkList
+                            .sublist(0, _about.checkN)
+                            .every((check) => check);
+                      }));
+                },
+                child: Container(
+                  height: 52,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 13, horizontal: 11),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: WakColor.grey200),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: (_selectIdx == -1)
+                            ? Text(
+                                '선택',
+                                style: WakText.txt16M
+                                    .copyWith(color: WakColor.grey400),
+                              )
+                            : Text(
+                                nickname[_selectIdx],
+                                style: WakText.txt16M
+                                    .copyWith(color: WakColor.grey900),
+                              ),
+                      ),
+                      const SizedBox(width: 4),
+                      SvgPicture.asset(
+                        'assets/icons/ic_24_arrow_bottom.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (_selectIdx == 0) _buildForm(formIdx: 1),
+              const SizedBox(height: 12),
+              const TextWithDot(text: '닉네임을 알려주시면 피드백을 받으시는 데 도움이 됩니다.'),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildFeature() {
@@ -211,7 +402,7 @@ class _ContactViewState extends State<ContactView> {
               ),
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -301,7 +492,7 @@ class _ContactViewState extends State<ContactView> {
     double maxHeight = 152,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all((title != null) ? 20 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -533,6 +724,81 @@ class _ContactViewState extends State<ContactView> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ChoiceModal extends StatefulWidget {
+  const ChoiceModal({
+    super.key,
+    required this.choices,
+    required this.initialChoice,
+  });
+  final List<String> choices;
+  final int initialChoice;
+
+  @override
+  State<ChoiceModal> createState() => _ChoiceModalState();
+}
+
+class _ChoiceModalState extends State<ChoiceModal> {
+  late int _selectIdx;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectIdx = widget.initialChoice;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
+      child: Container(
+        height: 228,
+        padding: const EdgeInsets.fromLTRB(20, 32, 20, 40),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: List.generate(
+            3,
+            (idx) {
+              bool isSelected = (_selectIdx == idx);
+              return GestureDetector(
+                onTap: () => setState(() {
+                  _selectIdx = (isSelected) ? -1 : idx;
+                  _ContactViewState._selectIdx = _selectIdx;
+                }),
+                behavior: HitTestBehavior.translucent,
+                child: Container(
+                  height: 52,
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        widget.choices[idx],
+                        style: (isSelected)
+                            ? WakText.txt18M.copyWith(color: WakColor.grey900)
+                            : WakText.txt18L.copyWith(color: WakColor.grey900),
+                      ),
+                      if (isSelected)
+                        SvgPicture.asset(
+                          'assets/icons/ic_24_checkbox.svg',
+                          width: 24,
+                          height: 24,
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
