@@ -1,3 +1,5 @@
+import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,12 +7,15 @@ import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
+import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/text_with_dot.dart';
 import 'package:wakmusic/widgets/common/toast_msg.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:mime/mime.dart';
 
 enum ContactAbout {
   bug('버그 제보', 2),
@@ -37,7 +42,8 @@ class _ContactViewState extends State<ContactView> {
   bool _enable = false;
   static late int _selectIdx;
   final int _maxFields = 4;
-  late List<String> _files; /* string -> for test */
+  late List<File> _files;
+  late List<Future<Uint8List?>?> _thumbnails;
   late final List<TextEditingController> _fieldTexts;
   late final List<ScrollController> _scrolls;
   late final List<FocusNode> _focusNodes;
@@ -48,6 +54,7 @@ class _ContactViewState extends State<ContactView> {
     super.initState();
     _selectIdx = -1;
     _files = [];
+    _thumbnails = [];
     _fieldTexts = List.generate(_maxFields, (_) => TextEditingController());
     _scrolls = List.generate(_maxFields, (_) => ScrollController());
     _focusNodes = List.generate(
@@ -71,6 +78,10 @@ class _ContactViewState extends State<ContactView> {
 
   @override
   void dispose() {
+    for(int i = 0; i < _files.length; i++) {
+      _files[i].deleteSync();
+    }
+    _thumbnails.clear();
     for (int i = 0; i < _maxFields; i++) {
       _fieldTexts[i].dispose();
       _scrolls[i].dispose();
@@ -79,16 +90,38 @@ class _ContactViewState extends State<ContactView> {
     super.dispose();
   }
 
+  Future<void> attach() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.media);
+    FilePickerStatus.done;
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      if (file.lengthSync() / (1024 * 1024) > 100) {
+        showToastWidget(
+          context: context,
+          position: const StyledToastPosition(
+            align: Alignment.bottomCenter,
+            offset: 56,
+          ),
+          animation: StyledToastAnimation.slideFromBottomFade,
+          reverseAnimation: StyledToastAnimation.fade,
+          const ToastMsg(msg: '최대 파일 크기는 100MB입니다.'),
+        );
+        return;
+      }
+      setState(() {
+        if (lookupMimeType(file.path)?.startsWith('image/') ?? false) {
+          _thumbnails.add(null);
+        } else {
+          _thumbnails.add(VideoThumbnail.thumbnailData(video: file.path));
+        }
+        _files.add(file);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final Map<ContactAbout, Widget> widgetMap = {
-      ContactAbout.bug: _buildBug(),
-      ContactAbout.feature: _buildFeature(),
-      ContactAbout.addSong: _buildSong(true),
-      ContactAbout.editSong: _buildSong(false),
-      ContactAbout.chart: _buildChart(),
-      ContactAbout.select: _buildSelect(),
-    };
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -111,7 +144,22 @@ class _ContactViewState extends State<ContactView> {
                   physics: const BouncingScrollPhysics(),
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 20),
-                    child: widgetMap[_about]!,
+                    child: () {
+                      switch (_about) {
+                        case ContactAbout.bug: 
+                          return _buildBug();
+                        case ContactAbout.feature: 
+                          return _buildFeature();
+                        case ContactAbout.addSong: 
+                          return _buildSong(true);
+                        case ContactAbout.editSong:
+                          return _buildSong(false);
+                        case ContactAbout.chart: 
+                          return _buildChart();
+                        case ContactAbout.select: 
+                          return _buildSelect();
+                      }
+                    }(),
                   ),
                 ),
               ),
@@ -197,19 +245,14 @@ class _ContactViewState extends State<ContactView> {
                     itemCount: _files.length,
                     itemBuilder: (context, idx) => Stack(
                       children: [
-                        Container(
-                          width: 80,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: WakColor.grey100),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
+                        _buildImage(idx),
                         Positioned(
                           top: 2,
                           right: 2,
                           child: GestureDetector(
                             onTap: () => setState(() {
                               _files.removeAt(idx);
+                              _thumbnails.removeAt(idx);
                             }),
                             child: SvgPicture.asset(
                               'assets/icons/ic_24_close_900.svg',
@@ -245,10 +288,7 @@ class _ContactViewState extends State<ContactView> {
                         const ToastMsg(msg: '최대 5개까지 첨부 가능합니다.'),
                       );
                     } else {
-                      /* attach file */
-                      setState(() {
-                        _files.add('test'); // for test
-                      });
+                      attach();
                     }
                   },
                   child: Container(
@@ -349,6 +389,50 @@ class _ContactViewState extends State<ContactView> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildImage(int idx) {
+    if (_thumbnails[idx] == null) {
+      return ExtendedImage.file(
+        _files[idx],
+        width: 80,
+        height: 80,
+        fit: BoxFit.cover,
+        shape: BoxShape.rectangle,
+        border: Border.all(color: WakColor.grey100),
+        borderRadius: BorderRadius.circular(8),
+      );
+    }
+    Widget skeletonBox = SkeletonBox(
+      child: Container(
+        width: 80,
+        decoration: BoxDecoration(
+          color: WakColor.grey200,
+          border: Border.all(color: WakColor.grey100),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+    return FutureBuilder(
+      future: _thumbnails[idx],
+      builder: (_, snapshot) => (snapshot.hasData)
+          ? ExtendedImage.memory(
+              snapshot.data!,
+              width: 80,
+              height: 80,
+              fit: BoxFit.cover,
+              shape: BoxShape.rectangle,
+              border: Border.all(color: WakColor.grey100),
+              borderRadius: BorderRadius.circular(8),
+              loadStateChanged: (state) {
+                if (state.extendedImageLoadState != LoadState.completed) {
+                  return skeletonBox;
+                }
+                return null;
+              },
+            )
+          : skeletonBox,
     );
   }
 
@@ -627,6 +711,8 @@ class _ContactViewState extends State<ContactView> {
               setState(() {
                 _about = ContactAbout.values.elementAt(_selectIdx);
                 _selectIdx = -1;
+                _files = [];
+                _thumbnails = [];
                 for (int i = 0; i < _maxFields; i++) {
                   _fieldTexts[i].clear();
                 }
