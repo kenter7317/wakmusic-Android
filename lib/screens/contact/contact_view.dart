@@ -193,8 +193,10 @@ class _ContactViewState extends State<ContactView> {
                   ),
                   itemBuilder: (_, idx) {
                     bool isSelected = (_selectIdx == idx);
+                    List<String> btnTexts = ['모바일 앱', 'PC 웹'];
                     return _buildCheckButton(
                       onTap: () => setState(() {
+                        _fieldTexts[1].text = (isSelected) ? '' : btnTexts[idx];
                         _checkList[1] = !isSelected;
                         _enable = _checkList
                             .sublist(0, _about.checkN)
@@ -202,7 +204,7 @@ class _ContactViewState extends State<ContactView> {
                         _selectIdx = (isSelected) ? -1 : idx;
                       }),
                       isSelected: isSelected,
-                      btnText: ['모바일 앱', 'PC 웹'][idx],
+                      btnText: btnTexts[idx],
                     );
                   },
                 ),
