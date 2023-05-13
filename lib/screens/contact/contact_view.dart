@@ -78,7 +78,7 @@ class _ContactViewState extends State<ContactView> {
 
   @override
   void dispose() {
-    for(int i = 0; i < _files.length; i++) {
+    for (int i = 0; i < _files.length; i++) {
       _files[i].deleteSync();
     }
     _thumbnails.clear();
@@ -146,17 +146,17 @@ class _ContactViewState extends State<ContactView> {
                     padding: const EdgeInsets.only(bottom: 20),
                     child: () {
                       switch (_about) {
-                        case ContactAbout.bug: 
+                        case ContactAbout.bug:
                           return _buildBug();
-                        case ContactAbout.feature: 
+                        case ContactAbout.feature:
                           return _buildFeature();
-                        case ContactAbout.addSong: 
+                        case ContactAbout.addSong:
                           return _buildSong(true);
                         case ContactAbout.editSong:
                           return _buildSong(false);
-                        case ContactAbout.chart: 
+                        case ContactAbout.chart:
                           return _buildChart();
-                        case ContactAbout.select: 
+                        case ContactAbout.select:
                           return _buildSelect();
                       }
                     }(),
@@ -332,21 +332,26 @@ class _ContactViewState extends State<ContactView> {
               ),
               const SizedBox(height: 12),
               GestureDetector(
-                onTap: () {
-                  showModal(
-                    context: context,
-                    builder: (_) => ChoiceModal(
-                      choices: nickname,
-                      initialChoice: _selectIdx,
-                    ),
-                  ).whenComplete(() => setState(() {
-                        _fieldTexts[1].text =
-                            (_selectIdx > 0) ? nickname[_selectIdx] : '';
-                        _checkList[1] = (_selectIdx > 0);
-                        _enable = _checkList
-                            .sublist(0, _about.checkN)
-                            .every((check) => check);
-                      }));
+                onTap: () async {
+                  int? choice = await showModal(
+                        context: context,
+                        builder: (_) => ChoiceModal(
+                          choices: nickname,
+                          initialChoice: _selectIdx,
+                        ),
+                      ) ??
+                      _selectIdx;
+                  if (_selectIdx != choice) {
+                    setState(() {
+                      _selectIdx = choice;
+                      _fieldTexts[1].text =
+                          (_selectIdx > 0) ? nickname[_selectIdx] : '';
+                      _checkList[1] = (_selectIdx > 0);
+                      _enable = _checkList
+                          .sublist(0, _about.checkN)
+                          .every((check) => check);
+                    });
+                  }
                 },
                 child: Container(
                   height: 52,
@@ -815,7 +820,7 @@ class _ContactViewState extends State<ContactView> {
   }
 }
 
-class ChoiceModal extends StatefulWidget {
+class ChoiceModal extends StatelessWidget {
   const ChoiceModal({
     super.key,
     required this.choices,
@@ -823,19 +828,6 @@ class ChoiceModal extends StatefulWidget {
   });
   final List<String> choices;
   final int initialChoice;
-
-  @override
-  State<ChoiceModal> createState() => _ChoiceModalState();
-}
-
-class _ChoiceModalState extends State<ChoiceModal> {
-  late int _selectIdx;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectIdx = widget.initialChoice;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -853,12 +845,11 @@ class _ChoiceModalState extends State<ChoiceModal> {
           children: List.generate(
             3,
             (idx) {
-              bool isSelected = (_selectIdx == idx);
+              bool isSelected = (initialChoice == idx);
               return GestureDetector(
-                onTap: () => setState(() {
-                  _selectIdx = (isSelected) ? -1 : idx;
-                  _ContactViewState._selectIdx = _selectIdx;
-                }),
+                onTap: () {
+                  Navigator.pop(context, idx);
+                },
                 behavior: HitTestBehavior.translucent,
                 child: Container(
                   height: 52,
@@ -867,7 +858,7 @@ class _ChoiceModalState extends State<ChoiceModal> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        widget.choices[idx],
+                        choices[idx],
                         style: (isSelected)
                             ? WakText.txt18M.copyWith(color: WakColor.grey900)
                             : WakText.txt18L.copyWith(color: WakColor.grey900),
