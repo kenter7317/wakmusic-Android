@@ -121,7 +121,7 @@ class _BotSheetState extends State<BotSheet> {
 
                           final repo = UserRepository();
                           await repo.addToMyPlaylist(_fieldText.text).then(
-                              (playlist) => Navigator.pop(context, playlist));
+                              (list) => Navigator.pop(context, list.simplify));
                         } catch (_) {
                           showToastWidget(
                             context: context,
@@ -268,14 +268,15 @@ class _BotSheetState extends State<BotSheet> {
             setState(() {
               if (value.isEmpty || value == widget.initialValue) {
                 _type = FormType.none;
-              }/* else if (value == 'test') { /* error condition */
+              } /* else if (value == 'test') { /* error condition */
                 _type = FormType.error;
               }*/
-                else {
-                  _type = FormType.enable;
-                }
-              });
-            }),
+              else {
+                _type = FormType.enable;
+              }
+            });
+          },
+        ),
         const SizedBox(height: 4),
         Row(
           children: [

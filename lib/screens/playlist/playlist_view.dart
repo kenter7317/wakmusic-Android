@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wakmusic/models/playlist_detail.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -31,18 +33,37 @@ class PlaylistView extends StatelessWidget {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
     SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
     return DismissibleView(
-      onDismissed: () {
-        _canPop(context, viewModel, selectedList, dismissible: false).whenComplete(() => Navigator.pop(context));
-      },
+      onDismissed: () => _canPop(
+        context,
+        viewModel,
+        selectedList,
+        dismissible: false,
+      ).whenComplete(() {
+        Navigator.pop(
+          context,
+          playlist.copyWith(
+            title: viewModel.title,
+            songlist: viewModel.songs.map((e) => e?.id ?? '').toList(),
+          ),
+        );
+        viewModel.title = null;
+      }),
       maxTransformValue: 0.1,
-      dismissThresholds: const { DismissiblePageDismissDirection.startToEnd: 0.1 },
+      dismissThresholds: const {
+        DismissiblePageDismissDirection.startToEnd: 0.1,
+      },
       child: Scaffold(
         body: _buildBody(context),
       ),
     );
   }
 
-  Future<bool> _canPop(BuildContext context, PlaylistViewModel viewModel, SelectSongProvider selectedList, {bool dismissible = true}) async {
+  Future<bool> _canPop(
+    BuildContext context,
+    PlaylistViewModel viewModel,
+    SelectSongProvider selectedList, {
+    bool dismissible = true,
+  }) async {
     switch (viewModel.curStatus) {
       case EditStatus.none:
         selectedList.clearList();
@@ -57,12 +78,13 @@ class PlaylistView extends StatelessWidget {
           result = true;
         } else {
           result = await showModal(
-            context: context,
-            builder: (_) => const PopUp(
-              type: PopUpType.txtTwoBtn,
-              msg: '변경된 내용을 저장할까요?',
-            ),
-          ) ?? ((dismissible) ? null : false);
+                context: context,
+                builder: (_) => const PopUp(
+                  type: PopUpType.txtTwoBtn,
+                  msg: '변경된 내용을 저장할까요?',
+                ),
+              ) ??
+              ((dismissible) ? null : false);
           viewModel.applySongs(result);
         }
         if (result != null) selectedList.clearList();
@@ -76,9 +98,9 @@ class PlaylistView extends StatelessWidget {
     return WillPopScope(
       onWillPop: () => _canPop(context, viewModel, selectedList),
       child: FutureBuilder<void>(
-        future: viewModel.getSongs(playlist.songlist.join(',')),
+        future: viewModel.getSongs(playlist),
         builder: (context, _) {
-          bool isEmpty = playlist.songlist.where((songId) => songId.isNotEmpty).isEmpty;
+          bool isEmpty = viewModel.songs.isEmpty;
           return StreamBuilder<bool>(
             stream: viewModel.isScrolled.stream,
             builder: (context, snapshot) {
@@ -88,7 +110,9 @@ class PlaylistView extends StatelessWidget {
                     _buildHeader(context),
                     Expanded(
                       child: CustomScrollView(
-                        clipBehavior: (snapshot.data ?? false) ? Clip.hardEdge : Clip.none,
+                        clipBehavior: (snapshot.data ?? false)
+                            ? Clip.hardEdge
+                            : Clip.none,
                         physics: const BouncingScrollPhysics(),
                         slivers: [
                           SliverPersistentHeader(
@@ -111,8 +135,7 @@ class PlaylistView extends StatelessWidget {
                                 isOpacityChange: false,
                               ),
                             ),
-                          if (!isEmpty)
-                            _buildSonglist(context),
+                          if (!isEmpty) _buildSonglist(context),
                         ],
                       ),
                     ),
@@ -139,7 +162,14 @@ class PlaylistView extends StatelessWidget {
             child: GestureDetector(
               onTap: () async {
                 if (await _canPop(context, viewModel, selectedList)) {
-                  Navigator.pop(context);
+                  Navigator.pop(
+                    context,
+                    playlist.copyWith(
+                      title: viewModel.title,
+                      songlist:
+                          viewModel.songs.map((e) => e?.id ?? '').toList(),
+                    ),
+                  );
                 }
               },
               child: SvgPicture.asset(
@@ -151,39 +181,42 @@ class PlaylistView extends StatelessWidget {
           ),
           if (playlist is! Reclist)
             (viewModel.curStatus != EditStatus.editing)
-              ? GestureDetector(
-                  onTap: () {
-                    if (viewModel.curStatus == EditStatus.editing) { /* editing <= for test */
-                      viewModel.updateStatus(EditStatus.none);
-                    } else {
-                      viewModel.updateStatus(EditStatus.editing);
-                    }
-                  },
-                  child: SvgPicture.asset(
-                    'assets/icons/ic_32_more.svg',
-                    width: 32,
-                    height: 32,
+                ? GestureDetector(
+                    onTap: () {
+                      if (viewModel.curStatus == EditStatus.editing) {
+                        /* editing <= for test */
+                        viewModel.updateStatus(EditStatus.none);
+                      } else {
+                        viewModel.updateStatus(EditStatus.editing);
+                      }
+                    },
+                    child: SvgPicture.asset(
+                      'assets/icons/ic_32_more.svg',
+                      width: 32,
+                      height: 32,
+                    ),
+                  )
+                : Expanded(
+                    child: Row(
+                      children: [
+                        const Spacer(),
+                        Text(
+                          '편집',
+                          style:
+                              WakText.txt16M.copyWith(color: WakColor.grey900),
+                        ),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            viewModel.applySongs(!listEquals(
+                                viewModel.songs, viewModel.tempsongs));
+                            selectedList.clearList();
+                          },
+                          child: const EditBtn(type: BtnType.done),
+                        ),
+                      ],
+                    ),
                   ),
-                )
-              : Expanded(
-                  child: Row(
-                    children: [
-                      const Spacer(),
-                      Text(
-                        '편집',
-                        style: WakText.txt16M.copyWith(color: WakColor.grey900),
-                      ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          viewModel.applySongs(true);
-                          selectedList.clearList();
-                        },
-                        child: const EditBtn(type: BtnType.done),
-                      ),
-                    ],
-                  ),
-                ),
         ],
       ),
     );
@@ -196,8 +229,8 @@ class PlaylistView extends StatelessWidget {
       child: Row(
         children: [
           ExtendedImage.network(
-            '$staticBaseUrl/playlist/${(playlist is! Reclist) ? '' : 'icon/square/'}'
-            '${playlist.image}.png'
+            '$staticBaseUrl/playlist/'
+            '${(playlist is! Reclist) ? playlist.image : 'icon/square/${playlist.id}'}.png'
             '?v=${playlist.imageVersion}',
             fit: BoxFit.cover,
             shape: BoxShape.rectangle,
@@ -216,7 +249,7 @@ class PlaylistView extends StatelessWidget {
                     ),
                   ),
                 );
-              } 
+              }
               return null;
             },
             cacheMaxAge: const Duration(days: 30),
@@ -235,7 +268,7 @@ class PlaylistView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    playlist.title,
+                    viewModel.title ?? playlist.title,
                     style: WakText.txt20B.copyWith(color: WakColor.grey900),
                     maxLines: 2,
                   ),
@@ -243,19 +276,23 @@ class PlaylistView extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '${playlist.songlist.where((songId) => songId.isNotEmpty).length}곡',
-                        style: WakText.txt14L.copyWith(color: WakColor.grey900.withOpacity(0.6)),
+                        '${viewModel.songs.length}곡',
+                        style: WakText.txt14L.copyWith(
+                          color: WakColor.grey900.withOpacity(0.6),
+                        ),
                       ),
                       if (viewModel.curStatus == EditStatus.editing)
                         Padding(
                           padding: const EdgeInsets.only(left: 4),
                           child: GestureDetector(
-                            onTap: () {
-                              showModal(
-                                context: context,
-                                builder: (_) => BotSheet(
-                                  type: BotSheetType.editList,
-                                  initialValue: playlist.title,
+                            onTap: () async {
+                              viewModel.updateTitle(
+                                await showModal(
+                                  context: context,
+                                  builder: (_) => BotSheet(
+                                    type: BotSheetType.editList,
+                                    initialValue: playlist.title,
+                                  ),
                                 ),
                               );
                             },
@@ -279,14 +316,16 @@ class PlaylistView extends StatelessWidget {
 
   Widget _buildSonglist(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
-    return (viewModel.curStatus != EditStatus.editing) 
+    return (viewModel.curStatus != EditStatus.editing)
         ? SliverList(
             delegate: SliverChildBuilderDelegate(
               (_, idx) => SongTile(
                 song: viewModel.songs[idx],
-                tileType: (playlist is! Reclist) ? TileType.canPlayTile : TileType.dateTile,
+                tileType: (playlist is! Reclist)
+                    ? TileType.canPlayTile
+                    : TileType.dateTile,
                 onLongPress: (playlist is! Reclist)
-                    ? () => viewModel.updateStatus(EditStatus.editing)                  
+                    ? () => viewModel.updateStatus(EditStatus.editing)
                     : null,
               ),
               childCount: viewModel.songs.length,
@@ -302,7 +341,8 @@ class PlaylistView extends StatelessWidget {
               tileType: TileType.editTile,
             ),
             onReorder: (oldIdx, newIdx) {
-              viewModel.moveSong(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
+              viewModel.moveSong(
+                  oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
             },
             onReorderStart: (_) => HapticFeedback.lightImpact(),
           );
@@ -310,14 +350,18 @@ class PlaylistView extends StatelessWidget {
 }
 
 class MyHeaderDelegate extends SliverPersistentHeaderDelegate {
-  MyHeaderDelegate({required this.widget, required this.extent, this.isOpacityChange = true});
+  MyHeaderDelegate(
+      {required this.widget,
+      required this.extent,
+      this.isOpacityChange = true});
 
   Widget widget;
   double extent;
   bool isOpacityChange;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
     double progress = shrinkOffset / maxExtent;
     if (isOpacityChange) viewModel.updateScroll((progress >= 1.0));
@@ -329,6 +373,7 @@ class MyHeaderDelegate extends SliverPersistentHeaderDelegate {
           )
         : widget;
   }
+
   @override
   double get maxExtent => extent;
 
@@ -336,5 +381,6 @@ class MyHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => extent;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
 }

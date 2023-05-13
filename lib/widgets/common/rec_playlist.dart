@@ -17,34 +17,41 @@ class RecPlaylist extends StatelessWidget {
   Widget build(BuildContext context) {
     RecPlaylistProvider recPlaylist = Provider.of<RecPlaylistProvider>(context);
     return SizedBox(
-      height: 300,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: () {
-          List<Widget> children = [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12.0),
-              child: Text(
-                '왁뮤팀이 추천하는 리스트',
-                style: WakText.txt16B.copyWith(color: WakColor.grey900),
+      // height: 300,
+      child: FutureBuilder<void>(
+        future: recPlaylist.getLists(),
+        builder: (context, _) => Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: () {
+            List<Widget> children = [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: Text(
+                  '왁뮤팀이 추천하는 리스트',
+                  style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                ),
               ),
-            ),
-          ];
-          children.addAll(
-            List.generate(
-              3,
-              (idx) => Row(
-                children: [
-                  _buildPlaylist(context, recPlaylist.list[idx * 2]),
-                  const SizedBox(width: 8),
-                  _buildPlaylist(context, recPlaylist.list[idx * 2 + 1]),
-                ],
+            ];
+            children.addAll(
+              List.generate(
+                recPlaylist.list.length ~/ 2 + 1,
+                (idx) => Row(
+                  children: [
+                    if (recPlaylist.list.isNotEmpty) ...[
+                      _buildPlaylist(context, recPlaylist.list[idx * 2]),
+                      const SizedBox(width: 8),
+                      if (recPlaylist.isOdd) const Spacer(),
+                      if (recPlaylist.isEven)
+                        _buildPlaylist(context, recPlaylist.list[idx * 2 + 1]),
+                    ],
+                  ],
+                ),
               ),
-            ),
-          );
-          return children;
-        }(),
+            );
+            return children;
+          }(),
+        ),
       ),
     );
   }
@@ -88,7 +95,7 @@ class RecPlaylist extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 ExtendedImage.network(
-                  '$staticBaseUrl/playlist/icon/round/${playlist.image}.png'
+                  '$staticBaseUrl/playlist/icon/round/${playlist.id}.png'
                   '?v=${playlist.imageVersion}',
                   fit: BoxFit.cover,
                   shape: BoxShape.circle,
@@ -106,7 +113,7 @@ class RecPlaylist extends StatelessWidget {
                           ),
                         ),
                       );
-                    } 
+                    }
                     return null;
                   },
                   cacheMaxAge: const Duration(days: 30),

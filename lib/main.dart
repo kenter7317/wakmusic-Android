@@ -18,7 +18,6 @@ import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
