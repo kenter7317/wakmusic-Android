@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:extended_image/extended_image.dart';
@@ -141,29 +142,29 @@ class Player extends StatelessWidget {
         Align(
           alignment: Alignment.center,
           child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Selector<AudioProvider, Song>(
-                  selector: (context, audioProvider) =>
-                      audioProvider.currentSong!,
-                  builder: (context, currentSong, _) {
-                    //print( "title and artist : ${currentSong.title} & ${currentSong.artist}");
-                    return Column(
-                      children: [
-                        Text(
-                          currentSong.title.toString(),
-                          style:
-                              WakText.txt16M.copyWith(color: WakColor.grey900),
-                          textAlign: TextAlign.center,
-                        ),
-                        Text(
-                          currentSong.artist.toString(),
-                          style: WakText.txt14M.copyWith(
-                              color: WakColor.grey900.withOpacity(0.6)),
-                          textAlign: TextAlign.center,
-                        )
-                      ],
-                    );
-                  })),
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Selector<AudioProvider, Song>(
+              selector: (context, audioProvider) => audioProvider.currentSong!,
+              builder: (context, currentSong, _) {
+                //print( "title and artist : ${currentSong.title} & ${currentSong.artist}");
+                return Column(
+                  children: [
+                    Text(
+                      currentSong.title.toString(),
+                      style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      currentSong.artist.toString(),
+                      style: WakText.txt14M
+                          .copyWith(color: WakColor.grey900.withOpacity(0.6)),
+                      textAlign: TextAlign.center,
+                    )
+                  ],
+                );
+              },
+            ),
+          ),
         ),
       ],
     );
@@ -220,7 +221,8 @@ class Player extends StatelessWidget {
         selector: (context, audioProvider) => audioProvider.currentSong!,
         builder: (context, currentSong, _) {
           PlayerViewModel viewModel = Provider.of<PlayerViewModel>(context);
-          final ScrollController controller = ScrollController();
+          viewModel.getLyrics(currentSong.id);
+          final controller = ScrollController();
           controller.addListener(() {
             if (controller.position.userScrollDirection !=
                 ScrollDirection.idle) {
@@ -230,76 +232,71 @@ class Player extends StatelessWidget {
             }
           });
 
-          return FutureBuilder<void>(
-            future: viewModel.getLyrics(currentSong.id),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              }
+          if (viewModel.lyricsEquals(currentSong.id) &&
+              viewModel.lyrics.subtitles.isNotEmpty) {
+            final scrollSnapListKey = GlobalKey<ScrollSnapListState>();
+            final audioProvider = Provider.of<AudioProvider>(context);
+            final data = viewModel.lyrics;
+            return StreamBuilder(
+              initialData: const Duration(),
+              stream: audioProvider.position,
+              builder: (context, position) {
+                var current = data.durationSearch(
+                    currentSong.start + (position.data ?? Duration.zero));
+                var nowIndex =
+                    (current != null) ? data.subtitles.indexOf(current) : 0;
+                print(
+                    'Search Result: ${position.data} / ${data.subtitles[0].start} / $nowIndex / ${current?.props}');
+                if (position.hasData &&
+                    viewModel.scrollState == ScrollState.notScrolling) {
+                  if (nowIndex == 0 ||
+                      current == null &&
+                          position.data! + currentSong.start >
+                              data.subtitles[0].start) {
+                  } else {
+                    Future.microtask(() {
+                      scrollSnapListKey.currentState?.focusToItem(nowIndex);
+                    });
+                  }
+                }
 
-              if (snapshot.connectionState == ConnectionState.done &&
-                  (viewModel.lyrics.subtitles.isNotEmpty)) {
-                final audioProvider = Provider.of<AudioProvider>(context);
-                final scrollSnapListKey = GlobalKey<ScrollSnapListState>();
-                final data = viewModel.lyrics;
-                return StreamBuilder(
-                  initialData: const Duration(),
-                  stream: audioProvider.position,
-                  builder: (context, position) {
-                    var current =
-                        data.durationSearch(position.data ?? Duration.zero);
-                    // var nowIndex = (current?.index ?? 1) - 1;
-                    var nowIndex =
-                        (current != null) ? data.subtitles.indexOf(current) : 0;
-                    print('Search Result: ${current?.props}');
-                    if (position.hasData &&
-                        viewModel.scrollState == ScrollState.notScrolling) {
-                      Future.microtask(() {
-                        if (current == null &&
-                            position.data! > data.subtitles[0].start) {
-                          return;
-                        }
-                        scrollSnapListKey.currentState?.focusToItem(nowIndex);
-                      });
+                return ScrollSnapList(
+                  key: scrollSnapListKey,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  onItemFocus: (idx) {
+                    if (nowIndex != idx) {
+                      print('$nowIndex TLQKF');
+                      audioProvider.seek(
+                        data.subtitles[idx].start.inSeconds.toDouble(),
+                      );
                     }
-
-                    return ScrollSnapList(
-                      key: scrollSnapListKey,
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      onItemFocus: (idx) {
-                        if (nowIndex != idx) {
-                          audioProvider.seek(
-                              data.subtitles[idx].start.inSeconds.toDouble());
-                        }
-                      },
-                      itemSize: 24,
-                      itemBuilder: (context, index) {
-                        // if (index == nowIndex) {
-                        // print('from NowIndex: ${data!.subtitles[current?.index ?? 0].props}');
-                        // }
-                        return Text(
-                          data.subtitles[index].data,
-                          style: WakText.txt14MH.copyWith(
-                              color: index == nowIndex
-                                  ? WakColor.lightBlue
-                                  : WakColor.grey500),
-                          textAlign: TextAlign.center,
-                        );
-                      },
-                      itemCount: data.subtitles.length,
-                      listController: controller,
+                  },
+                  itemSize: 24,
+                  itemBuilder: (context, index) {
+                    // if (index == nowIndex) {
+                    // print('from NowIndex: ${data!.subtitles[current?.index ?? 0].props}');
+                    // }
+                    return Text(
+                      data.subtitles[index].data,
+                      style: WakText.txt14MH.copyWith(
+                          color: index == nowIndex
+                              ? WakColor.lightBlue
+                              : WakColor.grey500),
+                      textAlign: TextAlign.center,
                     );
                   },
+                  itemCount: data.subtitles.length,
+                  listController: controller,
                 );
-              }
+              },
+            );
+          }
 
-              return Text(
-                '가사가 존재하지 않습니다',
-                style: WakText.txt14MH.copyWith(color: WakColor.grey500),
-                textAlign: TextAlign.center,
-              );
-            },
+          return Text(
+            '가사가 존재하지 않습니다',
+            style: WakText.txt14MH.copyWith(color: WakColor.grey500),
+            textAlign: TextAlign.center,
           );
         },
       ),
@@ -308,10 +305,12 @@ class Player extends StatelessWidget {
 
   Widget _buildAudioProgressBar(BuildContext context) {
     final audioProvider = Provider.of<AudioProvider>(context);
+    final currentSong = audioProvider.currentSong!;
     return StreamBuilder(
       initialData: const Duration(),
       stream: audioProvider.position,
       builder: (context, snapshot) {
+        print('${snapshot.data} aststeest');
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -326,7 +325,8 @@ class Player extends StatelessWidget {
                 thumbColor: WakColor.lightBlue,
                 timeLabelLocation: TimeLabelLocation.none,
                 onSeek: (duration) {
-                  audioProvider.seek(duration.inSeconds.toDouble());
+                  audioProvider.seek(
+                      (duration + currentSong.start).inSeconds.toDouble());
                 },
               ),
               const SizedBox(height: 4),

@@ -150,6 +150,8 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       id: song.id,
       title: song.title,
       artist: song.artist,
+      start: song.start,
+      end: song.end,
     );
     notifyListeners();
   }

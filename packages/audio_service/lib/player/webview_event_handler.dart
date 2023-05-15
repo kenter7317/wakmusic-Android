@@ -16,7 +16,7 @@ class WebViewEventHandler {
     };
 
     headlessInAppWebView = HeadlessInAppWebView(
-      initialSize: const Size(160, 90),
+      initialSize: const Size(480, 270),
       initialFile: 'packages/audio_service/assets/player.html',
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(

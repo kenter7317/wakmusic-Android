@@ -14,6 +14,7 @@ class PlayerViewModel with ChangeNotifier {
 
   ScrollState get scrollState => _scrollState;
   SubtitleController get lyrics => _lyrics;
+  bool lyricsEquals(String id) => id == _id;
 
   PlayerViewModel() {
     _api = API();
@@ -25,8 +26,8 @@ class PlayerViewModel with ChangeNotifier {
 
   Future<void> getLyrics(String id) async {
     if (id != _id) {
-      _id = id;
       _lyrics = await _api.getLyrics(id: id);
+      _id = id;
       notifyListeners();
     }
   }
