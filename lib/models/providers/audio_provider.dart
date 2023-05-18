@@ -285,4 +285,11 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
     _shuffledQueue.clear();
     notifyListeners();
   }
+
+  Future<void> swapQueueItem(int oldIdx, int newIdx) async {
+    var song = _queue.removeAt(oldIdx);
+    _queue.insert(newIdx, song);
+    if(oldIdx == _index) _index = newIdx;
+    notifyListeners();
+  }
 }

@@ -66,7 +66,6 @@ class PlayerPlayList extends StatelessWidget {
           (viewModel.state == PageState.edit) ?
             GestureDetector(
               onTap: () {
-                audioProvider.addQueueItems(viewModel.playList, override: true, autoplay: true);
                 viewModel.updateStatus(PageState.normal);
               },
               child: const EditBtn(type: BtnType.done),
@@ -139,8 +138,7 @@ class PlayerPlayList extends StatelessWidget {
                     tileType: TileType.editTile,
                   ),
                   onReorder: (oldIdx, newIdx) {
-                    Song? song = playList.removeAt(oldIdx);
-                    playList.insert((oldIdx < newIdx) ? newIdx - 1 : newIdx, song);
+                    Provider.of<AudioProvider>(context, listen: false).swapQueueItem(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
                   },
                   //onReorderStart: (_) => HapticFeedback.lightImpact(),
                 );
