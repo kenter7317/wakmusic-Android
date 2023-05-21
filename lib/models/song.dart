@@ -26,11 +26,6 @@ class Song {
   });
 
   factory Song.fromJson(JSON json) {
-    if (json['id'] != 'fgSXAKsq-Vo') {
-      json['start'] = 20;
-      json['end'] = 200;
-    }
-
     return Song(
       id: json['id'],
       title: json['title'],

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:subtitle/subtitle.dart';
 import 'package:wakmusic/services/api.dart';
 
@@ -9,11 +10,13 @@ class PlayerViewModel with ChangeNotifier {
   late final API _api;
   ScrollState _scrollState = ScrollState.notScrolling;
 
-  late SubtitleController _lyrics;
+  late Future<SubtitleController> _lyrics;
   String _id = '';
+  bool isChanging = false;
 
+  final scrollSnapListKey = GlobalKey<ScrollSnapListState>();
   ScrollState get scrollState => _scrollState;
-  SubtitleController get lyrics => _lyrics;
+  Future<SubtitleController> get lyrics => _lyrics;
   bool lyricsEquals(String id) => id == _id;
 
   PlayerViewModel() {
@@ -26,9 +29,8 @@ class PlayerViewModel with ChangeNotifier {
 
   Future<void> getLyrics(String id) async {
     if (id != _id) {
-      _lyrics = await _api.getLyrics(id: id);
+      _lyrics = _api.getLyrics(id: id);
       _id = id;
-      notifyListeners();
     }
   }
 }

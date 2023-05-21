@@ -168,6 +168,15 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
 
   @override
   Future<void> seek(double position) async {
+    switch (_playbackState) {
+      case PlaybackState.paused:
+        await play();
+        break;
+      case PlaybackState.ended:
+        await load(currentSong!);
+        break;
+      default:
+    }
     await _player.seekTo(seconds: position, allowSeekAhead: true);
     notifyListeners();
   }

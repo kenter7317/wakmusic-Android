@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:ui';
+import 'package:audio_service/models/enums.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ import '../../models/song.dart';
 import '../../style/text_styles.dart';
 
 class Player extends StatelessWidget {
-  const Player({Key? key}) : super(key: key);
+  Player({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -185,18 +186,37 @@ class Player extends StatelessWidget {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: ExtendedImage.network(
-                    'https://i.ytimg.com/vi/$id/hqdefault.jpg',
+                    'https://i.ytimg.com/vi/$id/maxresdefault.jpg',
                     fit: BoxFit.cover,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(8),
                     loadStateChanged: (state) {
-                      if (state.extendedImageLoadState != LoadState.completed) {
-                        return Image.asset(
-                          'assets/images/img_81_thumbnail.png',
-                          fit: BoxFit.cover,
-                        );
+                      switch (state.extendedImageLoadState) {
+                        case LoadState.loading:
+                          return Image.asset(
+                            'assets/images/img_81_thumbnail.png',
+                            fit: BoxFit.cover,
+                          );
+                        case LoadState.failed:
+                          return ExtendedImage.network(
+                            'https://i.ytimg.com/vi/$id/hqdefault.jpg',
+                            fit: BoxFit.cover,
+                            borderRadius: BorderRadius.circular(8),
+                            loadStateChanged: (state) {
+                              if (state.extendedImageLoadState !=
+                                  LoadState.completed) {
+                                return Image.asset(
+                                  'assets/images/img_81_thumbnail.png',
+                                  fit: BoxFit.cover,
+                                );
+                              }
+                              return null;
+                            },
+                            cacheMaxAge: const Duration(days: 30),
+                          );
+                        default:
+                          return null;
                       }
-                      return null;
                     },
                     cacheMaxAge: const Duration(days: 30),
                   ).image,
@@ -213,16 +233,16 @@ class Player extends StatelessWidget {
     final height =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
+    final controller = ScrollController();
     return Container(
       alignment: Alignment.center,
       height: height >= 732 ? 120 : 72,
-      width: 270,
+      width: MediaQuery.of(context).size.width * 0.75, // = 270/360
       child: Selector<AudioProvider, Song>(
         selector: (context, audioProvider) => audioProvider.currentSong!,
         builder: (context, currentSong, _) {
           PlayerViewModel viewModel = Provider.of<PlayerViewModel>(context);
           viewModel.getLyrics(currentSong.id);
-          final controller = ScrollController();
           controller.addListener(() {
             if (controller.position.userScrollDirection !=
                 ScrollDirection.idle) {
@@ -232,71 +252,85 @@ class Player extends StatelessWidget {
             }
           });
 
-          if (viewModel.lyricsEquals(currentSong.id) &&
-              viewModel.lyrics.subtitles.isNotEmpty) {
-            final scrollSnapListKey = GlobalKey<ScrollSnapListState>();
-            final audioProvider = Provider.of<AudioProvider>(context);
-            final data = viewModel.lyrics;
-            return StreamBuilder(
-              initialData: const Duration(),
-              stream: audioProvider.position,
-              builder: (context, position) {
-                var current = data.durationSearch(
-                    currentSong.start + (position.data ?? Duration.zero));
-                var nowIndex =
-                    (current != null) ? data.subtitles.indexOf(current) : 0;
-                print(
-                    'Search Result: ${position.data} / ${data.subtitles[0].start} / $nowIndex / ${current?.props}');
-                if (position.hasData &&
-                    viewModel.scrollState == ScrollState.notScrolling) {
-                  if (nowIndex == 0 ||
-                      current == null &&
-                          position.data! + currentSong.start >
-                              data.subtitles[0].start) {
-                  } else {
-                    Future.microtask(() {
-                      scrollSnapListKey.currentState?.focusToItem(nowIndex);
-                    });
-                  }
-                }
+          return FutureBuilder(
+            future: viewModel.lyrics,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
 
-                return ScrollSnapList(
-                  key: scrollSnapListKey,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  onItemFocus: (idx) {
-                    if (nowIndex != idx) {
-                      print('$nowIndex TLQKF');
-                      audioProvider.seek(
-                        data.subtitles[idx].start.inSeconds.toDouble(),
-                      );
+              if (snapshot.connectionState == ConnectionState.done &&
+                  (snapshot.data?.subtitles.isNotEmpty ?? false)) {
+                final audioProvider = Provider.of<AudioProvider>(context);
+                final lyrics = snapshot.data!;
+                return StreamBuilder(
+                  stream: audioProvider.position,
+                  builder: (context, position) {
+                    var current = lyrics.durationSearch(
+                        currentSong.start + (position.data ?? Duration.zero));
+                    var nowIndex = (current != null)
+                        ? lyrics.subtitles.indexOf(current)
+                        : 0;
+                    if (position.hasData) {
+                      Future.microtask(() {
+                        if (controller.position.userScrollDirection ==
+                            ScrollDirection.idle) {
+                          var curr = lyrics.durationSearch(currentSong.start +
+                              (position.data ?? Duration.zero));
+                          if (curr == null) {
+                            return;
+                          }
+                          var now = lyrics.subtitles.indexOf(curr);
+                          if (now < 0) {
+                            return;
+                          }
+                          viewModel.scrollSnapListKey.currentState
+                              ?.focusToItem(now);
+                        }
+                      });
                     }
-                  },
-                  itemSize: 24,
-                  itemBuilder: (context, index) {
-                    // if (index == nowIndex) {
-                    // print('from NowIndex: ${data!.subtitles[current?.index ?? 0].props}');
-                    // }
-                    return Text(
-                      data.subtitles[index].data,
-                      style: WakText.txt14MH.copyWith(
-                          color: index == nowIndex
-                              ? WakColor.lightBlue
-                              : WakColor.grey500),
-                      textAlign: TextAlign.center,
+
+                    return ScrollSnapList(
+                      key: viewModel.scrollSnapListKey,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      onItemFocus: (idx) async {
+                        if (nowIndex != idx) {
+                          audioProvider.seek(
+                            lyrics.subtitles[idx].start.inMilliseconds / 1000,
+                          );
+                        }
+                      },
+                      itemSize: 24,
+                      dynamicItemSize: true,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          height: 24,
+                          alignment: Alignment.center,
+                          child: Text(
+                            _lyricsFormat(lyrics.subtitles[index].data),
+                            style: WakText.txt14MH.copyWith(
+                              color: index == nowIndex
+                                  ? WakColor.lightBlue
+                                  : WakColor.grey500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      },
+                      itemCount: lyrics.subtitles.length,
+                      listController: controller,
                     );
                   },
-                  itemCount: data.subtitles.length,
-                  listController: controller,
                 );
-              },
-            );
-          }
+              }
 
-          return Text(
-            '가사가 존재하지 않습니다',
-            style: WakText.txt14MH.copyWith(color: WakColor.grey500),
-            textAlign: TextAlign.center,
+              return Text(
+                '가사가 존재하지 않습니다',
+                style: WakText.txt14MH.copyWith(color: WakColor.grey500),
+                textAlign: TextAlign.center,
+              );
+            },
           );
         },
       ),
@@ -310,7 +344,6 @@ class Player extends StatelessWidget {
       initialData: const Duration(),
       stream: audioProvider.position,
       builder: (context, snapshot) {
-        print('${snapshot.data} aststeest');
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -348,6 +381,10 @@ class Player extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _lyricsFormat(String data) {
+    return data;
   }
 
   String _format(Duration duration) {
