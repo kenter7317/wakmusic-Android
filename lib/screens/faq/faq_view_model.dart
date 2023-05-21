@@ -32,6 +32,12 @@ class FAQViewModel with ChangeNotifier {
       _faqLists = {
         '전체': await _api.fetchFAQ(),
       };
+      _faqLists['전체']!.sort((a, b) {
+        int categoryIdxA, categoryIdxB;
+        categoryIdxA = _categories.indexOf(a!.category);
+        categoryIdxB = _categories.indexOf(b!.category);
+        return categoryIdxA.compareTo(categoryIdxB);
+      });
       for(String category in _categories) {
         if (category == '전체') continue;
         _faqLists[category] = _faqLists['전체']!.where((faq) => faq!.category == category).map((faq) => FAQ.clone(faq!)).toList();

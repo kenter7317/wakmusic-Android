@@ -141,7 +141,7 @@ class FAQView extends StatelessWidget {
                           Text(
                             faqList[idx]!.question,
                             style: WakText.txt16M.copyWith(color: WakColor.grey900),
-                            maxLines: 10,
+                            maxLines: 20,
                           ),
                         ],
                       ),
@@ -173,7 +173,7 @@ class FAQView extends StatelessWidget {
                     child: Text(
                       faqList[idx]!.description,
                       style: WakText.txt14MH.copyWith(color: WakColor.grey900),
-                      maxLines: 20,
+                      maxLines: 40,
                     ),
                   ),
                 ),
