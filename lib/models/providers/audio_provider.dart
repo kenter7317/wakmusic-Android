@@ -150,6 +150,8 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       id: song.id,
       title: song.title,
       artist: song.artist,
+      start: song.start,
+      end: song.end,
     );
     notifyListeners();
   }
@@ -166,6 +168,15 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
 
   @override
   Future<void> seek(double position) async {
+    switch (_playbackState) {
+      case PlaybackState.paused:
+        await play();
+        break;
+      case PlaybackState.ended:
+        await load(currentSong!);
+        break;
+      default:
+    }
     await _player.seekTo(seconds: position, allowSeekAhead: true);
     notifyListeners();
   }

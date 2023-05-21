@@ -9,6 +9,8 @@ class Song {
   final DateTime date;
   final int views;
   final int last;
+  final Duration start;
+  final Duration? end;
 
   const Song({
     required this.id,
@@ -19,26 +21,32 @@ class Song {
     required this.date,
     required this.views,
     required this.last,
+    this.start = const Duration(),
+    this.end,
   });
 
-  factory Song.fromJson(JSON json) => Song(
-    id: json['id'],
-    title: json['title'],
-    artist: json['artist'],
-    remix: json['remix'],
-    reaction: json['reaction'],
-    date: () {
-      try {
-        return DateTime(
-          json['date'] ~/ 10000 + 2000,
-          json['date'] ~/ 100 % 100,
-          json['date'] % 100,
-        );
-      } catch (_) {
-        return DateTime(1999);
-      }
-    }(),
-    views: json['views'] ?? 0,
-    last: json['last'] ?? 0,
-  );
+  factory Song.fromJson(JSON json) {
+    return Song(
+      id: json['id'],
+      title: json['title'],
+      artist: json['artist'],
+      remix: json['remix'],
+      reaction: json['reaction'],
+      date: () {
+        try {
+          return DateTime(
+            json['date'] ~/ 10000 + 2000,
+            json['date'] ~/ 100 % 100,
+            json['date'] % 100,
+          );
+        } catch (_) {
+          return DateTime(1999);
+        }
+      }(),
+      views: json['views'] ?? 0,
+      last: json['last'] ?? 0,
+      start: Duration(seconds: json['start'] ?? 0),
+      end: json['end'] == 0 ? null : Duration(seconds: json['end']),
+    );
+  }
 }

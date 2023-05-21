@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:audio_service/audio_handler.dart';
@@ -6,6 +7,8 @@ import 'package:audio_service/models/audio_value.dart';
 import 'package:audio_service/models/enums.dart';
 import 'package:audio_service/player/webview_event_handler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
+typedef JSON = Map<String, dynamic>;
 
 class YoutubeAudioPlayer {
   YoutubeAudioPlayer(this.handler) {
@@ -33,16 +36,37 @@ class YoutubeAudioPlayer {
   String _id = '';
   String _title = '';
   String _artist = '';
+  Duration _start = const Duration();
+  Duration? _end;
 
   Future<void> loadVideoById({
     required String id,
     String title = '',
     String artist = '',
+    Duration? start,
+    Duration? end,
   }) async {
     _id = id;
     _title = title;
     _artist = artist;
-    return _eval('loadVideoById', args: '"$id", 0, "small"');
+    _start = start ?? const Duration();
+    _end = end;
+    return _evalMap(
+      'loadVideoById',
+      args: {
+        'videoId': id,
+        if (start != null) 'startSeconds': start.inSeconds,
+        if (end != null) 'endSeconds': end.inSeconds,
+      },
+    );
+  }
+
+  Future<void> _evalMap(String func, {JSON? args}) async {
+    await _eventHandler.isReady;
+    final controller = await _webViewCompleter.future;
+    return controller.evaluateJavascript(
+      source: 'player.$func(${jsonEncode(args)});',
+    );
   }
 
   Future<void> _eval(String func, {String args = ''}) async {
@@ -66,13 +90,14 @@ class YoutubeAudioPlayer {
 
   Future<double> get duration async {
     final duration = await _run('getDuration');
-    return double.tryParse('$duration') ?? 0;
+    final result = double.tryParse('$duration') ?? _start.inSeconds.toDouble();
+    return result - _start.inSeconds;
   }
 
   Future<double> get currentTime async {
     final time = await _run('getCurrentTime');
-    final result = double.tryParse('$time') ?? 0;
-    return result;
+    final result = double.tryParse('$time') ?? _start.inSeconds.toDouble();
+    return result - _start.inSeconds;
   }
 
   Future<void> pauseVideo() {
@@ -113,7 +138,8 @@ class YoutubeAudioPlayer {
         id: _id,
         title: _title,
         artist: _artist,
-        duration: duration,
+        duration:
+            (_end != null && _end! <= duration) ? _end! - _start : duration,
       );
       _metadataController.add(metadata);
     }
