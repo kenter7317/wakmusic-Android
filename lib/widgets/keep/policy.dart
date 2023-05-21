@@ -19,8 +19,7 @@ class Policy extends StatelessWidget {
           child: Row(
             children: [
               _buildPolicyBtn(() {
-                Navigator.push(
-                  context,
+                Navigator.of(context, rootNavigator: true).push(
                   pageRouteBuilder(
                     page: const PDFView(type: PDFType.terms),
                     offset: const Offset(0.0, 1.0),
@@ -29,8 +28,7 @@ class Policy extends StatelessWidget {
               }, '서비스 이용약관'),
               const SizedBox(width: 8),
               _buildPolicyBtn(() {
-                Navigator.push(
-                  context,
+                Navigator.of(context, rootNavigator: true).push(
                   pageRouteBuilder(
                     page: const PDFView(type: PDFType.privacy),
                     offset: const Offset(0.0, 1.0),
