@@ -36,7 +36,7 @@ class NoticeDetailView extends StatelessWidget {
                   Text(
                     notice.title,
                     style: WakText.txt18M.copyWith(color: WakColor.grey900),
-                    maxLines: 10,
+                    maxLines: 20,
                   ),
                   const SizedBox(height: 3),
                   SizedBox(
@@ -65,7 +65,7 @@ class NoticeDetailView extends StatelessWidget {
               child: Text(
                 notice.mainText,
                 style: WakText.txt14MH.copyWith(color: WakColor.grey900),
-                maxLines: 20,
+                maxLines: 40,
               ),
             ),
           ]

@@ -60,6 +60,10 @@ dependencies:
   flutter_naver_login: ^1.7.0
   flutter_secure_storage: ^8.0.0
   google_sign_in: ^6.0.2
+  url_launcher: ^6.1.11
+  file_picker: ^5.2.10
+  video_thumbnail: ^0.5.3
+  mime: ^1.0.4
 
 dev_dependencies:
   flutter_test:
