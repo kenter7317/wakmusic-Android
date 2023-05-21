@@ -132,8 +132,10 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
           Row(
             children: [
               ExtendedImage.network(
-                  "https://static.wakmusic.xyz/static/artist/square/${widget.artist.id}.png",
-                  width: artistImgRatio * 140),
+                "$staticBaseUrl/artist/square/${widget.artist.id}.png"
+                "?v=${widget.artist.squareImgVer}",
+                width: artistImgRatio * 140,
+              ),
               const SizedBox(width: 8),
               FlipCard(
                 controller: cardController,

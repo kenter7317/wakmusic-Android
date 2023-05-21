@@ -26,7 +26,7 @@ class RecPlaylist extends StatelessWidget {
           children: () {
             List<Widget> children = [
               Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
+                padding: const EdgeInsets.only(bottom: 4.0),
                 child: Text(
                   '왁뮤팀이 추천하는 리스트',
                   style: WakText.txt16B.copyWith(color: WakColor.grey900),
@@ -35,17 +35,21 @@ class RecPlaylist extends StatelessWidget {
             ];
             children.addAll(
               List.generate(
-                recPlaylist.list.length ~/ 2 + 1,
-                (idx) => Row(
-                  children: [
-                    if (recPlaylist.list.isNotEmpty) ...[
-                      _buildPlaylist(context, recPlaylist.list[idx * 2]),
-                      const SizedBox(width: 8),
-                      if (recPlaylist.isOdd) const Spacer(),
-                      if (recPlaylist.isEven)
-                        _buildPlaylist(context, recPlaylist.list[idx * 2 + 1]),
+                (recPlaylist.list.length / 2).round(),
+                (idx) => Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: [
+                      if (recPlaylist.list.isNotEmpty) ...[
+                        _buildPlaylist(context, recPlaylist.list[idx * 2]),
+                        const SizedBox(width: 8),
+                        if (recPlaylist.isOdd) const Spacer(),
+                        if (recPlaylist.isEven)
+                          _buildPlaylist(
+                              context, recPlaylist.list[idx * 2 + 1]),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             );
