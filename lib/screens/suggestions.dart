@@ -6,6 +6,7 @@ import 'package:wakmusic/screens/contact/contact_view.dart';
 import 'package:wakmusic/screens/faq/faq_view.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/notice/notice_view.dart';
+import 'package:wakmusic/screens/service_info.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/btn_with_icon.dart';
@@ -13,7 +14,6 @@ import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/text_with_dot.dart';
-import 'package:wakmusic/widgets/keep/policy.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
@@ -96,7 +96,7 @@ class Suggestions extends StatelessWidget {
             ),
           ),
           Container(
-            height: 196 + 32,
+            height: 68 * 4 + 24,
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
             child: Column(
               children: [
@@ -137,16 +137,24 @@ class Suggestions extends StatelessWidget {
                   iconName: 'ic_24_noti', 
                   btnText: '공지사항',
                 ),
+                const SizedBox(height: 8),
+                BtnWithIcon(
+                  onTap: () { 
+                    Navigator.push(
+                      context,
+                      pageRouteBuilder(page: const ServiceInfo()),
+                    );
+                  },
+                  type: BtnSizeType.big, 
+                  iconName: 'ic_24_document_off', 
+                  btnText: '서비스 정보',
+                )
               ],
             ),
           ),
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
             child: TextWithDot(text: '왁타버스 뮤직 팀에 속한 모든 팀원들은 부아내비 (부려먹는 게 아니라 내가 비빈거다)라는 모토를 가슴에 새기고 일하고 있습니다.'),
-          ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(0, 40, 0, 10),
-            child: Policy(),
           ),
         ],
       ),
