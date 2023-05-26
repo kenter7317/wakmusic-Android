@@ -21,7 +21,6 @@ import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/common/tab_view.dart';
 import 'package:wakmusic/widgets/keep/bot_sheet.dart';
 import 'package:wakmusic/widgets/keep/playlist_tile.dart';
-import 'package:wakmusic/widgets/keep/policy.dart';
 import 'package:wakmusic/widgets/keep/keep_tab_view.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/proxy_decorator.dart';
@@ -49,21 +48,10 @@ class KeepView extends StatelessWidget {
 
   Widget _buildBefore(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
-    double statusBarHeight = MediaQuery.of(context).padding.top;
-    double botPadding = WidgetsBinding.instance.window.viewPadding.bottom /
-        WidgetsBinding.instance.window.devicePixelRatio;
-    double height =
-        MediaQuery.of(context).size.height - statusBarHeight - botPadding;
-    double blankFactor;
-    if (height >= 672) {
-      blankFactor = (732 - height) / 3;
-    } else {
-      blankFactor = 20;
-    }
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
-        SizedBox(height: 52 - blankFactor),
+        const SizedBox(height: 52),
         Center(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(92 * 13 / 60),
@@ -86,7 +74,7 @@ class KeepView extends StatelessWidget {
           style: WakText.txt14L.copyWith(color: WakColor.grey600),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: 40 - blankFactor),
+        const SizedBox(height: 40),
         SizedBox(
           height: 196,
           child: ListView.separated(
@@ -116,8 +104,6 @@ class KeepView extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(height: 8),
           ),
         ),
-        SizedBox(height: 40 - blankFactor),
-        const Policy(),
         const SizedBox(height: 20),
       ],
     );
