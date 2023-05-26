@@ -113,6 +113,11 @@ flutter:
         - asset: assets/fonts/Pretendard-Bold.ttf
           weight: 700
 
+    - family: SCDream
+      fonts:
+        - asset: assets/fonts/SCDream3.otf
+          weight: 300
+
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
