@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 
 class ErrorInfo extends StatelessWidget {
@@ -33,7 +32,7 @@ class ErrorInfo extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               errorMsg,
-              style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+              style: WakText.txt14MH,
               textAlign: TextAlign.center,
             )
           ],

@@ -29,7 +29,7 @@ class RecPlaylist extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 4.0),
                 child: Text(
                   '왁뮤팀이 추천하는 리스트',
-                  style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                  style: WakText.txt16B,
                 ),
               ),
             ];

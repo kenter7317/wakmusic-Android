@@ -180,7 +180,7 @@ class _ContactViewState extends State<ContactView> {
         children: [
           Text(
             '어떤 것 관련해서 문의주셨나요?',
-            style: WakText.txt20M.copyWith(color: WakColor.grey900),
+            style: WakText.txt20M,
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -230,7 +230,7 @@ class _ContactViewState extends State<ContactView> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
                   '버그와 관련된 사진이나 영상을 첨부해 주세요.',
-                  style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                  style: WakText.txt18M,
                   maxLines: 5,
                 ),
               ),
@@ -327,7 +327,7 @@ class _ContactViewState extends State<ContactView> {
             children: [
               Text(
                 '왁물원 닉네임을 알려주세요.',
-                style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                style: WakText.txt18M,
                 maxLines: 5,
               ),
               const SizedBox(height: 12),
@@ -373,8 +373,7 @@ class _ContactViewState extends State<ContactView> {
                               )
                             : Text(
                                 nickname[_selectIdx],
-                                style: WakText.txt16M
-                                    .copyWith(color: WakColor.grey900),
+                                style: WakText.txt16M,
                               ),
                       ),
                       const SizedBox(width: 4),
@@ -456,7 +455,7 @@ class _ContactViewState extends State<ContactView> {
             children: [
               Text(
                 '어떤 플랫폼과 관련된 기능인가요?',
-                style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                style: WakText.txt18M,
                 maxLines: 5,
               ),
               const SizedBox(height: 12),
@@ -588,7 +587,7 @@ class _ContactViewState extends State<ContactView> {
           if (title != null)
             Text(
               title,
-              style: WakText.txt18M.copyWith(color: WakColor.grey900),
+              style: WakText.txt18M,
               maxLines: 5,
             ),
           ConstrainedBox(
@@ -700,7 +699,7 @@ class _ContactViewState extends State<ContactView> {
               ),
               child: Text(
                 btnText,
-                style: WakText.txt16L.copyWith(color: WakColor.grey900),
+                style: WakText.txt16L,
               ),
             ),
     );
@@ -859,9 +858,7 @@ class ChoiceModal extends StatelessWidget {
                     children: [
                       Text(
                         choices[idx],
-                        style: (isSelected)
-                            ? WakText.txt18M.copyWith(color: WakColor.grey900)
-                            : WakText.txt18L.copyWith(color: WakColor.grey900),
+                        style: (isSelected) ? WakText.txt18M : WakText.txt18L,
                       ),
                       if (isSelected)
                         SvgPicture.asset(

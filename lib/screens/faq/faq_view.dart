@@ -37,7 +37,7 @@ class FAQView extends StatelessWidget {
           children: [
             Header(
               type: HeaderType.back,
-              onTap: () => viewModel.collapseAll(), 
+              onTap: () => viewModel.collapseAll(),
               headerTxt: '자주 묻는 질문',
             ),
             Expanded(
@@ -46,7 +46,7 @@ class FAQView extends StatelessWidget {
                 builder: (_, __) {
                   if (viewModel.categories[0] == '') {
                     return TabSkeletonView(
-                      type: TabType.minTab, 
+                      type: TabType.minTab,
                       tabLength: viewModel.categories.length,
                       tabViewList: List.generate(
                         viewModel.categories.length,
@@ -135,12 +135,13 @@ class FAQView extends StatelessWidget {
                         children: [
                           Text(
                             faqList[idx]!.category,
-                            style: WakText.txt12L.copyWith(color: WakColor.grey500),
+                            style: WakText.txt12L
+                                .copyWith(color: WakColor.grey500),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             faqList[idx]!.question,
-                            style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                            style: WakText.txt16M,
                             maxLines: 20,
                           ),
                         ],
@@ -168,11 +169,12 @@ class FAQView extends StatelessWidget {
                   curve: Curves.easeIn,
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 20),
                     color: WakColor.grey200,
                     child: Text(
                       faqList[idx]!.description,
-                      style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                      style: WakText.txt14MH,
                       maxLines: 40,
                     ),
                   ),

@@ -6,7 +6,6 @@ import 'package:wakmusic/screens/contact/contact_view.dart';
 import 'package:wakmusic/screens/faq/faq_view.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/notice/notice_view.dart';
-import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/btn_with_icon.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
@@ -55,7 +54,7 @@ class Suggestions extends StatelessWidget {
                 Center(
                   child: Text(
                     '건의사항',
-                    style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                    style: WakText.txt16M,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -108,33 +107,33 @@ class Suggestions extends StatelessWidget {
                         offset: const Offset(0, 1),
                       ),
                     );
-                  }, 
-                  type: BtnSizeType.big, 
-                  iconName: 'ic_24_question', 
+                  },
+                  type: BtnSizeType.big,
+                  iconName: 'ic_24_question',
                   btnText: '문의하기',
                 ),
                 const SizedBox(height: 8),
                 BtnWithIcon(
-                  onTap: () { 
+                  onTap: () {
                     Navigator.push(
                       context,
                       pageRouteBuilder(page: const FAQView()),
                     );
-                  }, 
-                  type: BtnSizeType.big, 
-                  iconName: 'ic_24_qna', 
+                  },
+                  type: BtnSizeType.big,
+                  iconName: 'ic_24_qna',
                   btnText: '자주 묻는 질문',
                 ),
                 const SizedBox(height: 8),
                 BtnWithIcon(
-                  onTap: () { 
+                  onTap: () {
                     Navigator.push(
                       context,
                       pageRouteBuilder(page: const NoticeView()),
                     );
                   },
-                  type: BtnSizeType.big, 
-                  iconName: 'ic_24_noti', 
+                  type: BtnSizeType.big,
+                  iconName: 'ic_24_noti',
                   btnText: '공지사항',
                 ),
               ],
@@ -142,7 +141,9 @@ class Suggestions extends StatelessWidget {
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: TextWithDot(text: '왁타버스 뮤직 팀에 속한 모든 팀원들은 부아내비 (부려먹는 게 아니라 내가 비빈거다)라는 모토를 가슴에 새기고 일하고 있습니다.'),
+            child: TextWithDot(
+                text:
+                    '왁타버스 뮤직 팀에 속한 모든 팀원들은 부아내비 (부려먹는 게 아니라 내가 비빈거다)라는 모토를 가슴에 새기고 일하고 있습니다.'),
           ),
           const Padding(
             padding: EdgeInsets.fromLTRB(0, 40, 0, 10),

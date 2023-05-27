@@ -60,7 +60,7 @@ class PlayerPlayList extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: Text(
                 '재생목록',
-                style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                style: WakText.txt16M,
                 textAlign: TextAlign.center,
               )),
           (viewModel.state == PageState.edit) ?
