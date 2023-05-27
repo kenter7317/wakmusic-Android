@@ -7,10 +7,15 @@ import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/player/player_playlist_view.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/utils/number_format.dart';
+import 'package:wakmusic/widgets/common/keep_song_pop_up.dart';
+import 'package:wakmusic/widgets/common/pop_up.dart';
+import 'package:wakmusic/widgets/page_route_builder.dart';
+import 'package:wakmusic/widgets/show_modal.dart';
 
 import '../../screens/player/player_view.dart';
 
@@ -41,7 +46,8 @@ class _SubBotNavState extends State<SubBotNav> {
       editBar(context, EditBarType.keepBar),
       editBar(context, EditBarType.keepDetailBar),
       editBar(context, EditBarType.keepListBar),
-      editBar(context, EditBarType.keepProfileBar)
+      editBar(context, EditBarType.keepProfileBar),
+      editBar(context, EditBarType.searchBar)
     ];
     return barList[botNav.subIdx];
   }
@@ -94,13 +100,6 @@ class _SubBotNavState extends State<SubBotNav> {
             "ic_32_playadd_900",
             "노래담기",
           ), // 수정 (onTap 액션 필요)
-          playDetailBarBtn("ic_32_play_list", "재생목록", edgePadding: false,
-              onTap: () {
-            botNav.subChange(2);
-            Navigator.push(
-                botNav.pageContext,
-                MaterialPageRoute(
-                    builder: (context) => const PlayerPlayList()));
           playDetailBarBtn("ic_32_play_list", "재생목록", edgePadding: false,
               onTap: () {
             botNav.subChange(2);
@@ -213,14 +212,14 @@ class _SubBotNavState extends State<SubBotNav> {
                                         : audioProvider.currentSong!.title,
                                     style: WakText.txt14MH
                                         .copyWith(color: WakColor.grey900),
-                                  ), 
+                                  ),
                                   Text(
                                     audioProvider.currentSong == null
                                         ? "노래 없음"
                                         : audioProvider.currentSong!.artist,
                                     style: WakText.txt12L
                                         .copyWith(color: WakColor.grey900),
-                                  ), 
+                                  ),
                                 ],
                               ),
                             ),
@@ -237,15 +236,12 @@ class _SubBotNavState extends State<SubBotNav> {
                                     setState(() {
                                       audioProvider.play();
                                     });
-                                  }), // 수정
-                            iconBtn(
-                              "ic_32_close",
-                              edgePadding: false,
-                              onTap: () {
-                                botNav.subSwitch();
-                                audioProvider.clear();
-                              }
-                            ), // 수정
+                                  }),
+                            iconBtn("ic_32_close", edgePadding: false,
+                                onTap: () {
+                              botNav.subSwitch();
+                              audioProvider.clear();
+                            }),
                           ],
                         ),
                       )
@@ -255,56 +251,49 @@ class _SubBotNavState extends State<SubBotNav> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               () {
-                                switch (tempRepeat) {
-                                  case RepeatType.all:
+                                switch (audioProvider.loopMode) {
+                                  case LoopMode.all:
                                     return iconBtn("ic_32_repeat_on_all",
                                         onTap: () {
-                                      setState(() {
-                                        tempRepeat = RepeatType.one;
-                                      });
+                                      audioProvider.nextLoopMode();
                                     });
-                                  case RepeatType.one:
+                                  case LoopMode.single:
                                     return iconBtn("ic_32_repeat_on_1",
                                         onTap: () {
-                                      setState(() {
-                                        tempRepeat = RepeatType.none;
-                                      });
+                                      audioProvider.nextLoopMode();
                                     });
                                   default:
                                     return iconBtn("ic_32_repeat_off",
                                         onTap: () {
                                       setState(() {
-                                        tempRepeat = RepeatType.all;
+                                        audioProvider.nextLoopMode();
                                       });
-                                    }); // 수정 (실제 플레이어와 연결)
+                                    });
                                 }
                               }(),
-                              iconBtn("ic_32_prev_on"), // 수정 (실제 플레이어와 연결)
-                              tempIsPlaying
+                              iconBtn("ic_32_prev_on", onTap: () {
+                                audioProvider.toPrevious();
+                              }),
+                              audioProvider.playbackState ==
+                                      PlaybackState.playing
                                   ? iconBtn("ic_32_stop", onTap: () {
-                                      setState(() {
-                                        tempIsPlaying = !tempIsPlaying;
-                                      });
+                                      audioProvider.pause();
                                     })
                                   : iconBtn("ic_32_play_900", onTap: () {
-                                      setState(() {
-                                        tempIsPlaying = !tempIsPlaying;
-                                      });
-                                    }), // 수정 (실제 플레이어와 연결)
-                              iconBtn("ic_32_next_on"), // 수정 (실제 플레이어와 연결)
-                              tempRandom
+                                      audioProvider.play();
+                                    }),
+                              iconBtn("ic_32_next_on", onTap: () {
+                                audioProvider.toNext();
+                              }),
+                              audioProvider.shuffle
                                   ? iconBtn("ic_32_random_on",
                                       edgePadding: true, onTap: () {
-                                      setState(() {
-                                        tempRandom = !tempRandom;
-                                      });
+                                      audioProvider.toggleShuffle();
                                     })
                                   : iconBtn("ic_32_random_off",
                                       edgePadding: true, onTap: () {
-                                      setState(() {
-                                        tempRandom = !tempRandom;
-                                      });
-                                    }), // 수정 (실제 플레이어와 연결)
+                                      audioProvider.toggleShuffle();
+                                    }),
                             ]),
                       ),
               ],
@@ -350,7 +339,11 @@ class _SubBotNavState extends State<SubBotNav> {
 
   /* 곡 선택 */
   Widget editBar(BuildContext context, EditBarType type) {
-    final selNav = Provider.of<SelectSongProvider>(context);
+    final navProvider = Provider.of<NavProvider>(context);
+    final selProvider = Provider.of<SelectSongProvider>(context);
+    final audioProvider = Provider.of<AudioProvider>(context);
+    final keepViewModel = Provider.of<KeepViewModel>(context);
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -362,14 +355,61 @@ class _SubBotNavState extends State<SubBotNav> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (type.showSelect)
-                selNav.selNum != selNav.maxSel
+                selProvider.selNum != selProvider.maxSel
                     ? editBarBtn("ic_32_check_off", "전체선택",
-                        onTap: selNav.addAllSong)
+                        onTap: () => selProvider.addAllSong([])) // 수정
                     : editBarBtn("ic_32_check_on", "전체선택해제",
-                        onTap: selNav.clearList),
-              if (type.showSongAdd) editBarBtn("ic_32_playadd_25", "노래담기"),
-              if (type.showPlayListAdd) editBarBtn("ic_32_play_add", "재생목록추가"),
-              if (type.showPlay) editBarBtn("ic_32_play_25", "재생"),
+                        onTap: selProvider.clearList),
+              if (type.showSongAdd)
+                editBarBtn("ic_32_playadd_25", "노래담기",
+                    onTap: () => {
+                          if (keepViewModel.loginStatus == LoginStatus.before)
+                            {
+                              selProvider.clearList(),
+                              if (audioProvider.isEmpty)
+                                {navProvider.subSwitchForce(false)}
+                              else
+                                {navProvider.subChange(1)},
+                              showModal(
+                                context: context,
+                                builder: (context) => PopUp(
+                                  type: PopUpType.txtOneBtn,
+                                  msg: '로그인이 필요한 기능입니다.',
+                                  posFunc: () => navProvider.update(4),
+                                ),
+                              )
+                            }
+                          else
+                            {
+                              Navigator.of(context, rootNavigator: true).push(
+                                  pageRouteBuilder(page: const KeepSongPopUp()))
+                            },
+                        }),
+              if (type.showPlayListAdd)
+                editBarBtn(
+                  "ic_32_play_add",
+                  "재생목록추가",
+                  onTap: (() => {
+                        audioProvider.addQueueItems(
+                          selProvider.list,
+                        ),
+                        selProvider.clearList(),
+                        navProvider.subChange(1),
+                      }),
+                ),
+              if (type.showPlay)
+                editBarBtn(
+                  "ic_32_play_25",
+                  "재생",
+                  onTap: (() => {
+                        audioProvider.addQueueItems(
+                          selProvider.list,
+                          autoplay: true,
+                        ),
+                        selProvider.clearList(),
+                        navProvider.subChange(1),
+                      }),
+                ),
               if (type.showDelete) editBarBtn("ic_32_delete", "삭제"),
               if (type.showEdit) editBarBtn("ic_32_edit", "편집"),
               if (type.showShare) editBarBtn("ic_32_share-1", "공유하기"),
@@ -378,13 +418,13 @@ class _SubBotNavState extends State<SubBotNav> {
             ],
           ),
         ),
-        if (selNav.selNum > 0)
+        if (selProvider.selNum > 0)
           Positioned(
             top: -16,
-            left: 20 - (selNav.selNum.toString().length - 1) * 4,
+            left: 20 - (selProvider.selNum.toString().length - 1) * 4,
             child: Container(
               height: 32,
-              width: 32 + (selNav.selNum.toString().length - 1) * 8,
+              width: 32 + (selProvider.selNum.toString().length - 1) * 8,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 color: Colors.white,
@@ -398,7 +438,7 @@ class _SubBotNavState extends State<SubBotNav> {
               ),
               alignment: Alignment.center,
               child: Text(
-                selNav.selNum.toString(),
+                selProvider.selNum.toString(),
                 style: WakText.txt18B.copyWith(color: WakColor.lightBlue),
                 textAlign: TextAlign.center,
               ),
@@ -437,7 +477,8 @@ enum EditBarType {
   keepBar(true, true, true, true, false, false, false, false, false),
   keepDetailBar(false, false, false, false, false, true, true, false, false),
   keepListBar(true, true, false, false, false, false, false, false, false),
-  keepProfileBar(false, false, false, false, false, false, false, true, true);
+  keepProfileBar(false, false, false, false, false, false, false, true, true),
+  searchBar(false, true, true, false, true, false, false, false, false);
 
   const EditBarType(
       this.showSelect,
