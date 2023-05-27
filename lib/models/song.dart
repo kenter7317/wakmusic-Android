@@ -46,7 +46,7 @@ class Song {
       views: json['views'] ?? 0,
       last: json['last'] ?? 0,
       start: Duration(seconds: json['start'] ?? 0),
-      end: json['end'] == 0 ? null : Duration(seconds: json['end']),
+      end: (json['end'] ?? 0) == 0 ? null : Duration(seconds: json['end']),
     );
   }
 }
