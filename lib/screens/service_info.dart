@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +10,7 @@ import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ServiceInfo extends StatelessWidget {
   const ServiceInfo({super.key});
@@ -67,7 +70,13 @@ class ServiceInfo extends StatelessWidget {
                       ),
                       _buildItem(
                         context,
-                        onTap: () {/* remove cache data */},
+                        onTap: () async {
+                          Directory tempDir = await getTemporaryDirectory();
+                          print('cache size: ${_getSize(tempDir)}');
+                          if (tempDir.existsSync()) {
+                            tempDir.deleteSync(recursive: true);
+                          }
+                        },
                         text: '캐시 데이터 지우기',
                       ),
                       _buildItem(
@@ -84,6 +93,35 @@ class ServiceInfo extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _getSize(Directory tempDir) {
+    double value = _getTotalSizeOfFilesInDir(tempDir);
+    return _renderSize(value);
+  }
+
+  double _getTotalSizeOfFilesInDir(final FileSystemEntity file) {
+    if (file is File) {
+      return file.lengthSync().toDouble();
+    } else if (file is Directory) {
+      List children = file.listSync();
+      double total = 0;
+      for (FileSystemEntity child in children) {
+          total += _getTotalSizeOfFilesInDir(child);
+      }
+      return total;
+    }
+    return 0;
+  }
+
+  String  _renderSize(double value) {
+    List<String> unitArr = ['B', 'KB', 'MB', 'GB'];
+    int index = 0;
+    while (value > 1024) {
+      index++;
+      value = value / 1024;
+    }
+    return value.toStringAsFixed(2) + unitArr[index];
   }
 
   Widget _buildItem(
