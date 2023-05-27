@@ -98,6 +98,30 @@ class AppAuthorityPopUp extends StatelessWidget {
                       ))
                     ],
                   ),
+                  SizedBox(height: 8,),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/ic_32_alarm.svg',
+                        width: 32,
+                        height: 32,
+                      ),
+                      SizedBox(width: 8,),
+                      Expanded(child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('알림',
+                            style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                            textAlign: TextAlign.left,
+                          ),
+                          Text('백그라운드 음악 재생을 위한 권한',
+                            style: WakText.txt14L.copyWith(color: WakColor.grey500),
+                            textAlign: TextAlign.left,
+                          )
+                        ],
+                      ))
+                    ],
+                  ),
                   SizedBox(height: 16,),
                   Container(
                       decoration: BoxDecoration(
@@ -183,6 +207,7 @@ class AppAuthorityPopUp extends StatelessWidget {
     Map<Permission, PermissionStatus> permissionStatuses = await [
       Permission.camera,
       Permission.storage,
+      Permission.systemAlertWindow,
     ].request();
 
     // 허용/비허용의 차이가 없기에 주석처리
