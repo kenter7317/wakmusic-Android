@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:wakmusic/models/errors/http_error.dart';
 import 'package:wakmusic/models/playlist.dart';
@@ -161,19 +162,19 @@ class UserRepository {
     }
   }
 
-  Future<bool> addPlaylistSongs(String key, List<Song> songs) async {
+  Future<int> addPlaylistSongs(String key, List<Song> songs) async {
     final token = await _token;
     if (token == null) {
-      return false;
+      return -1;
     }
 
     try {
-      await _api.addPlaylistSongs(
+      final addedSongsNum = await _api.addPlaylistSongs(
         key,
         songs.map((song) => song.id).toList(),
         token: token,
       );
-      return true;
+      return addedSongsNum;
     } catch (e) {
       rethrow;
     }

@@ -124,13 +124,19 @@ class SongTile extends StatelessWidget {
           Provider.of<KeepViewModel>(context); /* for test */
       AudioProvider audioProvider = Provider.of<AudioProvider>(context);
       NavProvider navProvider = Provider.of<NavProvider>(context);
-      bool isSelected = selectedList.list.contains(song);
+      bool isSelected = selectedList.contains(song!);
       return GestureDetector(
         onTap: () {
-          /*if (tileType.canSelect) {
+          if (tileType.canSelect) {
             if (isSelected) {
               selectedList.removeSong(song!);
+              if (selectedList.list.isEmpty) {
+                navProvider.subChange(1);
+                if (audioProvider.isEmpty) navProvider.subSwitchForce(false);
+              }
             } else {
+              navProvider.subChange(navProvider.curIdx == 2 ? 9 : 4);
+              navProvider.subSwitchForce(true);
               selectedList.addSong(song!);
             }
             /* for test */
@@ -151,8 +157,7 @@ class SongTile extends StatelessWidget {
                   ),
                 );
               }*/
-          } else */
-          if (tileType != TileType.nowPlayTile) {
+          } else if (tileType != TileType.nowPlayTile) {
             if (song != null) {
               audioProvider.addQueueItem(song!, autoplay: true);
               navProvider.subChange(1);

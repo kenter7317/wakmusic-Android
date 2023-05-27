@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/playlist.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/repository/user_repo.dart';
@@ -39,8 +41,12 @@ class PlaylistTile extends StatelessWidget {
     } else {
       final selectedList = Provider.of<SelectPlaylistProvider>(context);
       bool isSelected = selectedList.list.contains(playlist);
+      SelectSongProvider selSongProvider = Provider.of<SelectSongProvider>(context);
+      NavProvider navProvider = Provider.of<NavProvider>(context);
+      AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+      
       return GestureDetector(
-        onTap: () {
+        onTap: () async {
           if (tileType.canSelect) {
             if (isSelected) {
               selectedList.removePlaylist(playlist!);
@@ -54,7 +60,7 @@ class PlaylistTile extends StatelessWidget {
                 Provider.of<KeepViewModel>(context, listen: false);
 
             viewModel.addSongs(playlist!, selectedSongs.list).then((value) {
-              if (value) {
+              if (value != -1) {
                 showToastWidget(
                   context: context,
                   position: const StyledToastPosition(
@@ -63,8 +69,14 @@ class PlaylistTile extends StatelessWidget {
                   ),
                   animation: StyledToastAnimation.slideFromBottomFade,
                   reverseAnimation: StyledToastAnimation.fade,
-                  ToastMsg(msg: '${playlist?.songlist?.length}곡을 리스트에 담았습니다.'),
+                  ToastMsg(msg: '$value곡을 리스트에 담았습니다.'),
                 );
+                selSongProvider.clearList();
+                if (audioProvider.isEmpty) {
+                  navProvider.subSwitchForce(false);
+                } else {
+                  navProvider.subChange(1);
+                }
               }
               Navigator.pop(context);
             });
