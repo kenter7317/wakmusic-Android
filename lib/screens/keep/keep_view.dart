@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:wakmusic/models/errors/error.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
@@ -77,7 +76,7 @@ class KeepView extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           '왁타버스 뮤직',
-          style: WakText.txt20M.copyWith(color: WakColor.grey900),
+          style: WakText.txt20M,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 4),
@@ -286,7 +285,7 @@ class KeepView extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   _nameProcessing(viewModel.user.displayName),
-                  style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                  style: WakText.txt16M,
                 ),
               ],
             ),
@@ -351,8 +350,8 @@ class KeepView extends StatelessWidget {
                           type: BotSheetType.createList,
                         ),
                       ));
-                    }, 
-                    type: BtnSizeType.small, 
+                    },
+                    type: BtnSizeType.small,
                     iconName: 'ic_32_playadd_900',
                     btnText: '리스트 만들기',
                   ),
@@ -365,8 +364,8 @@ class KeepView extends StatelessWidget {
                           type: BotSheetType.loadList,
                         ),
                       ));
-                    }, 
-                    type: BtnSizeType.small, 
+                    },
+                    type: BtnSizeType.small,
                     iconName: 'ic_32_share',
                     btnText: '리스트 가져오기',
                   ),

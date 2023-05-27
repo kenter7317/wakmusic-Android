@@ -3,20 +3,18 @@ import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/services/api.dart';
 
 class RecPlaylistProvider extends ChangeNotifier {
-  List<Reclist> _list = [];
-  List<Reclist> get list => _list;
-  bool get isOdd => _list.length.isOdd;
-  bool get isEven => _list.length.isEven;
   late final API _api;
+  late Future<List<Reclist>> _list;
+
+  Future<List<Reclist>> get list => _list;
 
   RecPlaylistProvider() {
     _api = API();
+    getLists();
   }
 
   Future<void> getLists() async {
-    if (_list.isEmpty) {
-      _list = await _api.fetchReclists();
-      notifyListeners();
-    }
+    _list = _api.fetchReclists();
+    notifyListeners();
   }
 }

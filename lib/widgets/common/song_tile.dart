@@ -238,7 +238,7 @@ class SongTile extends StatelessWidget {
                 if (tileType.showViews)
                   Text(
                     NumberFormat('###,###,###회').format(song!.views),
-                    style: WakText.txt12L.copyWith(color: WakColor.grey900),
+                    style: WakText.num12L,
                     textAlign: TextAlign.right,
                   ),
                 if (tileType.showDate)
@@ -246,7 +246,7 @@ class SongTile extends StatelessWidget {
                     (song!.date != DateTime(1999))
                         ? DateFormat('yyyy.MM.dd').format(song!.date)
                         : '-',
-                    style: WakText.txt12L.copyWith(color: WakColor.grey900),
+                    style: WakText.num12L,
                     textAlign: TextAlign.right,
                   ),
                 if (!tileType.canSelect && tileType != TileType.baseTile)
@@ -308,7 +308,7 @@ class SongTile extends StatelessWidget {
             SizedBox(
               child: Text(
                 rank.toString(),
-                style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                style: WakText.txt16M,
                 textAlign: TextAlign.center,
               ),
             ),

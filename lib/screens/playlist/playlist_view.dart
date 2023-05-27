@@ -3,9 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:wakmusic/models/playlist_detail.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
-import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -202,8 +200,7 @@ class PlaylistView extends StatelessWidget {
                         const Spacer(),
                         Text(
                           '편집',
-                          style:
-                              WakText.txt16M.copyWith(color: WakColor.grey900),
+                          style: WakText.txt16M,
                         ),
                         const Spacer(),
                         GestureDetector(
@@ -269,7 +266,7 @@ class PlaylistView extends StatelessWidget {
                 children: [
                   Text(
                     viewModel.title ?? playlist.title,
-                    style: WakText.txt20B.copyWith(color: WakColor.grey900),
+                    style: WakText.txt20B,
                     maxLines: 2,
                   ),
                   const SizedBox(height: 6),

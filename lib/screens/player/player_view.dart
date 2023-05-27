@@ -152,7 +152,7 @@ class Player extends StatelessWidget {
                   children: [
                     Text(
                       currentSong.title.toString(),
-                      style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                      style: WakText.txt16M,
                       textAlign: TextAlign.center,
                     ),
                     Text(
