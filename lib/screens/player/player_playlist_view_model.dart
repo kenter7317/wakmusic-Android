@@ -14,15 +14,4 @@ class PlayerPlayListViewModel with ChangeNotifier {
     _state = state;
     notifyListeners();
   }
-
-  void moveSong(int oldIdx, int newIdx) {
-    Song? song = _playlist.removeAt(oldIdx);
-    _playlist.insert(newIdx, song);
-    notifyListeners();
-  }
-
-  void setList(List<Song> list){
-    _playlist = [...list];
-    notifyListeners();
-  }
 }

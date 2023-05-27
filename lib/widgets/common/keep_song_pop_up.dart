@@ -36,18 +36,20 @@ class KeepSongPopUp extends StatelessWidget {
                   children: [
                     Text(
                       '담을곡',
-                      style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                      style: WakText.txt14MH,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       '00곡',
-                      style: WakText.txt14MH.copyWith(color: WakColor.lightBlue),
+                      style:
+                          WakText.txt14MH.copyWith(color: WakColor.lightBlue),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 child: BtnWithIcon(
                   onTap: () async {
                     viewModel.createList(await showModal(
@@ -64,14 +66,14 @@ class KeepSongPopUp extends StatelessWidget {
               ),
               Expanded(
                 child: (viewModel.playlists.isEmpty)
-                  ? const ErrorInfo(errorMsg: '내 리스트가 없습니다.')
-                  : ListView.builder(
-                      itemCount: viewModel.playlists.length,
-                      itemBuilder: (_, idx) => PlaylistTile(
-                        playlist: viewModel.playlists[idx],
-                        tileType: TileType.baseTile,
+                    ? const ErrorInfo(errorMsg: '내 리스트가 없습니다.')
+                    : ListView.builder(
+                        itemCount: viewModel.playlists.length,
+                        itemBuilder: (_, idx) => PlaylistTile(
+                          playlist: viewModel.playlists[idx],
+                          tileType: TileType.baseTile,
+                        ),
                       ),
-                    ),
               ),
             ],
           ),

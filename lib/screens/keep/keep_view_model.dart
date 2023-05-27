@@ -140,10 +140,28 @@ class KeepViewModel with ChangeNotifier {
   }
 
   Future<void> removeList(Playlist playlist) async {
-    _playlists.remove(playlist);
-    _tempPlaylists = [..._playlists];
-    /* call api */
+    if (await _repo.deletePlaylist(playlist.key!)) {
+      _playlists.remove(playlist);
+      _tempPlaylists = [..._playlists];
+    }
     notifyListeners();
+  }
+
+  Future<bool> addSongs(Playlist playlist, List<Song> songs) async {
+    if (playlist is Reclist || songs.isEmpty) {
+      return false;
+    }
+
+    if (await _repo.addPlaylistSongs(playlist.key!, songs)) {
+      final list = songs
+          .map((song) => song.id)
+          .where((e) => !playlist.songlist!.contains(e));
+      playlist.songlist!.addAll(list);
+      notifyListeners();
+      return true;
+    }
+
+    return false;
   }
 
   void moveSong(int oldIdx, int newIdx) {
@@ -169,11 +187,12 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void applyPlaylists(bool? apply) async {
+  Future<void> applyPlaylists(bool? apply) async {
     if (apply == null) return;
     if (apply) {
-      final res = await _repo
-          .editPlaylist(_tempPlaylists.whereType<Playlist>().toList());
+      final res = await _repo.editPlaylists(
+        _tempPlaylists.whereType<Playlist>().toList(),
+      );
       if (res) {
         _playlists = [..._tempPlaylists];
       }
@@ -181,6 +200,12 @@ class KeepViewModel with ChangeNotifier {
       _tempPlaylists = [..._playlists];
     }
     _editStatus = EditStatus.none;
+    notifyListeners();
+  }
+
+  Future<void> updatePlaylist(Playlist old, Playlist updated) async {
+    if (old == updated) return;
+    _playlists[_playlists.indexOf(old)] = updated;
     notifyListeners();
   }
 }

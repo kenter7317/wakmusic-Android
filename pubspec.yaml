@@ -60,6 +60,11 @@ dependencies:
   flutter_naver_login: ^1.7.0
   flutter_secure_storage: ^8.0.0
   google_sign_in: ^6.0.2
+  permission_handler: ^10.2.0
+  url_launcher: ^6.1.11
+  file_picker: ^5.2.10
+  video_thumbnail: ^0.5.3
+  mime: ^1.0.4
 
 dev_dependencies:
   flutter_test:
@@ -108,6 +113,11 @@ flutter:
           weight: 500
         - asset: assets/fonts/Pretendard-Bold.ttf
           weight: 700
+
+    - family: SCDream
+      fonts:
+        - asset: assets/fonts/SCDream3.otf
+          weight: 300
 
   #   - family: Schyler
   #     fonts:

@@ -11,6 +11,7 @@ import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:wakmusic/utils/json.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
+import 'package:wakmusic/widgets/common/text_with_dot.dart';
 import 'package:wakmusic/widgets/common/toast_msg.dart';
 
 enum BotSheetType {
@@ -56,14 +57,12 @@ class BotSheet extends StatefulWidget {
 class _BotSheetState extends State<BotSheet> {
   final int _maxLength = 12;
   FormType _type = FormType.none;
-  late API _api;
   late String _profile;
   late final TextEditingController _fieldText;
 
   @override
   void initState() {
     super.initState();
-    _api = API();
     assert(widget.type != BotSheetType.selProfile || widget.profiles != null);
     if (widget.type == BotSheetType.selProfile) {
       _profile = widget.initialValue ?? 'panchi';
@@ -98,7 +97,7 @@ class _BotSheetState extends State<BotSheet> {
               children: [
                 Text(
                   widget.type.title,
-                  style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                  style: WakText.txt18M,
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 32, 0, 40),
@@ -121,7 +120,7 @@ class _BotSheetState extends State<BotSheet> {
 
                           final repo = UserRepository();
                           await repo.addToMyPlaylist(_fieldText.text).then(
-                              (playlist) => Navigator.pop(context, playlist));
+                              (list) => Navigator.pop(context, list.simplify));
                         } catch (_) {
                           showToastWidget(
                             context: context,
@@ -268,14 +267,15 @@ class _BotSheetState extends State<BotSheet> {
             setState(() {
               if (value.isEmpty || value == widget.initialValue) {
                 _type = FormType.none;
-              }/* else if (value == 'test') { /* error condition */
+              } /* else if (value == 'test') { /* error condition */
                 _type = FormType.error;
               }*/
-                else {
-                  _type = FormType.enable;
-                }
-              });
-            }),
+              else {
+                _type = FormType.enable;
+              }
+            });
+          },
+        ),
         const SizedBox(height: 4),
         Row(
           children: [
@@ -319,21 +319,7 @@ class _BotSheetState extends State<BotSheet> {
               });
             }),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            SvgPicture.asset(
-              'assets/icons/ic_16_dot.svg',
-              width: 16,
-              height: 16,
-            ),
-            Expanded(
-              child: Text(
-                '리스트 코드로 리스트를 가져올 수 있습니다.',
-                style: WakText.txt12L.copyWith(color: WakColor.grey500),
-              ),
-            ),
-          ],
-        )
+        const TextWithDot(text: '리스트 코드로 리스트를 가져올 수 있습니다.'),
       ],
     );
   }
@@ -386,19 +372,7 @@ class _BotSheetState extends State<BotSheet> {
           ),
         ),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            SvgPicture.asset(
-              'assets/icons/ic_16_dot.svg',
-              width: 16,
-              height: 16,
-            ),
-            Text(
-              '리스트 코드로 리스트를 가져올 수 있습니다.',
-              style: WakText.txt12L.copyWith(color: WakColor.grey500),
-            ),
-          ],
-        )
+        const TextWithDot(text: '리스트 코드로 리스트를 가져올 수 있습니다.'),
       ],
     );
   }

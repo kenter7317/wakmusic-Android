@@ -101,6 +101,13 @@ class _SubBotNavState extends State<SubBotNav> {
                 botNav.pageContext,
                 MaterialPageRoute(
                     builder: (context) => const PlayerPlayList()));
+          playDetailBarBtn("ic_32_play_list", "재생목록", edgePadding: false,
+              onTap: () {
+            botNav.subChange(2);
+            Navigator.push(
+                botNav.pageContext,
+                MaterialPageRoute(
+                    builder: (context) => const PlayerPlayList()));
           }),
         ],
       ),
@@ -149,7 +156,7 @@ class _SubBotNavState extends State<SubBotNav> {
           botNav.subChange(0);
           Navigator.push(
             botNav.pageContext,
-            MaterialPageRoute(builder: (context) => const Player()),
+            MaterialPageRoute(builder: (context) => Player()),
           );
         }
       },

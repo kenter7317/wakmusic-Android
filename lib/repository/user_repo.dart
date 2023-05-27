@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:wakmusic/models/errors/http_error.dart';
 import 'package:wakmusic/models/playlist.dart';
+import 'package:wakmusic/models/playlist_detail.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/user.dart';
 import 'package:wakmusic/services/api.dart';
@@ -13,9 +14,7 @@ class UserRepository {
   final API _api;
 
   UserRepository({
-    FlutterSecureStorage storage = const FlutterSecureStorage(
-        // aOptions: AndroidOptions(encryptedSharedPreferences: true),
-        ),
+    FlutterSecureStorage storage = const FlutterSecureStorage(),
   })  : _storage = storage,
         _api = API();
 
@@ -116,7 +115,7 @@ class UserRepository {
     }
   }
 
-  Future<Playlist> addToMyPlaylist(String key) async {
+  Future<PlaylistDetail> addToMyPlaylist(String key) async {
     final token = await _token;
     if (token == null) {
       throw HttpError.unauthorized;
@@ -124,7 +123,7 @@ class UserRepository {
 
     try {
       if (await _api.addToMyPlaylist(key, token: token)) {
-        return await _api.fetchPlaylist(key: key);
+        return await _api.fetchPlaylistDetail(key: key);
       }
 
       throw HttpError.badRequest;
@@ -133,7 +132,7 @@ class UserRepository {
     }
   }
 
-  Future<bool> editPlaylist(List<Playlist> playlists) async {
+  Future<bool> editPlaylists(List<Playlist> playlists) async {
     final token = await _token;
     if (token == null) {
       return false;
@@ -141,7 +140,7 @@ class UserRepository {
 
     try {
       final list = playlists.map((e) => e.key).whereType<String>().toList();
-      await _api.editPlaylist(list, token: token);
+      await _api.editPlaylists(list, token: token);
       return true;
     } catch (e) {
       rethrow;
@@ -156,6 +155,90 @@ class UserRepository {
 
     try {
       await _api.deletePlaylist(key, token: token);
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> addPlaylistSongs(String key, List<Song> songs) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.addPlaylistSongs(
+        key,
+        songs.map((song) => song.id).toList(),
+        token: token,
+      );
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> editPlaylistSongs(String key, List<Song> songs) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.editPlaylistSongs(
+        key,
+        songs.map((song) => song.id).toList(),
+        token: token,
+      );
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> editPlaylistTitle(String key, String title) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.editPlaylistTitle(key, title, token: token);
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> editLikeSongs(List<Song> songs) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.editUserLikeSongs(
+        songs.map((song) => song.id).toList(),
+        token: token,
+      );
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteLikeSongs(List<Song> songs) async {
+    final token = await _token;
+    if (token == null) {
+      return false;
+    }
+
+    try {
+      await _api.editUserLikeSongs(
+        songs.map((song) => song.id).toList(),
+        token: token,
+      );
       return true;
     } catch (e) {
       rethrow;

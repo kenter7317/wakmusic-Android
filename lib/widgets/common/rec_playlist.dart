@@ -16,103 +16,118 @@ class RecPlaylist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RecPlaylistProvider recPlaylist = Provider.of<RecPlaylistProvider>(context);
-    return SizedBox(
-      height: 300,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: () {
-          List<Widget> children = [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12.0),
-              child: Text(
-                '왁뮤팀이 추천하는 리스트',
-                style: WakText.txt16B.copyWith(color: WakColor.grey900),
+    return FutureBuilder<List<Reclist>>(
+      future: recPlaylist.list,
+      builder: (context, snapshot) {
+        int length = (snapshot.data?.length ?? 6), rowN = (length / 2).round();
+        double height = rowN * 88 - 8;
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '왁뮤팀이 추천하는 리스트',
+              style: WakText.txt16B.copyWith(color: WakColor.grey900),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: height,
+              child: GridView.builder(
+                itemCount: length,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  mainAxisExtent: 80,
+                ),
+                padding: EdgeInsets.zero,
+                itemBuilder: (context, idx) {
+                  return _buildPlaylist(context, snapshot.data?[idx]);
+                },
               ),
             ),
-          ];
-          children.addAll(
-            List.generate(
-              3,
-              (idx) => Row(
-                children: [
-                  _buildPlaylist(context, recPlaylist.list[idx * 2]),
-                  const SizedBox(width: 8),
-                  _buildPlaylist(context, recPlaylist.list[idx * 2 + 1]),
-                ],
-              ),
-            ),
-          );
-          return children;
-        }(),
-      ),
+          ],
+        );
+      },
     );
   }
 
   Widget _buildPlaylist(BuildContext context, Reclist? playlist) {
     if (playlist == null) {
-      return Expanded(
-        child: SkeletonBox(
-          child: Container(
-            height: 80,
-            decoration: BoxDecoration(
-              color: WakColor.grey200,
-              borderRadius: BorderRadius.circular(8),
+      return Container(
+        padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
+        decoration: BoxDecoration(
+          color: WakColor.grey25,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: SkeletonText(wakTxtStyle: WakText.txt14MH),
             ),
-          ),
+            const SizedBox(width: 4),
+            SkeletonBox(
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: const BoxDecoration(
+                  color: WakColor.grey200,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ],
         ),
       );
     } else {
-      return Expanded(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              pageRouteBuilder(page: PlaylistView(playlist: playlist)),
-            );
-          },
-          child: Container(
-            height: 80,
-            padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
-            decoration: BoxDecoration(
-              color: WakColor.grey25,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    playlist.title,
-                    style: WakText.txt14MH.copyWith(color: WakColor.grey600),
-                  ),
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            pageRouteBuilder(page: PlaylistView(playlist: playlist)),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
+          decoration: BoxDecoration(
+            color: WakColor.grey25,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  playlist.title,
+                  style: WakText.txt14MH.copyWith(color: WakColor.grey600),
                 ),
-                const SizedBox(width: 4),
-                ExtendedImage.network(
-                  '$staticBaseUrl/playlist/icon/round/${playlist.image}.png'
-                  '?v=${playlist.imageVersion}',
-                  fit: BoxFit.cover,
-                  shape: BoxShape.circle,
-                  width: 48,
-                  height: 48,
-                  loadStateChanged: (state) {
-                    if (state.extendedImageLoadState != LoadState.completed) {
-                      return SkeletonBox(
-                        child: Container(
-                          width: 48,
-                          height: 48,
-                          decoration: const BoxDecoration(
-                            color: WakColor.grey200,
-                            shape: BoxShape.circle,
-                          ),
+              ),
+              const SizedBox(width: 4),
+              ExtendedImage.network(
+                '$staticBaseUrl/playlist/icon/round/${playlist.id}.png'
+                '?v=${playlist.imageVersion}',
+                fit: BoxFit.cover,
+                shape: BoxShape.circle,
+                width: 48,
+                height: 48,
+                loadStateChanged: (state) {
+                  if (state.extendedImageLoadState != LoadState.completed) {
+                    return SkeletonBox(
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration: const BoxDecoration(
+                          color: WakColor.grey200,
+                          shape: BoxShape.circle,
                         ),
-                      );
-                    } 
-                    return null;
-                  },
-                  cacheMaxAge: const Duration(days: 30),
-                ),
-              ],
-            ),
+                      ),
+                    );
+                  }
+                  return null;
+                },
+                cacheMaxAge: const Duration(days: 30),
+              ),
+            ],
           ),
         ),
       );

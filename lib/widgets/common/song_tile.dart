@@ -24,33 +24,72 @@ import '../../models/providers/nav_provider.dart';
 import '../../screens/player/player_view.dart';
 
 enum TileType {
-  baseTile(false, false, false, false,
-    {'start': 20, 'middle': 0, 'end': 20}, {}),
-  editTile(false, false, false, true,
-    {'start': 20, 'middle': 16, 'end': 20}, 
-    {'icon': 'ic_32_move', 'size': 32.0}),
-  homeTile(true, false, false, false,
-    {'start': 0, 'middle': 12, 'end': 0},
-    {'icon': 'ic_24_play_shadow', 'size': 24.0}),
-  nowPlayTile(false, false, false, false,
-    {'start': 20, 'middle': 12, 'end': 16},
-    {'icon': 'wavestream', 'size': 32.0}),
-  canPlayTile(false, false, false, false,
-    {'start': 20, 'middle': 16, 'end': 20},
-    {'icon': 'ic_32_play_point_shadow', 'size': 32.0}),
-  chartTile(true, true, false, true,
-    {'start': 20, 'middle': 12, 'end': 20}, {}),
-  dateTile(false, false, true, true,
-    {'start': 20, 'middle': 16, 'end': 20}, {});
-
-  const TileType(
-    this.showRank,
-    this.showViews,
-    this.showDate,
-    this.canSelect,
-    this.padding,
-    this.icon,
+  baseTile(
+    showRank: false,
+    showViews: false,
+    showDate: false,
+    canSelect: false,
+    padding: {'start': 20, 'middle': 0, 'end': 20},
+    icon: {},
+  ),
+  editTile(
+    showRank: false,
+    showViews: false,
+    showDate: false,
+    canSelect: true,
+    padding: {'start': 20, 'middle': 16, 'end': 20},
+    icon: {'icon': 'ic_32_move', 'size': 32.0},
+  ),
+  homeTile(
+    showRank: true,
+    showViews: false,
+    showDate: false,
+    canSelect: false,
+    padding: {'start': 0, 'middle': 12, 'end': 0},
+    icon: {'icon': 'ic_24_play_shadow', 'size': 24.0},
+  ),
+  nowPlayTile(
+    showRank: false,
+    showViews: false,
+    showDate: false,
+    canSelect: false,
+    padding: {'start': 20, 'middle': 12, 'end': 16},
+    icon: {'icon': 'wavestream', 'size': 32.0},
+  ),
+  canPlayTile(
+    showRank: false,
+    showViews: false,
+    showDate: false,
+    canSelect: false,
+    padding: {'start': 20, 'middle': 16, 'end': 20},
+    icon: {'icon': 'ic_32_play_point_shadow', 'size': 32.0},
+  ),
+  chartTile(
+    showRank: true,
+    showViews: true,
+    showDate: false,
+    canSelect: true,
+    padding: {'start': 20, 'middle': 12, 'end': 20},
+    icon: {},
+  ),
+  dateTile(
+    showRank: false,
+    showViews: false,
+    showDate: true,
+    canSelect: true,
+    padding: {'start': 20, 'middle': 16, 'end': 20},
+    icon: {},
   );
+
+  const TileType({
+    required this.showRank,
+    required this.showViews,
+    required this.showDate,
+    required this.canSelect,
+    required this.padding,
+    required this.icon,
+  });
+
   final bool showRank;
   final bool showViews;
   final bool showDate;
@@ -79,14 +118,16 @@ class SongTile extends StatelessWidget {
     if (song == null) {
       return _buildSkeleton(context);
     } else {
-      SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
-      KeepViewModel viewModel = Provider.of<KeepViewModel>(context); /* for test */
+      SelectSongProvider selectedList =
+          Provider.of<SelectSongProvider>(context);
+      KeepViewModel viewModel =
+          Provider.of<KeepViewModel>(context); /* for test */
       AudioProvider audioProvider = Provider.of<AudioProvider>(context);
       NavProvider navProvider = Provider.of<NavProvider>(context);
       bool isSelected = selectedList.list.contains(song);
       return GestureDetector(
         onTap: () {
-          if (tileType.canSelect) {
+          /*if (tileType.canSelect) {
             if (isSelected) {
               selectedList.removeSong(song!);
             } else {
@@ -110,8 +151,9 @@ class SongTile extends StatelessWidget {
                   ),
                 );
               }*/
-          } else if (tileType != TileType.nowPlayTile) {
-            if(song != null){
+          } else */
+          if (tileType != TileType.nowPlayTile) {
+            if (song != null) {
               audioProvider.addQueueItem(song!, autoplay: true);
               navProvider.subChange(1);
               navProvider.subSwitchForce(true);
@@ -125,19 +167,21 @@ class SongTile extends StatelessWidget {
           }
         },
         child: Container(
-          padding: EdgeInsets.fromLTRB(tileType.padding['start']!, 0, tileType.padding['end']!, 0),
-          color: (tileType.canSelect && isSelected) 
-            ? WakColor.grey200
-            : (tileType == TileType.editTile)
-              ? WakColor.grey100
-              : Colors.transparent,
+          padding: EdgeInsets.fromLTRB(
+              tileType.padding['start']!, 0, tileType.padding['end']!, 0),
+          color: (tileType.canSelect && isSelected)
+              ? WakColor.grey200
+              : (tileType == TileType.editTile)
+                  ? WakColor.grey100
+                  : Colors.transparent,
           child: SizedBox(
             height: (tileType == TileType.homeTile) ? 42 : 60,
             child: Row(
               children: [
                 if (tileType.showRank) _buildRank(context),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: (tileType == TileType.homeTile) ? 1 : 10),
+                  padding: EdgeInsets.symmetric(
+                      vertical: (tileType == TileType.homeTile) ? 1 : 10),
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
                     child: ExtendedImage.network(
@@ -146,7 +190,8 @@ class SongTile extends StatelessWidget {
                       shape: BoxShape.rectangle,
                       borderRadius: BorderRadius.circular(4),
                       loadStateChanged: (state) {
-                        if (state.extendedImageLoadState != LoadState.completed) {
+                        if (state.extendedImageLoadState !=
+                            LoadState.completed) {
                           return Image.asset(
                             'assets/images/img_40_thumbnail.png',
                             fit: BoxFit.cover,
@@ -169,7 +214,9 @@ class SongTile extends StatelessWidget {
                         child: Text(
                           song!.title,
                           style: WakText.txt14MH.copyWith(
-                            color: (tileType == TileType.nowPlayTile) ? WakColor.lightBlue : WakColor.grey900,
+                            color: (tileType == TileType.nowPlayTile)
+                                ? WakColor.lightBlue
+                                : WakColor.grey900,
                           ),
                         ),
                       ),
@@ -178,7 +225,9 @@ class SongTile extends StatelessWidget {
                         child: Text(
                           song!.artist,
                           style: WakText.txt12L.copyWith(
-                            color: (tileType == TileType.nowPlayTile) ? WakColor.lightBlue : WakColor.grey900,
+                            color: (tileType == TileType.nowPlayTile)
+                                ? WakColor.lightBlue
+                                : WakColor.grey900,
                           ),
                         ),
                       ),
@@ -189,48 +238,48 @@ class SongTile extends StatelessWidget {
                 if (tileType.showViews)
                   Text(
                     NumberFormat('###,###,###회').format(song!.views),
-                    style: WakText.txt12L.copyWith(color: WakColor.grey900),
+                    style: WakText.num12L,
                     textAlign: TextAlign.right,
                   ),
                 if (tileType.showDate)
                   Text(
                     (song!.date != DateTime(1999))
-                      ? DateFormat('yyyy.MM.dd').format(song!.date)
-                      : '-',
-                    style: WakText.txt12L.copyWith(color: WakColor.grey900),
+                        ? DateFormat('yyyy.MM.dd').format(song!.date)
+                        : '-',
+                    style: WakText.num12L,
                     textAlign: TextAlign.right,
                   ),
                 if (!tileType.canSelect && tileType != TileType.baseTile)
                   (tileType != TileType.nowPlayTile)
-                    ? GestureDetector(
-                        onTap: () {
-                          audioProvider.addQueueItem(song!, autoplay: true);
-                          navProvider.subChange(1);
-                          navProvider.subSwitchForce(true);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: WakColor.dark.withOpacity(0.04),
-                                blurRadius: tileType.icon['size'] / 6,
-                                offset: Offset(0, tileType.icon['size'] / 6),
-                              ),
-                            ],
+                      ? GestureDetector(
+                          onTap: () {
+                            audioProvider.addQueueItem(song!, autoplay: true);
+                            navProvider.subChange(1);
+                            navProvider.subSwitchForce(true);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: WakColor.dark.withOpacity(0.04),
+                                  blurRadius: tileType.icon['size'] / 6,
+                                  offset: Offset(0, tileType.icon['size'] / 6),
+                                ),
+                              ],
+                            ),
+                            child: SvgPicture.asset(
+                              'assets/icons/${tileType.icon['icon']}.svg',
+                              width: tileType.icon['size'],
+                              height: tileType.icon['size'],
+                            ),
                           ),
-                          child: SvgPicture.asset(
-                            'assets/icons/${tileType.icon['icon']}.svg',
-                            width: tileType.icon['size'],
-                            height: tileType.icon['size'],
-                          ),
+                        )
+                      : Lottie.asset(
+                          'assets/lottie/${tileType.icon['icon']}.json',
+                          width: tileType.icon['size'],
+                          height: tileType.icon['size'],
                         ),
-                      )
-                    : Lottie.asset(
-                        'assets/lottie/${tileType.icon['icon']}.json',
-                        width: tileType.icon['size'],
-                        height: tileType.icon['size'],
-                      ),
                 if (tileType == TileType.editTile)
                   ReorderableDragStartListener(
                     index: idx,
@@ -259,7 +308,7 @@ class SongTile extends StatelessWidget {
             SizedBox(
               child: Text(
                 rank.toString(),
-                style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                style: WakText.txt16M,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -330,7 +379,8 @@ class SongTile extends StatelessWidget {
 
   Widget _buildSkeleton(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(tileType.padding['start']!, 0, tileType.padding['end']!, 0),
+      padding: EdgeInsets.fromLTRB(
+          tileType.padding['start']!, 0, tileType.padding['end']!, 0),
       child: SizedBox(
         height: (tileType == TileType.homeTile) ? 42 : 60,
         child: Row(
@@ -348,7 +398,8 @@ class SongTile extends StatelessWidget {
               ),
             SkeletonBox(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: (tileType == TileType.homeTile) ? 1 : 10),
+                padding: EdgeInsets.symmetric(
+                    vertical: (tileType == TileType.homeTile) ? 1 : 10),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
                   child: Container(

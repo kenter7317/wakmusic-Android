@@ -64,11 +64,12 @@ class AudioService {
 
   static final Stream<Duration> position = createPositionStream(
     minPeriod: const Duration(milliseconds: 250),
+    maxPeriod: const Duration(milliseconds: 250),
   );
 
   static Stream<Duration> createPositionStream({
     int steps = 400,
-    Duration minPeriod = const Duration(milliseconds: 500),
+    Duration minPeriod = const Duration(milliseconds: 100),
     Duration maxPeriod = const Duration(milliseconds: 500),
   }) {
     assert(minPeriod <= maxPeriod);

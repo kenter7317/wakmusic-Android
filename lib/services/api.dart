@@ -5,6 +5,7 @@ import 'package:wakmusic/models/faq.dart';
 import 'package:wakmusic/models/notice.dart';
 import 'package:wakmusic/models/errors/error.dart';
 import 'package:wakmusic/models/errors/http_error.dart';
+import 'package:wakmusic/models/playlist_detail.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:subtitle/subtitle.dart';
@@ -92,7 +93,9 @@ class API {
   Future<List<Song>> fetchNew({required GroupType type}) async {
     final response = await getResponse('$testBaseUrl/songs/new/${type.name}');
     if (response.statusCode == 200) {
-      return (jsonDecode(response.body) as List).map((e) => Song.fromJson(e)).toList();
+      return (jsonDecode(response.body) as List)
+          .map((e) => Song.fromJson(e))
+          .toList();
     } else {
       throw Exception('New API failed :(');
     }
@@ -132,6 +135,7 @@ class API {
     return controller;
   }
 
+  @Deprecated('use fetchPlaylistDetail()')
   Future<Playlist> fetchPlaylist({required String key}) async {
     final response = await getResponse('$baseUrl/playlist/detail/$key');
     if (response.statusCode == 200) {
@@ -141,10 +145,42 @@ class API {
     throw HttpError.byCode(response.statusCode);
   }
 
+  Future<List<Reclist>> fetchReclists() async {
+    final response = await getResponse('$testBaseUrl/playlist/recommended');
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Reclist.fromJson(e))
+          .toList();
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<PlaylistDetail> fetchPlaylistDetail({required String key}) async {
+    final response = await getResponse('$testBaseUrl/playlist/$key/detail');
+    if (response.statusCode == 200) {
+      return PlaylistDetail.fromJson(jsonDecode(response.body));
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<ReclistDetail> fetchReclistDetail({required String key}) async {
+    final response =
+        await getResponse('$testBaseUrl/playlist/recommended/$key');
+    if (response.statusCode == 200) {
+      return ReclistDetail.fromJson(jsonDecode(response.body));
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
   Future<List<String>> fetchFAQCategories() async {
     final response = await getResponse('$testBaseUrl/qna/categories');
     if (response.statusCode == 200) {
-      return(jsonDecode(response.body) as List).map((e) => e as String).toList();
+      return (jsonDecode(response.body) as List)
+          .map((e) => e as String)
+          .toList();
     } else {
       throw Exception('FAQ Categories load failed :(');
     }
@@ -153,7 +189,9 @@ class API {
   Future<List<FAQ>> fetchFAQ() async {
     final response = await getResponse('$testBaseUrl/qna');
     if (response.statusCode == 200) {
-      return(jsonDecode(response.body) as List).map((e) => FAQ.fromJson(e)).toList();
+      return (jsonDecode(response.body) as List)
+          .map((e) => FAQ.fromJson(e))
+          .toList();
     } else {
       throw Exception('FAQ load failed :(');
     }
@@ -162,12 +200,27 @@ class API {
   Future<List<Notice>> fetchNotice() async {
     final response = await getResponse('$testBaseUrl/notice/all');
     if (response.statusCode == 200) {
-      return List.from((jsonDecode(response.body) as List).map((e) => Notice.fromJson(e)).toList().reversed);
+      return List.from((jsonDecode(response.body) as List)
+          .map((e) => Notice.fromJson(e))
+          .toList()
+          .reversed);
     } else {
       throw Exception('Notice load failed :(');
     }
   }
-  
+
+  Future<List<Notice>> fetchNoticeDisplay() async {
+    final response = await getResponse('$testBaseUrl/notice');
+    if (response.statusCode == 200) {
+      return List.from((jsonDecode(response.body) as List)
+          .map((e) => Notice.fromJson(e))
+          .toList()
+          .reversed);
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
   Future<String> getToken(Login provider) async {
     final id = await provider.service.login();
     if (id == null) {
@@ -228,8 +281,8 @@ class API {
   }
 
   Future<List<Song>> fetchAlbums(String id, String sort, int start) async {
-    final response =
-        await getResponse('$testBaseUrl/artist/albums?id=$id&sort=$sort&start=$start');
+    final response = await getResponse(
+        '$testBaseUrl/artist/albums?id=$id&sort=$sort&start=$start');
 
     if (response.statusCode == 200) {
       return (jsonDecode(response.body) as List)
@@ -337,7 +390,7 @@ class API {
     throw HttpError.byCode(response.statusCode);
   }
 
-  Future<bool> editPlaylist(
+  Future<bool> editPlaylists(
     List<String> playlists, {
     required String token,
   }) async {
@@ -357,13 +410,133 @@ class API {
     throw HttpError.byCode(response.statusCode);
   }
 
+  Future<bool> deletePlaylists(
+    List<String> playlists, {
+    required String token,
+  }) async {
+    final response = await http.delete(
+      Uri.parse('$testBaseUrl/user/playlists/delete'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
+      },
+      body: {'"playlists"': jsonEncode(playlists)}.toString(),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
   Future<void> deletePlaylist(
-    key, {
+    String key, {
     required String token,
   }) async {
     final response = await http.delete(
       Uri.parse('$testBaseUrl/playlist/$key/delete'),
       headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> addPlaylistSongs(
+    String key,
+    List<String> songs, {
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$testBaseUrl/playlist/$key/songs/add'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
+      },
+      body: {'"songs"': jsonEncode(songs)}.toString(),
+    );
+
+    if (response.statusCode == 201) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> editPlaylistSongs(
+    String key,
+    List<String> songs, {
+    required String token,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('$testBaseUrl/playlist/$key/edit'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: {'"songs"': jsonEncode(songs)}.toString(),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> editPlaylistTitle(
+    String key,
+    String title, {
+    required String token,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('$testBaseUrl/playlist/$key/edit/title'),
+      headers: {'Authorization': 'Bearer $token'},
+      body: {'title': title},
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> editUserLikeSongs(
+    List<String> songs, {
+    required String token,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('$testBaseUrl/user/likes/edit'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: {'"songs"': jsonEncode(songs)}.toString(),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+
+    throw HttpError.byCode(response.statusCode);
+  }
+
+  Future<void> deleteUserLikeSongs(
+    List<String> songs, {
+    required String token,
+  }) async {
+    final response = await http.delete(
+      Uri.parse('$testBaseUrl/user/likes/delete'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: {'"songs"': jsonEncode(songs)}.toString(),
     );
 
     if (response.statusCode == 200) {
