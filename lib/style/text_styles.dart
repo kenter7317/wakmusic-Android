@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:wakmusic/style/colors.dart';
 
 class WakText {
   /* base */
-  static const TextStyle txtBase = TextStyle(overflow: TextOverflow.ellipsis, letterSpacing: -0.5, leadingDistribution: TextLeadingDistribution.even);
+  static const TextStyle txtBase = TextStyle(
+    overflow: TextOverflow.ellipsis,
+    letterSpacing: -0.5,
+    leadingDistribution: TextLeadingDistribution.even,
+    color: WakColor.grey900,
+  );
   static final TextStyle txtLBase = txtBase.copyWith(fontWeight: FontWeight.w300);
   static final TextStyle txtMBase = txtBase.copyWith(fontWeight: FontWeight.w500);
   static final TextStyle txtBBase = txtBase.copyWith(fontWeight: FontWeight.w700);

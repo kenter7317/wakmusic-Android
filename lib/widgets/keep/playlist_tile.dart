@@ -130,16 +130,14 @@ class PlaylistTile extends StatelessWidget {
                         height: 24,
                         child: Text(
                           playlist!.title,
-                          style:
-                              WakText.txt14MH.copyWith(color: WakColor.grey900),
+                          style: WakText.txt14MH,
                         ),
                       ),
                       SizedBox(
                         height: 18,
                         child: Text(
                           '${playlist!.songlist!.where((songId) => songId.isNotEmpty).length}곡',
-                          style:
-                              WakText.txt12L.copyWith(color: WakColor.grey900),
+                          style: WakText.txt12L,
                         ),
                       ),
                     ],

@@ -57,14 +57,12 @@ class BotSheet extends StatefulWidget {
 class _BotSheetState extends State<BotSheet> {
   final int _maxLength = 12;
   FormType _type = FormType.none;
-  late API _api;
   late String _profile;
   late final TextEditingController _fieldText;
 
   @override
   void initState() {
     super.initState();
-    _api = API();
     assert(widget.type != BotSheetType.selProfile || widget.profiles != null);
     if (widget.type == BotSheetType.selProfile) {
       _profile = widget.initialValue ?? 'panchi';
@@ -99,7 +97,7 @@ class _BotSheetState extends State<BotSheet> {
               children: [
                 Text(
                   widget.type.title,
-                  style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                  style: WakText.txt18M,
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 32, 0, 40),

@@ -171,13 +171,11 @@ class _SubBotNavState extends State<SubBotNav> {
                                 children: [
                                   Text(
                                     "리와인드 (RE:WIND)",
-                                    style: WakText.txt14MH
-                                        .copyWith(color: WakColor.grey900),
+                                    style: WakText.txt14MH,
                                   ), // 수정
                                   Text(
                                     "이세계아이돌",
-                                    style: WakText.txt12L
-                                        .copyWith(color: WakColor.grey900),
+                                    style: WakText.txt12L,
                                   ), // 수정
                                 ],
                               ),

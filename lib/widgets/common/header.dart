@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 
 enum HeaderType {
@@ -49,7 +48,7 @@ class Header extends StatelessWidget {
           Center(
             child: Text(
               headerTxt,
-              style: WakText.txt16M.copyWith(color: WakColor.grey900),
+              style: WakText.txt16M,
               textAlign: TextAlign.center,
             ),
           ),
