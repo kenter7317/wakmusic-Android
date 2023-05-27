@@ -60,13 +60,12 @@ class PlayerPlayList extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: Text(
                 '재생목록',
-                style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                style: WakText.txt16M,
                 textAlign: TextAlign.center,
               )),
           (viewModel.state == PageState.edit) ?
             GestureDetector(
               onTap: () {
-                audioProvider.addQueueItems(viewModel.playList, override: true, autoplay: true);
                 viewModel.updateStatus(PageState.normal);
               },
               child: const EditBtn(type: BtnType.done),
@@ -74,7 +73,6 @@ class PlayerPlayList extends StatelessWidget {
           :
             GestureDetector(
               onTap: () {
-                viewModel.setList(audioProvider.queue);
                 viewModel.updateStatus(PageState.edit);
               },
               child: const EditBtn(type: BtnType.edit),
@@ -107,8 +105,8 @@ class PlayerPlayList extends StatelessWidget {
                 );
               },
           )
-          : Selector<PlayerPlayListViewModel, List<Song>>(
-              selector: (context, viewModel) => viewModel.playList,
+          : Selector<AudioProvider, List<Song>>(
+              selector: (context, audioProvider) => audioProvider.queue,
               builder: (context, playList, _){
                 return ReorderableListView.builder(
                   proxyDecorator: (child, _, animation) => AnimatedBuilder(
@@ -140,7 +138,7 @@ class PlayerPlayList extends StatelessWidget {
                     tileType: TileType.editTile,
                   ),
                   onReorder: (oldIdx, newIdx) {
-                    viewModel.moveSong(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
+                    Provider.of<AudioProvider>(context, listen: false).swapQueueItem(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
                   },
                   //onReorderStart: (_) => HapticFeedback.lightImpact(),
                 );

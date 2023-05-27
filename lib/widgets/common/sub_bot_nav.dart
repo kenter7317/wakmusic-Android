@@ -80,14 +80,13 @@ class _SubBotNavState extends State<SubBotNav> {
             "ic_32_playadd_900",
             "노래담기",
           ), // 수정 (onTap 액션 필요)
-          playDetailBarBtn("ic_32_play_list", "재생목록",
-              edgePadding: false,
-              onTap: (){
-                botNav.subChange(2);
-                Navigator.push(
-                    botNav.pageContext,
-                    MaterialPageRoute(builder: (context) => const PlayerPlayList())
-                );
+          playDetailBarBtn("ic_32_play_list", "재생목록", edgePadding: false,
+              onTap: () {
+            botNav.subChange(2);
+            Navigator.push(
+                botNav.pageContext,
+                MaterialPageRoute(
+                    builder: (context) => const PlayerPlayList()));
           }),
         ],
       ),
@@ -128,14 +127,14 @@ class _SubBotNavState extends State<SubBotNav> {
   Widget playerBar(PlayerBarType type) {
     final botNav = Provider.of<NavProvider>(context);
     return GestureDetector(
-      onTap: () { if(type == PlayerBarType.main)
-        {
+      onTap: () {
+        if (type == PlayerBarType.main) {
           botNav.mainSwitchForce(false);
           botNav.subSwitchForce(true);
           botNav.subChange(0);
           Navigator.push(
             botNav.pageContext,
-            MaterialPageRoute(builder: (context) => const Player()),
+            MaterialPageRoute(builder: (context) => Player()),
           );
         }
       },
@@ -172,13 +171,11 @@ class _SubBotNavState extends State<SubBotNav> {
                                 children: [
                                   Text(
                                     "리와인드 (RE:WIND)",
-                                    style: WakText.txt14MH
-                                        .copyWith(color: WakColor.grey900),
+                                    style: WakText.txt14MH,
                                   ), // 수정
                                   Text(
                                     "이세계아이돌",
-                                    style: WakText.txt12L
-                                        .copyWith(color: WakColor.grey900),
+                                    style: WakText.txt12L,
                                   ), // 수정
                                 ],
                               ),
@@ -226,7 +223,8 @@ class _SubBotNavState extends State<SubBotNav> {
                                       });
                                     });
                                   default:
-                                    return iconBtn("ic_32_repeat_off", onTap: () {
+                                    return iconBtn("ic_32_repeat_off",
+                                        onTap: () {
                                       setState(() {
                                         tempRepeat = RepeatType.all;
                                       });
@@ -247,14 +245,14 @@ class _SubBotNavState extends State<SubBotNav> {
                                     }), // 수정 (실제 플레이어와 연결)
                               iconBtn("ic_32_next_on"), // 수정 (실제 플레이어와 연결)
                               tempRandom
-                                  ? iconBtn("ic_32_random_on", edgePadding: true,
-                                      onTap: () {
+                                  ? iconBtn("ic_32_random_on",
+                                      edgePadding: true, onTap: () {
                                       setState(() {
                                         tempRandom = !tempRandom;
                                       });
                                     })
-                                  : iconBtn("ic_32_random_off", edgePadding: true,
-                                      onTap: () {
+                                  : iconBtn("ic_32_random_off",
+                                      edgePadding: true, onTap: () {
                                       setState(() {
                                         tempRandom = !tempRandom;
                                       });
@@ -375,8 +373,16 @@ enum EditBarType {
   keepListBar(true, true, false, false, false, false, false, false, false),
   keepProfileBar(false, false, false, false, false, false, false, true, true);
 
-  const EditBarType(this.showSelect, this.showSongAdd, this.showPlayListAdd,
-      this.showDelete, this.showPlay, this.showEdit, this.showShare, this.showProfileChange, this.showNicknameChange);
+  const EditBarType(
+      this.showSelect,
+      this.showSongAdd,
+      this.showPlayListAdd,
+      this.showDelete,
+      this.showPlay,
+      this.showEdit,
+      this.showShare,
+      this.showProfileChange,
+      this.showNicknameChange);
   final bool showSelect;
   final bool showSongAdd;
   final bool showPlayListAdd;

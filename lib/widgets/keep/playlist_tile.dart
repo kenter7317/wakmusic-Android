@@ -5,7 +5,11 @@ import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/repository/user_repo.dart';
+import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -17,9 +21,9 @@ import 'package:wakmusic/widgets/page_route_builder.dart';
 
 class PlaylistTile extends StatelessWidget {
   const PlaylistTile({
-    super.key, 
-    required this.playlist, 
-    required this.tileType, 
+    super.key,
+    required this.playlist,
+    required this.tileType,
     this.idx = 0,
     this.onLongPress,
   });
@@ -33,7 +37,7 @@ class PlaylistTile extends StatelessWidget {
     if (playlist == null) {
       return _buildSkeleton(context);
     } else {
-      SelectPlaylistProvider selectedList = Provider.of<SelectPlaylistProvider>(context);
+      final selectedList = Provider.of<SelectPlaylistProvider>(context);
       bool isSelected = selectedList.list.contains(playlist);
       return GestureDetector(
         onTap: () {
@@ -44,23 +48,33 @@ class PlaylistTile extends StatelessWidget {
               selectedList.addPlaylist(playlist!);
             }
           } else if (tileType == TileType.baseTile) {
-            /* put songs in playlist */
-            showToastWidget(
-              context: context,
-              position: const StyledToastPosition(
-                align: Alignment.bottomCenter,
-                offset: 56,
-              ),
-              animation: StyledToastAnimation.slideFromBottomFade,
-              reverseAnimation: StyledToastAnimation.fade,
-              const ToastMsg(msg: '00곡을 리스트에 담았습니다.'),
-            );
-            Navigator.pop(context);
+            final selectedSongs =
+                Provider.of<SelectSongProvider>(context, listen: false);
+            final viewModel =
+                Provider.of<KeepViewModel>(context, listen: false);
+
+            viewModel.addSongs(playlist!, selectedSongs.list).then((value) {
+              if (value) {
+                showToastWidget(
+                  context: context,
+                  position: const StyledToastPosition(
+                    align: Alignment.bottomCenter,
+                    offset: 56,
+                  ),
+                  animation: StyledToastAnimation.slideFromBottomFade,
+                  reverseAnimation: StyledToastAnimation.fade,
+                  ToastMsg(msg: '${playlist?.songlist?.length}곡을 리스트에 담았습니다.'),
+                );
+              }
+              Navigator.pop(context);
+            });
           } else {
+            final viewModel =
+                Provider.of<KeepViewModel>(context, listen: false);
             Navigator.push(
               context,
               pageRouteBuilder(page: PlaylistView(playlist: playlist!)),
-            );
+            ).then((changed) => viewModel.updatePlaylist(playlist!, changed));
           }
         },
         onLongPress: () {
@@ -70,12 +84,13 @@ class PlaylistTile extends StatelessWidget {
           }
         },
         child: Container(
-          padding: EdgeInsets.fromLTRB(tileType.padding['start']!, 0, tileType.padding['end']!, 0),
-          color: (tileType.canSelect && isSelected) 
-            ? WakColor.grey200
-            : (tileType == TileType.editTile)
-              ? WakColor.grey100
-              : Colors.transparent,
+          padding: EdgeInsets.fromLTRB(
+              tileType.padding['start']!, 0, tileType.padding['end']!, 0),
+          color: (tileType.canSelect && isSelected)
+              ? WakColor.grey200
+              : (tileType == TileType.editTile)
+                  ? WakColor.grey100
+                  : Colors.transparent,
           child: SizedBox(
             height: 60,
             child: Row(
@@ -100,7 +115,7 @@ class PlaylistTile extends StatelessWidget {
                           ),
                         ),
                       );
-                    } 
+                    }
                     return null;
                   },
                   cacheMaxAge: const Duration(days: 30),
@@ -115,14 +130,14 @@ class PlaylistTile extends StatelessWidget {
                         height: 24,
                         child: Text(
                           playlist!.title,
-                          style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                          style: WakText.txt14MH,
                         ),
                       ),
                       SizedBox(
                         height: 18,
                         child: Text(
-                          '${playlist!.songlist.where((songId) => songId.isNotEmpty).length}곡',
-                          style: WakText.txt12L.copyWith(color: WakColor.grey900),
+                          '${playlist!.songlist!.where((songId) => songId.isNotEmpty).length}곡',
+                          style: WakText.txt12L,
                         ),
                       ),
                     ],
@@ -171,7 +186,8 @@ class PlaylistTile extends StatelessWidget {
 
   Widget _buildSkeleton(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(tileType.padding['start']!, 0, tileType.padding['end']!, 0),
+      padding: EdgeInsets.fromLTRB(
+          tileType.padding['start']!, 0, tileType.padding['end']!, 0),
       child: SizedBox(
         height: 60,
         child: Row(

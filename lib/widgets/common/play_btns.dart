@@ -81,7 +81,7 @@ class PlayBtns extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 btnName,
-                style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                style: WakText.txt14MH,
                 textAlign: TextAlign.center,
               ),
               const Spacer(flex: 5),

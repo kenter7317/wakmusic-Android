@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:wakmusic/services/api.dart';
+
 class Artist {
   final String id;
   final String name;
@@ -53,7 +55,8 @@ class Artist {
         instagram: json['instagram'],
         roundImgVer: json['image_round_version'],
         squareImgVer: json['image_square_version'],
-        roundImg: 'https://static.wakmusic.xyz/static/artist/round/${json['id']}.png?v=${json['image_round_version']}',
+        roundImg: '$staticBaseUrl/artist/round/${json['id']}.png'
+            '?v=${json['image_round_version']}',
         // background: 'https://wakmusic.xyz/static/artist/big/${json['id']}.jpg',
       );
 }

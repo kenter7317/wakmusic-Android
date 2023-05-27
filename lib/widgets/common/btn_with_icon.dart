@@ -52,7 +52,9 @@ class BtnWithIcon extends StatelessWidget {
             Center(
               child: Text(
                 btnText,
-                style: ((type == BtnSizeType.big) ? WakText.txt16M : WakText.txt14MH).copyWith(color: WakColor.grey900),
+                style: (type == BtnSizeType.big)
+                    ? WakText.txt16M
+                    : WakText.txt14MH,
                 textAlign: TextAlign.center,
               ),
             ),

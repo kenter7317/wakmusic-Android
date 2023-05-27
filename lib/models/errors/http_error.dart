@@ -12,6 +12,13 @@ enum HttpError {
 
   final int statusCode;
 
-  factory HttpError.byCode(int code) =>
-      values.singleWhere((e) => e.statusCode == code, orElse: () => unknown);
+  factory HttpError.byCode(int code) {
+    return values.singleWhere(
+      (e) => e.statusCode == code,
+      orElse: () {
+        print('Unknown Http Status Code: $code');
+        return unknown;
+      },
+    );
+  }
 }

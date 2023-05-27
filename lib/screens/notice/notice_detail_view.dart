@@ -35,8 +35,8 @@ class NoticeDetailView extends StatelessWidget {
                 children: [
                   Text(
                     notice.title,
-                    style: WakText.txt18M.copyWith(color: WakColor.grey900),
-                    maxLines: 10,
+                    style: WakText.txt18M,
+                    maxLines: 20,
                   ),
                   const SizedBox(height: 3),
                   SizedBox(
@@ -60,38 +60,45 @@ class NoticeDetailView extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                notice.mainText,
-                style: WakText.txt14MH.copyWith(color: WakColor.grey900),
-                maxLines: 20,
-              ),
-            ),
-          ]
-              .followedBy(
-                notice.images.map(
-                  (image) => Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    child: ExtendedImage.network(
-                      '$staticBaseUrl/notice/$image',
-                      fit: BoxFit.cover,
-                      loadStateChanged: (state) {
-                        if (state.extendedImageLoadState !=
-                            LoadState.completed) {
-                          return SkeletonBox(
-                            child: AspectRatio(
-                                aspectRatio: 1 / 1,
-                                child: Container(color: WakColor.grey200)),
-                          );
-                        }
-                        return null;
-                      },
+            Expanded(
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      notice.mainText,
+                      style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                      maxLines: 40,
                     ),
                   ),
-                ),
-              )
-              .toList(),
+                ]
+                    .followedBy(
+                      notice.images.map(
+                        (image) => Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: ExtendedImage.network(
+                            '$staticBaseUrl/notice/$image',
+                            fit: BoxFit.cover,
+                            loadStateChanged: (state) {
+                              if (state.extendedImageLoadState !=
+                                  LoadState.completed) {
+                                return SkeletonBox(
+                                  child: AspectRatio(
+                                      aspectRatio: 1 / 1,
+                                      child: Container(color: WakColor.grey200)),
+                                );
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -102,7 +102,8 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
   @override
   Future<void> play() async {
     if (isEmpty) return;
-    if (currentSong != null && playbackState.isNotPlaying) {
+    if (currentSong != null && playbackState.isNotPlaying ||
+        playbackState == PlaybackState.ended) {
       await load(currentSong!);
     } else {
       await _player.playVideo();
@@ -119,10 +120,13 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
 
   @override
   Future<void> playPause() async {
-    if (playbackState == PlaybackState.playing) {
-      pause();
-    } else {
-      play();
+    switch (playbackState) {
+      case PlaybackState.playing:
+        return pause();
+      case PlaybackState.ended:
+        return load(currentSong!);
+      default:
+        return play();
     }
   }
 
@@ -146,6 +150,8 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       id: song.id,
       title: song.title,
       artist: song.artist,
+      start: song.start,
+      end: song.end,
     );
     notifyListeners();
   }
@@ -162,6 +168,15 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
 
   @override
   Future<void> seek(double position) async {
+    switch (_playbackState) {
+      case PlaybackState.paused:
+        await play();
+        break;
+      case PlaybackState.ended:
+        await load(currentSong!);
+        break;
+      default:
+    }
     await _player.seekTo(seconds: position, allowSeekAhead: true);
     notifyListeners();
   }
@@ -279,6 +294,13 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
     _queue.clear();
     _index = 0;
     _shuffledQueue.clear();
+    notifyListeners();
+  }
+
+  Future<void> swapQueueItem(int oldIdx, int newIdx) async {
+    var song = _queue.removeAt(oldIdx);
+    _queue.insert(newIdx, song);
+    if(oldIdx == _index) _index = newIdx;
     notifyListeners();
   }
 }
