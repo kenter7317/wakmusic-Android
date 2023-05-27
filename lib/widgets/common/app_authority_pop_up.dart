@@ -54,7 +54,7 @@ class AppAuthorityPopUp extends StatelessWidget {
                   Row(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/ic_32_camera.svg',
+                        'assets/icons/ic_32_camera_circle.svg',
                         width: 32,
                         height: 32,
                       ),
@@ -78,7 +78,7 @@ class AppAuthorityPopUp extends StatelessWidget {
                   Row(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/ic_32_album.svg',
+                        'assets/icons/ic_32_album_circle.svg',
                         width: 32,
                         height: 32,
                       ),
@@ -102,7 +102,7 @@ class AppAuthorityPopUp extends StatelessWidget {
                   Row(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/ic_32_alarm.svg',
+                        'assets/icons/ic_32_alarm_circle.svg',
                         width: 32,
                         height: 32,
                       ),
