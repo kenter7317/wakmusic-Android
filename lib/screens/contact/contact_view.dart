@@ -1,8 +1,10 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wakmusic/amplifyconfiguration.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/header.dart';
@@ -51,6 +53,9 @@ class _ContactViewState extends State<ContactView> {
 
   @override
   void initState() {
+    Amplify.isConfigured;
+    // Amplify.configure('{}');
+    Amplify.configure(amplifyconfig);
     super.initState();
     _selectIdx = -1;
     _files = [];
@@ -96,7 +101,10 @@ class _ContactViewState extends State<ContactView> {
     FilePickerStatus.done;
     if (result != null) {
       File file = File(result.files.single.path!);
-      if (file.lengthSync() / (1024 * 1024) > 100) {
+      final storedSize = _files.isNotEmpty
+          ? _files.map((f) => f.lengthSync()).reduce((o, n) => o + n)
+          : 0;
+      if ((file.lengthSync() + storedSize) / (1024 * 1024) > 100) {
         showToastWidget(
           context: context,
           position: const StyledToastPosition(
@@ -782,19 +790,21 @@ class _ContactViewState extends State<ContactView> {
                     builder: (_) => PopUp(
                       type: PopUpType.txtTwoBtn,
                       msg: '작성하신 내용으로 등록하시겠습니까?',
-                      posFunc: () => showModal(
-                        context: context,
-                        builder: (_) => const PopUp(
-                          type: PopUpType.txtOneBtn,
-                          msg: '문의가 등록되었습니다.\n도움을 주셔서 감사합니다.',
-                        ),
-                      ).whenComplete(() {
-                        // send inquiry
-                        for (int i = 0; i < _maxFields; i++) {
-                          print('${i}th field: "${_fieldTexts[i].text}"');
-                        }
-                        Navigator.pop(context);
-                      }),
+                      posFunc: () async {
+                        showModal(
+                          context: context,
+                          builder: (_) => const PopUp(
+                            type: PopUpType.txtOneBtn,
+                            msg: '문의가 등록되었습니다.\n도움을 주셔서 감사합니다.',
+                          ),
+                        ).whenComplete(() {
+                          // send inquiry
+                          for (int i = 0; i < _maxFields; i++) {
+                            print('${i}th field: "${_fieldTexts[i].text}"');
+                          }
+                          Navigator.pop(context);
+                        });
+                      },
                     ),
                   );
                 }

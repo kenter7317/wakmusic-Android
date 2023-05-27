@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/main.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wakmusic/repository/s3_repo.dart';
 import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
@@ -27,6 +28,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     _controller = AnimationController(vsync: this);
 
+    S3Repository().configure();
     Provider.of<AudioProvider>(context, listen: false).init();
     Provider.of<KeepViewModel>(context, listen: false).getUser();
   }
