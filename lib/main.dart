@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/repository/notice_repo.dart';
 import 'package:wakmusic/screens/charts/charts_view.dart';
@@ -17,7 +18,8 @@ import 'package:wakmusic/screens/keep/keep_view.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
-void main() {
+void main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 

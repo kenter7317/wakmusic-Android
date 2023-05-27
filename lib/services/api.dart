@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/artist.dart';
 import 'package:wakmusic/models/faq.dart';
@@ -11,6 +12,7 @@ import 'package:wakmusic/models/playlist.dart';
 import 'package:subtitle/subtitle.dart';
 import 'package:wakmusic/models/user.dart';
 import 'package:wakmusic/services/login.dart';
+import 'package:wakmusic/utils/dotenv.dart';
 import 'package:wakmusic/utils/json.dart';
 
 enum ChartType {
@@ -54,9 +56,9 @@ enum GroupType {
   final String locale;
 }
 
-const baseUrl = 'https://wakmusic.xyz/api';
-const testBaseUrl = 'https://test.wakmusic.xyz/api';
-const staticBaseUrl = 'https://static.wakmusic.xyz/static';
+get baseUrl => env['BASE_URL'];
+get testBaseUrl => env['BASE_URL_TEST'];
+get staticBaseUrl => env['BASE_URL_STATIC'];
 
 class API {
   Future<http.Response> getResponse(
