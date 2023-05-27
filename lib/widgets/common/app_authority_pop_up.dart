@@ -29,7 +29,7 @@ class AppAuthorityPopUp extends StatelessWidget {
       ),
       child: Container(
         width: 335,
-        height: 407,
+        height: 463,
         child: Column(
           children: [
             Container(
