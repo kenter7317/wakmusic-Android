@@ -33,6 +33,7 @@ class WakText {
   static final TextStyle txt16B = txtBBase.copyWith(height: 24 / 16, fontSize: 16.0);
   static final TextStyle txt18B = txtBBase.copyWith(height: 28 / 18, fontSize: 18.0);
   static final TextStyle txt20B = txtBBase.copyWith(height: 32 / 20, fontSize: 20.0);
+  static final TextStyle txt22B = txtBBase.copyWith(height: 32 / 22, fontSize: 22.0);
   static final TextStyle txt24B = txtBBase.copyWith(height: 36 / 24, fontSize: 24.0);
   /* number */
   static final TextStyle num12L = txt12L.copyWith(fontFamily: 'SCDream');
