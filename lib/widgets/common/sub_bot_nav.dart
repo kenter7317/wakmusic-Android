@@ -10,7 +10,7 @@ import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/player/player_playlist_view.dart';
-import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart' as playlist;
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/utils/number_format.dart';
@@ -347,7 +347,7 @@ class _SubBotNavState extends State<SubBotNav> {
     final selListProvider = Provider.of<SelectPlaylistProvider>(context);
     final audioProvider = Provider.of<AudioProvider>(context);
     final keepViewModel = Provider.of<KeepViewModel>(context);
-    final playListViewModel = Provider.of<PlaylistViewModel>(context);
+    final playListViewModel = Provider.of<playlist.PlaylistViewModel>(context);
 
     return Stack(
       clipBehavior: Clip.none,
@@ -422,7 +422,11 @@ class _SubBotNavState extends State<SubBotNav> {
               if (type.showDelete)
                 editBarBtn("ic_32_delete", "삭제", onTap: () {
                   if (selProvider.list.isNotEmpty) {
-                    keepViewModel.deleteLikeSongs(selProvider.list);
+                    if (playListViewModel.curStatus == playlist.EditStatus.editing) {
+                      playListViewModel.removeSongs(selProvider.list);
+                    } else {
+                      keepViewModel.deleteLikeSongs(selProvider.list);
+                    }
                   } else {
                     for (var list in selListProvider.list) {
                       keepViewModel.removeList(list);
@@ -434,8 +438,30 @@ class _SubBotNavState extends State<SubBotNav> {
                     }
                   }
                 }),
-              if (type.showEdit) editBarBtn("ic_32_edit", "편집"),
-              if (type.showShare) editBarBtn("ic_32_share-1", "공유하기"),
+              if (type.showEdit)
+                editBarBtn("ic_32_edit", "편집", onTap: () {
+                  playListViewModel.updateStatus(playlist.EditStatus.editing);
+                  if (audioProvider.isEmpty) {
+                    navProvider.subSwitchForce(false);
+                  } else {
+                    navProvider.subChange(1);
+                  }
+                }),
+              if (type.showShare)
+                editBarBtn("ic_32_share-1", "공유하기", onTap: () async {
+                  await showModal(
+                    context: context,
+                    builder: (_) => BotSheet(
+                      type: BotSheetType.shareList,
+                      initialValue: playListViewModel.prevKeyword.toString(),
+                    ),
+                  );
+                  if (audioProvider.isEmpty) {
+                    navProvider.subSwitchForce(false);
+                  } else {
+                    navProvider.subChange(1);
+                  }
+                }),
               if (type.showProfileChange)
                 editBarBtn("ic_32_profile", "프로필 변경", onTap: () async {
                   keepViewModel.updateUserProfile(await showModal(
