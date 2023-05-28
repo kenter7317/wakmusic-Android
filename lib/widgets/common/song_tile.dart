@@ -135,7 +135,21 @@ class SongTile extends StatelessWidget {
                 if (audioProvider.isEmpty) navProvider.subSwitchForce(false);
               }
             } else {
-              navProvider.subChange(navProvider.curIdx == 2 ? 9 : 4);
+              switch (navProvider.curIdx) {
+                case 1:
+                  navProvider.subChange(4);
+                  break;
+                case 2:
+                  navProvider.subChange(9);
+                  break;
+                case 3:
+                  navProvider.subChange(4);
+                  break;
+                case 4:
+                  navProvider.subChange(5);
+                  break;
+                default:
+              }
               navProvider.subSwitchForce(true);
               selectedList.addSong(song!);
             }

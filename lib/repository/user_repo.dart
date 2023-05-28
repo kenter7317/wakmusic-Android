@@ -236,7 +236,7 @@ class UserRepository {
     }
 
     try {
-      await _api.editUserLikeSongs(
+      await _api.deleteUserLikeSongs(
         songs.map((song) => song.id).toList(),
         token: token,
       );

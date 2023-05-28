@@ -6,14 +6,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
+import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/player/player_playlist_view.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/utils/number_format.dart';
 import 'package:wakmusic/widgets/common/keep_song_pop_up.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
+import 'package:wakmusic/widgets/keep/bot_sheet.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
@@ -341,8 +344,10 @@ class _SubBotNavState extends State<SubBotNav> {
   Widget editBar(BuildContext context, EditBarType type) {
     final navProvider = Provider.of<NavProvider>(context);
     final selProvider = Provider.of<SelectSongProvider>(context);
+    final selListProvider = Provider.of<SelectPlaylistProvider>(context);
     final audioProvider = Provider.of<AudioProvider>(context);
     final keepViewModel = Provider.of<KeepViewModel>(context);
+    final playListViewModel = Provider.of<PlaylistViewModel>(context);
 
     return Stack(
       clipBehavior: Clip.none,
@@ -386,35 +391,82 @@ class _SubBotNavState extends State<SubBotNav> {
                             },
                         }),
               if (type.showPlayListAdd)
-                editBarBtn(
-                  "ic_32_play_add",
-                  "재생목록추가",
-                  onTap: (() => {
-                        audioProvider.addQueueItems(
-                          selProvider.list,
-                        ),
-                        selProvider.clearList(),
-                        navProvider.subChange(1),
-                      }),
-                ),
+                editBarBtn("ic_32_play_add", "재생목록추가", onTap: () async {
+                  if (selProvider.list.isNotEmpty) {
+                    audioProvider.addQueueItems(
+                      selProvider.list,
+                    );
+                    selProvider.clearList();
+                  } else {
+                    await selListProvider.getDetailPlaylist();
+                    for (var i = 0;
+                        i < selListProvider.detailList.length;
+                        i++) {
+                      audioProvider
+                          .addQueueItems(selListProvider.detailList[i].songs);
+                    }
+                    selListProvider.clearList();
+                  }
+                  navProvider.subChange(1);
+                }),
               if (type.showPlay)
-                editBarBtn(
-                  "ic_32_play_25",
-                  "재생",
-                  onTap: (() => {
-                        audioProvider.addQueueItems(
-                          selProvider.list,
-                          autoplay: true,
-                        ),
-                        selProvider.clearList(),
-                        navProvider.subChange(1),
-                      }),
-                ),
-              if (type.showDelete) editBarBtn("ic_32_delete", "삭제"),
+                editBarBtn("ic_32_play_25", "재생",
+                    onTap: () => {
+                          audioProvider.addQueueItems(
+                            selProvider.list,
+                            autoplay: true,
+                          ),
+                          selProvider.clearList(),
+                          navProvider.subChange(1),
+                        }),
+              if (type.showDelete)
+                editBarBtn("ic_32_delete", "삭제", onTap: () {
+                  if (selProvider.list.isNotEmpty) {
+                    keepViewModel.deleteLikeSongs(selProvider.list);
+                  } else {
+                    for (var list in selListProvider.list) {
+                      keepViewModel.removeList(list);
+                    }
+                    if (audioProvider.isEmpty) {
+                      navProvider.subSwitchForce(false);
+                    } else {
+                      navProvider.subChange(1);
+                    }
+                  }
+                }),
               if (type.showEdit) editBarBtn("ic_32_edit", "편집"),
               if (type.showShare) editBarBtn("ic_32_share-1", "공유하기"),
-              if (type.showProfileChange) editBarBtn("ic_32_profile", "프로필 변경"),
-              if (type.showNicknameChange) editBarBtn("ic_32_edit", "닉네임 수정")
+              if (type.showProfileChange)
+                editBarBtn("ic_32_profile", "프로필 변경", onTap: () async {
+                  keepViewModel.updateUserProfile(await showModal(
+                    context: context,
+                    builder: (_) => BotSheet(
+                      type: BotSheetType.selProfile,
+                      initialValue: keepViewModel.user.profile,
+                      profiles: keepViewModel.profiles,
+                    ),
+                  ));
+                  if (audioProvider.isEmpty) {
+                    navProvider.subSwitchForce(false);
+                  } else {
+                    navProvider.subChange(1);
+                  }
+                }),
+              if (type.showNicknameChange)
+                editBarBtn("ic_32_edit", "닉네임 수정", onTap: () async {
+                  keepViewModel.updateUserName(await showModal(
+                    context: context,
+                    builder: (_) => BotSheet(
+                      type: BotSheetType.editName,
+                      initialValue: keepViewModel.user.displayName,
+                    ),
+                  ));
+                  if (audioProvider.isEmpty) {
+                    navProvider.subSwitchForce(false);
+                  } else {
+                    navProvider.subChange(1);
+                  }
+                })
             ],
           ),
         ),
@@ -476,7 +528,7 @@ enum EditBarType {
   chartBar(true, true, true, false, true, false, false, false, false),
   keepBar(true, true, true, true, false, false, false, false, false),
   keepDetailBar(false, false, false, false, false, true, true, false, false),
-  keepListBar(true, true, false, false, false, false, false, false, false),
+  keepListBar(true, false, true, true, false, false, false, false, false),
   keepProfileBar(false, false, false, false, false, false, false, true, true),
   searchBar(false, true, true, false, true, false, false, false, false);
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
@@ -231,6 +232,8 @@ class KeepView extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
+    NavProvider navProvider = Provider.of<NavProvider>(context);
+
     return Container(
       height: 48,
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -240,21 +243,8 @@ class KeepView extends StatelessWidget {
             context,
             behavior: HitTestBehavior.translucent,
             onTap: () async {
-              // viewModel.updateUserProfile(await showModal(
-              //   context: context,
-              //   builder: (_) => BotSheet(
-              //     type: BotSheetType.selProfile,
-              //     initialValue: viewModel.user.profile,
-              //     profiles: viewModel.profiles,
-              //   ),
-              // ));
-              viewModel.updateUserName(await showModal(
-                context: context,
-                builder: (_) => BotSheet(
-                  type: BotSheetType.editName,
-                  initialValue: viewModel.user.displayName,
-                ),
-              ));
+              navProvider.subChange(8);
+              navProvider.subSwitchForce(true);
             },
             child: Row(
               children: [

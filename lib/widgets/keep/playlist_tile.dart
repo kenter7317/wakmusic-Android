@@ -9,9 +9,9 @@ import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/repository/user_repo.dart';
-import 'package:wakmusic/screens/keep/keep_view_model.dart';
+import 'package:wakmusic/screens/keep/keep_view_model.dart' as Keep;
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
-import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart'; 
 import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -44,20 +44,30 @@ class PlaylistTile extends StatelessWidget {
       SelectSongProvider selSongProvider = Provider.of<SelectSongProvider>(context);
       NavProvider navProvider = Provider.of<NavProvider>(context);
       AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+      Keep.KeepViewModel keepViewModel = Provider.of<Keep.KeepViewModel>(context);
       
       return GestureDetector(
         onTap: () async {
           if (tileType.canSelect) {
             if (isSelected) {
               selectedList.removePlaylist(playlist!);
+              if (selectedList.list.isEmpty && audioProvider.isEmpty) {
+                navProvider.subSwitchForce(false);
+              } else if (selectedList.list.isEmpty) {
+                navProvider.subChange(1);
+              }
             } else {
               selectedList.addPlaylist(playlist!);
+              if (keepViewModel.editStatus == Keep.EditStatus.playlists) {
+                navProvider.subChange(7);
+                navProvider.subSwitchForce(true);
+              } 
             }
           } else if (tileType == TileType.baseTile) {
             final selectedSongs =
                 Provider.of<SelectSongProvider>(context, listen: false);
             final viewModel =
-                Provider.of<KeepViewModel>(context, listen: false);
+                Provider.of<Keep.KeepViewModel>(context, listen: false);
 
             viewModel.addSongs(playlist!, selectedSongs.list).then((value) {
               if (value != -1) {
@@ -82,7 +92,7 @@ class PlaylistTile extends StatelessWidget {
             });
           } else {
             final viewModel =
-                Provider.of<KeepViewModel>(context, listen: false);
+                Provider.of<Keep.KeepViewModel>(context, listen: false);
             Navigator.push(
               context,
               pageRouteBuilder(page: PlaylistView(playlist: playlist!)),

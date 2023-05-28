@@ -210,4 +210,9 @@ class KeepViewModel with ChangeNotifier {
     _playlists[_playlists.indexOf(old)] = updated;
     notifyListeners();
   }
+
+  void deleteLikeSongs(List<Song> songs) {
+    _repo.deleteLikeSongs(songs);
+    notifyListeners();
+  }
 }
