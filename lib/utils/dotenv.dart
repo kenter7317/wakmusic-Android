@@ -1,3 +1,4 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:wakmusic/utils/json.dart';
 
-get env => dotenv.env;
+JSONType<String> get env => dotenv.env;

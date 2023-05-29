@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:wakmusic/models/errors/error.dart';
+import 'package:wakmusic/models_v2/enums/error.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/user.dart';
