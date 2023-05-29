@@ -1,13 +1,15 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:audio_service/audio_handler.dart';
 import 'package:audio_service/models/enums.dart';
 import 'package:audio_service/player/youtube_audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class WebViewEventHandler {
-  WebViewEventHandler(this.controller) {
+  WebViewEventHandler(this.controller, String html) {
     final events = <String, void Function(Object)>{
       'Ready': onReady,
       'StateChange': onStateChange,
@@ -17,7 +19,10 @@ class WebViewEventHandler {
 
     headlessInAppWebView = HeadlessInAppWebView(
       initialSize: const Size(480, 270),
-      initialFile: 'packages/audio_service/assets/player.html',
+      initialData: InAppWebViewInitialData(
+        data: html,
+        baseUrl: Uri.parse("https://www.youtube.com"),
+      ),
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
           mediaPlaybackRequiresUserGesture: false,
@@ -29,6 +34,9 @@ class WebViewEventHandler {
           controller.addJavaScriptHandler(handlerName: k, callback: v);
         });
         this.controller.init(controller);
+      },
+      onConsoleMessage: (controller, msg) {
+        log(msg.toString());
       },
     );
   }
