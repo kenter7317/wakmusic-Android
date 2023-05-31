@@ -62,6 +62,8 @@
             autoplay: 0,
             controls: 0,
             showinfo: 0,
+            // origin: "http://localhost:5500",
+            // enablejsapi: 1,
             rel: 0,
             loop: 0,
             fs: 0,
@@ -69,6 +71,7 @@
             cc_load_policy: 0,
             iv_load_policy: 3,
             disablekb: 1,
+            playsinline: 1,
           },
           events: {
             onReady: (e) => send("Ready", e),
@@ -83,6 +86,7 @@
       }
 
       function send(key, data) {
+        console.log(player.g.baseURI, player.g.src);
         window.flutter_inappwebview.callHandler(key, data);
       }
 

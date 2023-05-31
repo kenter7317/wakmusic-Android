@@ -7,6 +7,7 @@ import 'package:audio_service/models/callbacks.dart';
 import 'package:audio_service/models/enums.dart';
 import 'package:audio_service/player/youtube_audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'audio_service_platform_interface.dart';
 
@@ -28,7 +29,10 @@ class AudioService {
     final handler = builder();
     _handler = handler;
     callbacks.setHandler(handler);
-    player = YoutubeAudioPlayer(_handler);
+    player = YoutubeAudioPlayer(
+      _handler,
+      await rootBundle.loadString('packages/audio_service/assets/player.html'),
+    );
     _observe();
     return player;
   }
