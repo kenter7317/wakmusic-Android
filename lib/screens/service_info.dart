@@ -9,8 +9,10 @@ import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
+import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:wakmusic/widgets/show_modal.dart';
 
 class ServiceInfo extends StatelessWidget {
   const ServiceInfo({super.key});
@@ -72,10 +74,18 @@ class ServiceInfo extends StatelessWidget {
                         context,
                         onTap: () async {
                           Directory tempDir = await getTemporaryDirectory();
-                          print('cache size: ${_getSize(tempDir)}');
-                          if (tempDir.existsSync()) {
-                            tempDir.deleteSync(recursive: true);
-                          }
+                          showModal(
+                            context: context,
+                            builder: (_) => PopUp(
+                              type: PopUpType.txtTwoBtn,
+                              msg: '캐시 데이터(${_getSize(tempDir)})를 지우시겠습니까?',
+                              posFunc: () {
+                                if (tempDir.existsSync()) {
+                                  tempDir.deleteSync(recursive: true);
+                                }
+                              },
+                            ),
+                          );
                         },
                         text: '캐시 데이터 지우기',
                       ),
@@ -115,9 +125,9 @@ class ServiceInfo extends StatelessWidget {
   }
 
   String  _renderSize(double value) {
-    List<String> unitArr = ['B', 'KB', 'MB', 'GB'];
+    List<String> unitArr = [' B', ' KB', ' MB', ' GB'];
     int index = 0;
-    while (value > 1024) {
+    while (value > 1024 && index < 3) {
       index++;
       value = value / 1024;
     }
