@@ -55,9 +55,9 @@ enum GroupType {
   final String locale;
 }
 
-get baseUrl => env['BASE_URL'];
-get testBaseUrl => env['BASE_URL_TEST'];
-get staticBaseUrl => env['BASE_URL_STATIC'];
+get baseUrl => env['BASE_URL_v1'];
+get testBaseUrl => env['BASE_URL_TEST_v1'];
+get staticBaseUrl => env['BASE_URL_STATIC_v1'];
 
 @Deprecated('old')
 class API {

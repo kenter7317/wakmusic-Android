@@ -1,5 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:wakmusic/models_v2/enums/types.dart';
 import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/services/apis/api.dart';
 
@@ -10,10 +8,23 @@ class SongsAPI extends API {
   const SongsAPI();
 
   Future<List<Song>> newest({
-    GroupType? group, // null일 때 monthly
+    GroupType? group,
   }) async {
     final url = dotenv.get('API_NEW');
-    throw '';
+    final response = await request(
+      '$url/${group?.name ?? 'monthly'}',
+      method: HttpMethod.get,
+    );
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.get)) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Song.fromJson(e))
+          .toList();
+    }
+
+    assert(status.isError);
+    throw status;
   }
 
   // 보류
@@ -27,6 +38,22 @@ class SongsAPI extends API {
     required String keyword,
   }) async {
     final url = dotenv.get('API_SEARCH');
-    throw '';
+    final response = await request(
+      '$url/search'
+      '?type=${type.name}'
+      '&sort=${sort.name}'
+      '&keyword=$keyword',
+      method: HttpMethod.get,
+    );
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.get)) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Song.fromJson(e))
+          .toList();
+    }
+
+    assert(status.isError);
+    throw status;
   }
 }

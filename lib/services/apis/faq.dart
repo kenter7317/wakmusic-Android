@@ -1,4 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wakmusic/models_v2/faq.dart';
 import 'package:wakmusic/models_v2/category.dart';
 import 'package:wakmusic/services/apis/api.dart';
@@ -10,10 +9,30 @@ class FAQAPI extends API {
   const FAQAPI();
 
   Future<List<Category>> get categories async {
-    throw '';
+    final response = await request('$url/categories', method: HttpMethod.get);
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.get)) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Category.fromJson(e))
+          .toList();
+    }
+
+    assert(status.isError);
+    throw status;
   }
 
   Future<List<FAQ>> get list async {
-    throw '';
+    final response = await request(url, method: HttpMethod.get);
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.get)) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => FAQ.fromJson(e))
+          .toList();
+    }
+
+    assert(status.isError);
+    throw status;
   }
 }

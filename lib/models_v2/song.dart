@@ -1,3 +1,4 @@
+import 'package:wakmusic/models_v2/enums/types.dart';
 import 'package:wakmusic/utils/json.dart';
 
 class Song {
@@ -7,10 +8,9 @@ class Song {
   final String? remix;
   final String? reaction;
   final DateTime date;
-  final int views;
-  final int last;
   final Duration start;
   final Duration? end;
+  final SongMetadata metadata;
 
   const Song({
     required this.id,
@@ -19,15 +19,17 @@ class Song {
     required this.remix,
     required this.reaction,
     required this.date,
-    required this.views,
-    required this.last,
     this.start = const Duration(),
     this.end,
+    required this.metadata,
   });
 
-  factory Song.fromJson(JSON json) {
+  factory Song.fromJson(
+    JSON json, {
+    ChartType? type,
+  }) {
     return Song(
-      id: json['id'],
+      id: json['songId'],
       title: json['title'],
       artist: json['artist'],
       remix: json['remix'],
@@ -43,10 +45,41 @@ class Song {
           return DateTime(1999);
         }
       }(),
-      views: json['views'] ?? 0,
-      last: json['last'] ?? 0,
       start: Duration(seconds: json['start'] ?? 0),
       end: (json['end'] ?? 0) == 0 ? null : Duration(seconds: json['end']),
+      metadata: SongMetadata.fromJson(
+        json[type?.name ?? 'total'],
+        type: type,
+      ),
+    );
+  }
+}
+
+class SongMetadata {
+  final ChartType? type;
+  final int views;
+  final int? increase;
+  final int? last;
+
+  bool get rankable => (type != null) && (increase != null) && (last != null);
+
+  const SongMetadata({
+    this.type,
+    required this.views,
+    this.increase,
+    this.last,
+  })  : assert(type == null || type == ChartType.total || increase != null),
+        assert(type == null || last != null);
+
+  factory SongMetadata.fromJson(
+    JSON json, {
+    ChartType? type,
+  }) {
+    return SongMetadata(
+      type: type,
+      views: json['views'],
+      increase: json['increase'],
+      last: json['last'],
     );
   }
 }

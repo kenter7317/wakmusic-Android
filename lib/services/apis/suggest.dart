@@ -1,4 +1,5 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
+
 import 'package:wakmusic/services/apis/api.dart';
 
 class SuggestAPI extends API {
@@ -7,7 +8,7 @@ class SuggestAPI extends API {
 
   const SuggestAPI();
 
-  Future<void> bugReport({
+  Future<String> bugReport({
     required String userId,
     String? nickname,
     List<String>? attaches,
@@ -15,25 +16,78 @@ class SuggestAPI extends API {
     String? deviceModel,
     String? osVersion,
   }) async {
-    throw '';
+    final response = await request(
+      '$url/bug',
+      method: HttpMethod.put,
+      strict: true,
+      body: {
+        '"userId"': userId,
+        if (nickname != null) '"nickname"': nickname,
+        if (attaches != null) '"attachs"': jsonEncode(attaches),
+        '"detainContent"': detailContent,
+        if (deviceModel != null) '"deviceModel"': deviceModel,
+        if (osVersion != null) '"osVersion"': osVersion,
+      },
+    );
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.put)) {
+      return jsonDecode(response.body)['message'];
+    }
+
+    assert(status.isError);
+    throw status;
   }
 
-  Future<void> feature({
+  Future<String> feature({
     required String userId,
     String platform = 'MOBILE',
     required String detailContent,
   }) async {
-    throw '';
+    final response = await request(
+      '$url/feature',
+      method: HttpMethod.put,
+      strict: true,
+      body: {
+        '"userId"': userId,
+        '"platform"': platform,
+        '"detainContent"': detailContent,
+      },
+    );
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.put)) {
+      return jsonDecode(response.body)['message'];
+    }
+
+    assert(status.isError);
+    throw status;
   }
 
-  Future<void> weekly({
+  Future<String> weekly({
     required String userId,
     required String detailContent,
   }) async {
-    throw '';
+    final response = await request(
+      '$url/bug',
+      method: HttpMethod.put,
+      strict: true,
+      body: {
+        '"userId"': userId,
+        '"detainContent"': detailContent,
+      },
+    );
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.put)) {
+      return jsonDecode(response.body)['message'];
+    }
+
+    assert(status.isError);
+    throw status;
   }
 
-  Future<void> music({
+  Future<String> music({
     required String userId,
     bool update = false, // type 기본값 add
     String? artist,
@@ -41,6 +95,26 @@ class SuggestAPI extends API {
     String? youtubeLink,
     required String detailContent,
   }) async {
-    throw '';
+    final response = await request(
+      '$url/bug',
+      method: HttpMethod.put,
+      strict: true,
+      body: {
+        '"userId"': userId,
+        '"type"': update ? 'UPDATE' : 'ADD',
+        if (artist != null) '"artist"': artist,
+        if (title != null) '"title"': title,
+        if (youtubeLink != null) '"youtubeLink"': youtubeLink,
+        '"detainContent"': detailContent,
+      },
+    );
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.put)) {
+      return jsonDecode(response.body)['message'];
+    }
+
+    assert(status.isError);
+    throw status;
   }
 }

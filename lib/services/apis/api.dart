@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:wakmusic/models_v2/enums/http_method.dart';
-import 'package:wakmusic/models_v2/enums/http_status.dart';
 import 'package:wakmusic/services/apis/artist.dart';
 import 'package:wakmusic/services/apis/auth.dart';
 import 'package:wakmusic/services/apis/charts.dart';
@@ -17,6 +16,15 @@ import 'package:wakmusic/services/apis/user.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:wakmusic/utils/json.dart';
+
+export 'dart:convert' show jsonDecode;
+
+export 'package:flutter_dotenv/flutter_dotenv.dart';
+export 'package:wakmusic/utils/json.dart';
+export 'package:wakmusic/models_v2/enums/error.dart';
+export 'package:wakmusic/models_v2/enums/http_method.dart';
+export 'package:wakmusic/models_v2/enums/http_status.dart';
+export 'package:wakmusic/models_v2/enums/types.dart';
 
 class API {
   String get url => throw UnimplementedError('set url');
@@ -44,13 +52,13 @@ class API {
     String url, {
     required HttpMethod method,
     String? token,
-    bool? typeIsJSON,
+    bool? strict,
     JSON? body,
   }) async {
     try {
       final header = {
         if (token != null) 'Authorization': 'Bearer $token',
-        if (method != HttpMethod.get && typeIsJSON == true)
+        if (method != HttpMethod.get && strict == true)
           'Content-Type': 'application/json',
       };
 
@@ -58,13 +66,29 @@ class API {
         case HttpMethod.get:
           return await http.get(Uri.parse(url), headers: header);
         case HttpMethod.post:
-          return await http.post(Uri.parse(url), headers: header, body: body);
+          return await http.post(
+            Uri.parse(url),
+            headers: header,
+            body: (strict == true) ? '$body' : body,
+          );
         case HttpMethod.put:
-          return await http.put(Uri.parse(url), headers: header, body: body);
+          return await http.put(
+            Uri.parse(url),
+            headers: header,
+            body: (strict == true) ? '$body' : body,
+          );
         case HttpMethod.patch:
-          return await http.patch(Uri.parse(url), headers: header, body: body);
+          return await http.patch(
+            Uri.parse(url),
+            headers: header,
+            body: (strict == true) ? '$body' : body,
+          );
         case HttpMethod.delete:
-          return await http.delete(Uri.parse(url), headers: header, body: body);
+          return await http.delete(
+            Uri.parse(url),
+            headers: header,
+            body: (strict == true) ? '$body' : body,
+          );
       }
     } catch (e) {
       return http.Response('', 404);

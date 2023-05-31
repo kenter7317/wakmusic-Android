@@ -1,4 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wakmusic/services/apis/api.dart';
 
 class StaticAPI extends API {

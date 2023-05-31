@@ -1,4 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wakmusic/services/apis/api.dart';
 
 class LikeAPI extends API {
@@ -10,20 +9,50 @@ class LikeAPI extends API {
   Future<int> get({
     required String songId,
   }) async {
-    throw '';
+    final response = await request('$url/$songId', method: HttpMethod.get);
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.get)) {
+      return jsonDecode(response.body)['likes'];
+    }
+
+    assert(status.isError);
+    throw status;
   }
 
   Future<int> add({
     required String songId,
     required String token,
   }) async {
-    throw '';
+    final response = await request(
+      '$url/$songId/addLike',
+      method: HttpMethod.post,
+    );
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.post)) {
+      return jsonDecode(response.body)['likes'];
+    }
+
+    assert(status.isError);
+    throw status;
   }
 
   Future<int> remove({
     required String songId,
     required String token,
   }) async {
-    throw '';
+    final response = await request(
+      '$url/$songId/removeLike',
+      method: HttpMethod.post,
+    );
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.post)) {
+      return jsonDecode(response.body)['likes'];
+    }
+
+    assert(status.isError);
+    throw status;
   }
 }

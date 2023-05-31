@@ -1,4 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wakmusic/models_v2/category.dart';
 import 'package:wakmusic/models_v2/notice.dart';
 import 'package:wakmusic/services/apis/api.dart';
@@ -10,14 +9,44 @@ class NoticeAPI extends API {
   const NoticeAPI();
 
   Future<List<Category>> get categories async {
-    throw '';
+    final response = await request('$url/categories', method: HttpMethod.get);
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.get)) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Category.fromJson(e))
+          .toList();
+    }
+
+    assert(status.isError);
+    throw status;
   }
 
   Future<List<Notice>> get display async {
-    throw '';
+    final response = await request(url, method: HttpMethod.get);
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.get)) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Notice.fromJson(e))
+          .toList();
+    }
+
+    assert(status.isError);
+    throw status;
   }
 
   Future<List<Notice>> get all async {
-    throw '';
+    final response = await request('$url/all', method: HttpMethod.get);
+
+    final status = HttpStatus.byCode(response.statusCode);
+    if (status.valid(HttpMethod.get)) {
+      return (jsonDecode(response.body) as List)
+          .map((e) => Notice.fromJson(e))
+          .toList();
+    }
+
+    assert(status.isError);
+    throw status;
   }
 }
