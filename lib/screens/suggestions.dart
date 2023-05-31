@@ -33,8 +33,7 @@ class Suggestions extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
     return SafeArea(
-      child: ListView(
-        physics: const BouncingScrollPhysics(),
+      child: Column(
         children: [
           SizedBox(
             height: 48,
@@ -55,7 +54,7 @@ class Suggestions extends StatelessWidget {
                 Center(
                   child: Text(
                     '건의사항',
-                    style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                    style: WakText.txt16M,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -95,66 +94,73 @@ class Suggestions extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            height: 68 * 4 + 24,
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-            child: Column(
+          Expanded(
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
               children: [
-                BtnWithIcon(
-                  onTap: () {
-                    Navigator.of(context, rootNavigator: true).push(
-                      pageRouteBuilder(
-                        page: const ContactView(),
-                        offset: const Offset(0, 1),
+                Container(
+                  height: 68 * 4 + 24,
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+                  child: Column(
+                    children: [
+                      BtnWithIcon(
+                        onTap: () {
+                          Navigator.of(context, rootNavigator: true).push(
+                            pageRouteBuilder(
+                              page: const ContactView(),
+                              offset: const Offset(0, 1),
+                            ),
+                          );
+                        },
+                        type: BtnSizeType.big,
+                        iconName: 'ic_24_question',
+                        btnText: '문의하기',
                       ),
-                    );
-                  }, 
-                  type: BtnSizeType.big, 
-                  iconName: 'ic_24_question', 
-                  btnText: '문의하기',
+                      const SizedBox(height: 8),
+                      BtnWithIcon(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            pageRouteBuilder(page: const FAQView()),
+                          );
+                        },
+                        type: BtnSizeType.big,
+                        iconName: 'ic_24_qna',
+                        btnText: '자주 묻는 질문',
+                      ),
+                      const SizedBox(height: 8),
+                      BtnWithIcon(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            pageRouteBuilder(page: const NoticeView()),
+                          );
+                        },
+                        type: BtnSizeType.big,
+                        iconName: 'ic_24_noti',
+                        btnText: '공지사항',
+                      ),
+                      const SizedBox(height: 8),
+                      BtnWithIcon(
+                        onTap: () { 
+                          Navigator.push(
+                            context,
+                            pageRouteBuilder(page: const ServiceInfoView()),
+                          );
+                        },
+                        type: BtnSizeType.big, 
+                        iconName: 'ic_24_document_off', 
+                        btnText: '서비스 정보',
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 8),
-                BtnWithIcon(
-                  onTap: () { 
-                    Navigator.push(
-                      context,
-                      pageRouteBuilder(page: const FAQView()),
-                    );
-                  }, 
-                  type: BtnSizeType.big, 
-                  iconName: 'ic_24_qna', 
-                  btnText: '자주 묻는 질문',
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                  child: TextWithDot(text: '왁타버스 뮤직 팀에 속한 모든 팀원들은 부아내비 (부려먹는 게 아니라 내가 비빈거다)라는 모토를 가슴에 새기고 일하고 있습니다.'),
                 ),
-                const SizedBox(height: 8),
-                BtnWithIcon(
-                  onTap: () { 
-                    Navigator.push(
-                      context,
-                      pageRouteBuilder(page: const NoticeView()),
-                    );
-                  },
-                  type: BtnSizeType.big, 
-                  iconName: 'ic_24_noti', 
-                  btnText: '공지사항',
-                ),
-                const SizedBox(height: 8),
-                BtnWithIcon(
-                  onTap: () { 
-                    Navigator.push(
-                      context,
-                      pageRouteBuilder(page: const ServiceInfoView()),
-                    );
-                  },
-                  type: BtnSizeType.big, 
-                  iconName: 'ic_24_document_off', 
-                  btnText: '서비스 정보',
-                )
               ],
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-            child: TextWithDot(text: '왁타버스 뮤직 팀에 속한 모든 팀원들은 부아내비 (부려먹는 게 아니라 내가 비빈거다)라는 모토를 가슴에 새기고 일하고 있습니다.'),
           ),
         ],
       ),

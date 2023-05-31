@@ -11,8 +11,8 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 typedef JSON = Map<String, dynamic>;
 
 class YoutubeAudioPlayer {
-  YoutubeAudioPlayer(this.handler) {
-    _eventHandler = WebViewEventHandler(this);
+  YoutubeAudioPlayer(this.handler, String html) {
+    _eventHandler = WebViewEventHandler(this, html);
     headlessInAppWebView = _eventHandler.headlessInAppWebView;
     headlessInAppWebView.run();
   }
