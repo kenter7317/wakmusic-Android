@@ -3,6 +3,8 @@ import 'package:wakmusic/models_v2/enums/http_method.dart';
 enum HttpStatus {
   unknown(0),
 
+  ok(200),
+  created(201),
   badRequest(400),
   unauthorized(401),
   forbidden(403),

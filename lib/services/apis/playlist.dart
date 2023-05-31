@@ -9,7 +9,7 @@ class PlaylistAPI extends API {
 
   const PlaylistAPI();
 
-  Future<List<dynamic>> recommendedList() async {
+  Future<List<dynamic>> get recommendedAll async {
     final url = dotenv.get('API_RECOMMEND');
     throw '';
   }

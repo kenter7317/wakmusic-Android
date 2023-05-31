@@ -10,7 +10,7 @@ class ArtistAPI extends API {
 
   const ArtistAPI();
 
-  Future<List<Artist>> list() async {
+  Future<List<Artist>> get list async {
     throw '';
   }
 

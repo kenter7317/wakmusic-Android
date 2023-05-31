@@ -9,15 +9,15 @@ class NoticeAPI extends API {
 
   const NoticeAPI();
 
-  Future<List<Category>> categories() async {
+  Future<List<Category>> get categories async {
     throw '';
   }
 
-  Future<List<Notice>> display() async {
+  Future<List<Notice>> get display async {
     throw '';
   }
 
-  Future<List<Notice>> all() async {
+  Future<List<Notice>> get all async {
     throw '';
   }
 }

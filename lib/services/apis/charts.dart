@@ -16,7 +16,7 @@ class ChartsAPI extends API {
     throw '';
   }
 
-  Future<DateTime> updatedTime() async {
+  Future<DateTime> get updatedTime async {
     final url = dotenv.get('API_UPDATED');
 
     throw '';

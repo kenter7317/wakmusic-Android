@@ -9,7 +9,7 @@ import 'package:wakmusic/services/apis/api.dart';
 class CommonAPI extends API {
   const CommonAPI();
 
-  Future<List<Member>> teams() async {
+  Future<List<Member>> get teams async {
     final url = dotenv.get('API_TEAMS');
     final response = await request(url, method: HttpMethod.get);
 

@@ -9,11 +9,11 @@ class FAQAPI extends API {
 
   const FAQAPI();
 
-  Future<List<Category>> categories() async {
+  Future<List<Category>> get categories async {
     throw '';
   }
 
-  Future<List<FAQ>> list() async {
+  Future<List<FAQ>> get list async {
     throw '';
   }
 }
