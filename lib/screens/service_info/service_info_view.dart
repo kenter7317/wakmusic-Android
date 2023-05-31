@@ -4,18 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
-import 'package:wakmusic/screens/pdf_view.dart';
+import 'package:wakmusic/screens/service_info/oss_view.dart';
+import 'package:wakmusic/screens/service_info/pdf_view.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
+import 'package:wakmusic/widgets/common/item.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
-class ServiceInfo extends StatelessWidget {
-  const ServiceInfo({super.key});
+class ServiceInfoView extends StatelessWidget {
+  const ServiceInfoView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class ServiceInfo extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
+    KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
     return SafeArea(
       child: Column(
         children: [
@@ -43,8 +46,7 @@ class ServiceInfo extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Column(
                     children: [
-                      _buildItem(
-                        context,
+                      Item(
                         onTap: () =>
                             Navigator.of(context, rootNavigator: true).push(
                           pageRouteBuilder(
@@ -54,8 +56,7 @@ class ServiceInfo extends StatelessWidget {
                         ),
                         text: '서비스 이용약관',
                       ),
-                      _buildItem(
-                        context,
+                      Item(
                         onTap: () =>
                             Navigator.of(context, rootNavigator: true).push(
                           pageRouteBuilder(
@@ -65,13 +66,16 @@ class ServiceInfo extends StatelessWidget {
                         ),
                         text: '개인정보 처리 방침',
                       ),
-                      _buildItem(
-                        context,
-                        onTap: () {/* open source licence */},
+                      Item(
+                        onTap: () => Navigator.push(
+                          context,
+                          pageRouteBuilder(
+                            page: const OSSView(),
+                          ),
+                        ),
                         text: '오픈소스 라이선스',
                       ),
-                      _buildItem(
-                        context,
+                      Item(
                         onTap: () async {
                           Directory tempDir = await getTemporaryDirectory();
                           showModal(
@@ -89,10 +93,36 @@ class ServiceInfo extends StatelessWidget {
                         },
                         text: '캐시 데이터 지우기',
                       ),
-                      _buildItem(
-                        context,
-                        text: '버전정보',
-                        isVersion: true,
+                      Container(
+                        height: 61,
+                        padding: const EdgeInsets.fromLTRB(20, 0, 24, 0),
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: WakColor.grey200),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '버전정보',
+                                style: WakText.txt16M
+                                    .copyWith(color: WakColor.grey900),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            FutureBuilder<String>(
+                                future: viewModel.version,
+                                builder: (context, snapshot) {
+                                  return Text(
+                                    '${(snapshot.hasData) ? snapshot.data : '-'}',
+                                    style: WakText.txt12L
+                                        .copyWith(color: WakColor.grey500),
+                                    textAlign: TextAlign.right,
+                                  );
+                                }),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -117,14 +147,14 @@ class ServiceInfo extends StatelessWidget {
       List children = file.listSync();
       double total = 0;
       for (FileSystemEntity child in children) {
-          total += _getTotalSizeOfFilesInDir(child);
+        total += _getTotalSizeOfFilesInDir(child);
       }
       return total;
     }
     return 0;
   }
 
-  String  _renderSize(double value) {
+  String _renderSize(double value) {
     List<String> unitArr = [' B', ' KB', ' MB', ' GB'];
     int index = 0;
     while (value > 1024 && index < 3) {
@@ -132,52 +162,5 @@ class ServiceInfo extends StatelessWidget {
       value = value / 1024;
     }
     return value.toStringAsFixed(2) + unitArr[index];
-  }
-
-  Widget _buildItem(
-    BuildContext context, {
-    void Function()? onTap,
-    required String text,
-    bool isVersion = false,
-  }) {
-    KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        height: 61,
-        padding: EdgeInsets.fromLTRB(20, 0, (isVersion) ? 24 : 20, 0),
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: WakColor.grey200),
-          ),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                text,
-                style: WakText.txt16M.copyWith(color: WakColor.grey900),
-              ),
-            ),
-            const SizedBox(width: 16),
-            (isVersion)
-                ? FutureBuilder<String>(
-                    future: viewModel.version,
-                    builder: (context, snapshot) {
-                      return Text(
-                        '${(snapshot.hasData) ? snapshot.data : '-'}',
-                        style: WakText.txt12L.copyWith(color: WakColor.grey500),
-                        textAlign: TextAlign.right,
-                      );
-                    })
-                : SvgPicture.asset(
-                    'assets/icons/ic_24_arrow_right.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-          ],
-        ),
-      ),
-    );
   }
 }

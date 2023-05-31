@@ -6,7 +6,7 @@ import 'package:wakmusic/screens/contact/contact_view.dart';
 import 'package:wakmusic/screens/faq/faq_view.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/notice/notice_view.dart';
-import 'package:wakmusic/screens/service_info.dart';
+import 'package:wakmusic/screens/service_info/service_info_view.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/btn_with_icon.dart';
@@ -142,7 +142,7 @@ class Suggestions extends StatelessWidget {
                   onTap: () { 
                     Navigator.push(
                       context,
-                      pageRouteBuilder(page: const ServiceInfo()),
+                      pageRouteBuilder(page: const ServiceInfoView()),
                     );
                   },
                   type: BtnSizeType.big, 
