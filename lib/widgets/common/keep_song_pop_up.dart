@@ -1,7 +1,6 @@
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -37,7 +36,7 @@ class KeepSongPopUp extends StatelessWidget {
                   children: [
                     Text(
                       '담을곡',
-                      style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                      style: WakText.txt14MH,
                     ),
                     const SizedBox(width: 4),
                     Text(

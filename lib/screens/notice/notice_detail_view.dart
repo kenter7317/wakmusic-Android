@@ -35,7 +35,7 @@ class NoticeDetailView extends StatelessWidget {
                 children: [
                   Text(
                     notice.title,
-                    style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                    style: WakText.txt18M,
                     maxLines: 20,
                   ),
                   const SizedBox(height: 3),
@@ -76,7 +76,7 @@ class NoticeDetailView extends StatelessWidget {
                     .followedBy(
                       notice.images.map(
                         (image) => Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                          padding: const EdgeInsets.only(bottom: 20),
                           child: ExtendedImage.network(
                             '$staticBaseUrl/notice/$image',
                             fit: BoxFit.cover,

@@ -32,7 +32,7 @@ class PopUp extends StatelessWidget {
               child: Text(
                 msg ?? '',
                 maxLines: 4,
-                style: WakText.txt18M.copyWith(color: WakColor.grey900),
+                style: WakText.txt18M,
                 textAlign: TextAlign.center,
               ),
             )

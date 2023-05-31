@@ -6,7 +6,6 @@ import 'package:wakmusic/screens/contact/contact_view.dart';
 import 'package:wakmusic/screens/faq/faq_view.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/notice/notice_view.dart';
-import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/btn_with_icon.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
@@ -54,7 +53,7 @@ class Suggestions extends StatelessWidget {
                 Center(
                   child: Text(
                     '건의사항',
-                    style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                    style: WakText.txt16M,
                     textAlign: TextAlign.center,
                   ),
                 ),

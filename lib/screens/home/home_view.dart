@@ -93,7 +93,8 @@ class HomeView extends StatelessWidget {
             future: viewModel.topList,
             builder: (context, snapshot) => Column(
               children: [
-                _buildChartTitle(context, (snapshot.hasData) ? snapshot.data : null),
+                _buildChartTitle(
+                    context, (snapshot.hasData) ? snapshot.data : null),
                 const SizedBox(height: 20),
                 SizedBox(
                   height: 274,
@@ -124,12 +125,12 @@ class HomeView extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () =>botNav.update(1),
+            onTap: () => botNav.update(1),
             child: Row(
               children: [
                 Text(
                   '왁뮤차트 TOP100',
-                  style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                  style: WakText.txt16B,
                 ),
                 const SizedBox(width: 4),
                 SvgPicture.asset(
@@ -167,10 +168,12 @@ class HomeView extends StatelessWidget {
         future: viewModel.newLists[viewModel.curTabName],
         builder: (context, snapshot) {
           List<Song?> newList;
-          if (!snapshot.hasError && snapshot.connectionState == ConnectionState.waiting) {
+          if (!snapshot.hasError &&
+              snapshot.connectionState == ConnectionState.waiting) {
             newList = viewModel.prevLists[viewModel.curTabName]!;
           } else {
-            newList = (snapshot.hasData) ? snapshot.data! : List.filled(10, null);
+            newList =
+                (snapshot.hasData) ? snapshot.data! : List.filled(10, null);
           }
           return Column(
             children: [
@@ -184,11 +187,13 @@ class HomeView extends StatelessWidget {
                       Expanded(
                         child: Text(
                           '최신 음악',
-                          style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                          style: WakText.txt16B,
                         ),
                       ),
                       Row(
-                        children: GroupType.values.map((tabName) => _buildNewTab(context, tabName)).toList(),
+                        children: GroupType.values
+                            .map((tabName) => _buildNewTab(context, tabName))
+                            .toList(),
                       ),
                     ],
                   ),
@@ -202,7 +207,8 @@ class HomeView extends StatelessWidget {
                   physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   itemCount: 10,
-                  itemBuilder: (context, idx) => _buildNewListItem(context, newList[idx]),
+                  itemBuilder: (context, idx) =>
+                      _buildNewListItem(context, newList[idx]),
                   separatorBuilder: (_, __) => const SizedBox(width: 8),
                 ),
               ),
@@ -225,8 +231,9 @@ class HomeView extends StatelessWidget {
         child: Text(
           tabName.locale,
           style: (tabName == viewModel.curTabName)
-            ? WakText.txt14B.copyWith(color: WakColor.grey900)
-            : WakText.txt14L.copyWith(color: WakColor.grey900.withOpacity(0.6)),
+              ? WakText.txt14B
+              : WakText.txt14L
+                  .copyWith(color: WakColor.grey900.withOpacity(0.6)),
           textAlign: TextAlign.right,
         ),
       ),
@@ -234,7 +241,8 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildNewListItem(BuildContext context, Song? song) {
-    AudioProvider audioProvider = Provider.of<AudioProvider>(context, listen: false);
+    AudioProvider audioProvider =
+        Provider.of<AudioProvider>(context, listen: false);
     if (song == null) {
       return SizedBox(
         width: 144,
@@ -276,7 +284,9 @@ class HomeView extends StatelessWidget {
             Stack(
               children: [
                 GestureDetector(
-                  onTap: () { audioProvider.addQueueItem(song, autoplay: true); },
+                  onTap: () {
+                    audioProvider.addQueueItem(song, autoplay: true);
+                  },
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
                     child: ExtendedImage.network(
@@ -285,7 +295,8 @@ class HomeView extends StatelessWidget {
                       shape: BoxShape.rectangle,
                       borderRadius: BorderRadius.circular(8),
                       loadStateChanged: (state) {
-                        if (state.extendedImageLoadState != LoadState.completed) {
+                        if (state.extendedImageLoadState !=
+                            LoadState.completed) {
                           return Image.asset(
                             'assets/images/img_81_thumbnail.png',
                             fit: BoxFit.cover,
@@ -334,11 +345,11 @@ class HomeView extends StatelessWidget {
                 children: [
                   Text(
                     song.title,
-                    style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                    style: WakText.txt14MH,
                   ),
                   Text(
                     song.artist,
-                    style: WakText.txt12L.copyWith(color: WakColor.grey900),
+                    style: WakText.txt12L,
                   ),
                 ],
               ),

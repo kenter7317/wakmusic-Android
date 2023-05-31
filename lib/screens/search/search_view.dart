@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/services/api.dart';
@@ -29,7 +28,8 @@ class SearchView extends StatelessWidget {
     statusNavColor(context, ScreenType.search);
     SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
     _fieldText.text = viewModel.text;
-    _fieldText.selection = TextSelection.collapsed(offset: viewModel.text.length);
+    _fieldText.selection =
+        TextSelection.collapsed(offset: viewModel.text.length);
     return WillPopScope(
       onWillPop: () async {
         if (viewModel.curStatus != SearchStatus.before) {
@@ -50,7 +50,8 @@ class SearchView extends StatelessWidget {
                   return const SingleChildScrollView(
                     physics: BouncingScrollPhysics(),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 32, horizontal: 20),
                       child: RecPlaylist(),
                     ),
                   );
@@ -73,7 +74,9 @@ class SearchView extends StatelessWidget {
     return Container(
       height: 56 + statusBarHeight,
       padding: EdgeInsets.fromLTRB(20, 16 + statusBarHeight, 20, 16),
-      color: (viewModel.curStatus == SearchStatus.during) ? WakColor.lightBlue : Colors.white,
+      color: (viewModel.curStatus == SearchStatus.during)
+          ? WakColor.lightBlue
+          : Colors.white,
       child: TextFormField(
         controller: _fieldText,
         onTap: () {
@@ -104,16 +107,22 @@ class SearchView extends StatelessWidget {
         textInputAction: TextInputAction.search,
         style: WakText.txt16M.copyWith(
           height: 1.0,
-          color: (viewModel.curStatus == SearchStatus.during) ? Colors.white : WakColor.grey900,
+          color: (viewModel.curStatus == SearchStatus.during)
+              ? Colors.white
+              : WakColor.grey900,
         ),
-        cursorColor: (viewModel.curStatus == SearchStatus.during) ? Colors.white : WakColor.grey900,
+        cursorColor: (viewModel.curStatus == SearchStatus.during)
+            ? Colors.white
+            : WakColor.grey900,
         decoration: InputDecoration(
           isDense: true,
           contentPadding: EdgeInsets.zero,
           border: InputBorder.none,
           hintText: '검색어를 입력하세요.',
           hintStyle: WakText.txt16M.copyWith(
-            color: (viewModel.curStatus == SearchStatus.before) ? WakColor.grey400 : WakColor.grey25.withOpacity(0.6),
+            color: (viewModel.curStatus == SearchStatus.before)
+                ? WakColor.grey400
+                : WakColor.grey25.withOpacity(0.6),
           ),
           prefixIcon: Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -125,18 +134,18 @@ class SearchView extends StatelessWidget {
           ),
           prefixIconConstraints: const BoxConstraints(maxWidth: 32),
           suffixIcon: (viewModel.curStatus != SearchStatus.before)
-            ? GestureDetector(
-                onTap: () {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  viewModel.updateStatus(SearchStatus.before);
-                  selectedList.clearList();
-                },
-                child: const Padding(
-                  padding: EdgeInsets.only(left: 8),
-                  child: EditBtn(type: BtnType.cancel),
-                ),
-              )
-            : null,
+              ? GestureDetector(
+                  onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    viewModel.updateStatus(SearchStatus.before);
+                    selectedList.clearList();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 8),
+                    child: EditBtn(type: BtnType.cancel),
+                  ),
+                )
+              : null,
           suffixIconConstraints: const BoxConstraints(maxWidth: 53),
         ),
       ),
@@ -157,7 +166,7 @@ class SearchView extends StatelessWidget {
               children: [
                 Text(
                   '최근 검색어',
-                  style: WakText.txt16B.copyWith(color: WakColor.grey900),
+                  style: WakText.txt16B,
                 ),
                 GestureDetector(
                   onTap: () {
@@ -206,7 +215,7 @@ class SearchView extends StatelessWidget {
                   },
                   child: Text(
                     viewModel.history[idx],
-                    style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                    style: WakText.txt14MH,
                   ),
                 ),
               ),
@@ -233,12 +242,13 @@ class SearchView extends StatelessWidget {
   Widget _buildAfter(BuildContext context) {
     return TabView(
       type: TabType.maxTab,
-      tabBarList: List.generate(4, (idx) => (idx == 0) ? '전체' : SearchType.values[idx - 1].str),
+      tabBarList: List.generate(
+          4, (idx) => (idx == 0) ? '전체' : SearchType.values[idx - 1].str),
       tabViewList: List.generate(
         4,
         (idx) => (idx == 0)
-          ? _buildTotalTab(context)
-          : _buildTab(context, SearchType.values[idx - 1]),
+            ? _buildTotalTab(context)
+            : _buildTab(context, SearchType.values[idx - 1]),
       ),
     );
   }
@@ -261,17 +271,18 @@ class SearchView extends StatelessWidget {
           }
           if (tabs.isEmpty) {
             return const ErrorInfo(errorMsg: '검색 결과가 없습니다.');
-          } else if (tabs.length == 1){
+          } else if (tabs.length == 1) {
             return ListView.builder(
               physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.zero,
               itemCount: snapshot.data![tabs[0]].length + 1,
               itemBuilder: (context, songIdx) => (songIdx == 0)
-                ? _buildTabHeader(context, tabs[0], snapshot.data![tabs[0]].length, true)
-                : SongTile(
-                    song: snapshot.data![tabs[0]][songIdx - 1],
-                    tileType: TileType.dateTile,
-                  ),
+                  ? _buildTabHeader(
+                      context, tabs[0], snapshot.data![tabs[0]].length, true)
+                  : SongTile(
+                      song: snapshot.data![tabs[0]][songIdx - 1],
+                      tileType: TileType.dateTile,
+                    ),
             );
           } else {
             return ListView.separated(
@@ -280,17 +291,18 @@ class SearchView extends StatelessWidget {
               itemCount: tabs.length,
               itemBuilder: (context, idx) => Column(
                 children: [
-                  _buildTabHeader(context, tabs[idx], snapshot.data![tabs[idx]].length, true),
+                  _buildTabHeader(context, tabs[idx],
+                      snapshot.data![tabs[idx]].length, true),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: List.generate(
                       3,
-                      (songIdx) => (songIdx < snapshot.data![tabs[idx]].length) 
-                        ? SongTile(
-                            song: snapshot.data![tabs[idx]][songIdx],
-                            tileType: TileType.dateTile,
-                          )
-                        : Container(),
+                      (songIdx) => (songIdx < snapshot.data![tabs[idx]].length)
+                          ? SongTile(
+                              song: snapshot.data![tabs[idx]][songIdx],
+                              tileType: TileType.dateTile,
+                            )
+                          : Container(),
                     ),
                   ),
                 ],
@@ -325,7 +337,8 @@ class SearchView extends StatelessWidget {
     );
   }
 
-  Widget _buildTabHeader(BuildContext context, int? tabIdx, int? length, bool hasData) {
+  Widget _buildTabHeader(
+      BuildContext context, int? tabIdx, int? length, bool hasData) {
     if (!hasData) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
@@ -346,7 +359,7 @@ class SearchView extends StatelessWidget {
           children: [
             Text(
               SearchType.values[tabIdx!].str,
-              style: WakText.txt16M.copyWith(color: WakColor.grey900),
+              style: WakText.txt16M,
             ),
             const SizedBox(width: 4),
             Text(
@@ -355,12 +368,13 @@ class SearchView extends StatelessWidget {
             ),
             const Spacer(),
             GestureDetector(
-              onTap: () => DefaultTabController.of(context)!.animateTo(tabIdx + 1),
+              onTap: () =>
+                  DefaultTabController.of(context)!.animateTo(tabIdx + 1),
               child: Row(
                 children: [
                   Text(
                     '전체보기',
-                    style: WakText.txt12MH.copyWith(color: WakColor.grey900),
+                    style: WakText.txt12MH,
                     textAlign: TextAlign.right,
                   ),
                   SvgPicture.asset(
