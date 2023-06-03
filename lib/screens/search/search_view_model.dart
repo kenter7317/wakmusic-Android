@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wakmusic/services/api.dart';
-import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/services/apis/api.dart';
+import 'package:wakmusic/models_v2/song.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 
@@ -28,7 +28,7 @@ class SearchViewModel extends ChangeNotifier {
     _text = keyword;
     for (SearchType type in SearchType.values) {
       if (type == SearchType.ids) continue;
-      _resultLists[type] = _api.search(keyword: keyword, type: type);
+      _resultLists[type] = API.songs.search(type: type, sort: AlbumType.popular, keyword: keyword);
     }
     _status = SearchStatus.after;
     addHistory(keyword);
