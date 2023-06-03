@@ -1,4 +1,5 @@
-import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/models_v2/playlist.dart';
+import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/models_v2/profile.dart';
 import 'package:wakmusic/services/apis/api.dart';
 
