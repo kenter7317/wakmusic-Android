@@ -10,7 +10,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('store expired token', () {
-    const FlutterSecureStorage().write(key: 'token', value: 'bad_token');
+    // const FlutterSecureStorage().write(key: 'token', value: 'bad_token');
+    final a = [
+      ['b']
+    ];
+
+    print(a[0]);
+    a[0] = ['a'];
+    print(a[0]);
   });
 
   // testWidgets('Counter increments smoke test', (WidgetTester tester) async {

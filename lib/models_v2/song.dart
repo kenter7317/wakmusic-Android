@@ -53,6 +53,12 @@ class Song {
       ),
     );
   }
+
+  @override
+  bool operator ==(covariant Song other) => id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class SongMetadata {

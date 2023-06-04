@@ -11,7 +11,9 @@ enum HttpStatus {
   notFound(404),
   conflict(409),
   tooManyRequests(429),
-  internal(500);
+  internalError(500),
+  badGateway(502),
+  timedOut(522);
 
   const HttpStatus(this.statusCode);
 
@@ -19,6 +21,7 @@ enum HttpStatus {
 
   bool get isSuccessful => 2 == statusCode ~/ 100;
   bool get isError => {4, 5}.contains(statusCode ~/ 100);
+  bool get serverIsDown => {badGateway, timedOut}.contains(this);
 
   bool valid(HttpMethod method) {
     return isSuccessful && method.code == statusCode;
