@@ -10,7 +10,6 @@ class SearchViewModel extends ChangeNotifier {
   SearchStatus _status = SearchStatus.before;
   List<String> _history = [];
   String _text = '';
-  late final API _api;
   late Map<SearchType, Future<List<Song>>> _resultLists;
   
   SearchStatus get curStatus => _status;
@@ -19,7 +18,6 @@ class SearchViewModel extends ChangeNotifier {
   Map<SearchType, Future<List<Song>>> get resultLists => _resultLists;
 
   SearchViewModel() {
-    _api = API();
     _resultLists = {};
     getHistory();
   }
