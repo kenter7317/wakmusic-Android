@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/artist.dart';
-import 'package:wakmusic/screens/artists/artist_detail_view.dart';
+import 'package:wakmusic/screens/artists/artist_detail_view3.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
+import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 import 'package:flutter/services.dart';
 
@@ -135,7 +136,10 @@ class ArtistsListView extends StatelessWidget {
               viewModel.setArtist(artist);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => ArtistView(artist: artist)),
+                pageRouteBuilder(
+                  page: ArtistView(artist: artist),
+                  offset: const Offset(0.0, 1.0),
+                ),
               );
             },
             child: ExtendedImage.network(artist.roundImg,

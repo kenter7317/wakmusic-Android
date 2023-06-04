@@ -56,4 +56,9 @@ class ArtistsViewModel with ChangeNotifier {
 
     notifyListeners();
   }
+
+  void clear() {
+    _albums = {};
+    _isLastAlbum = List.generate(3, (index) => false);
+  }
 }

@@ -68,6 +68,7 @@ dependencies:
   path_provider: ^2.0.15
   flutter_oss_licenses: ^2.0.1
   flutter_dotenv: ^5.0.2
+  sliver_tools: ^0.2.10
 
 dev_dependencies:
   flutter_test:
