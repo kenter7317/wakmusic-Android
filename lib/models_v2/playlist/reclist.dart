@@ -27,7 +27,7 @@ class Reclist extends Playlist {
   @override
   final PlaylistImage image;
 
-  List<Song> songs;
+  List<Song>? songs;
 
   Reclist({
     required this.key,
@@ -35,7 +35,10 @@ class Reclist extends Playlist {
     required this.public,
     required this.createAt,
     required this.image,
-  }) : songs = [];
+    this.songs,
+  });
+
+  bool get fetchRequired => songs == null;
 
   factory Reclist.fromJson(JSON json) {
     return Reclist(
@@ -44,6 +47,7 @@ class Reclist extends Playlist {
       public: json['public'],
       createAt: msEpoch(json['createAt']),
       image: PlaylistImage.fromJson(json['image_round_version']),
+      songs: (json['songs'] as List?)?.map((e) => Song.fromJson(e)).toList(),
     );
   }
 }

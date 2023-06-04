@@ -1,4 +1,5 @@
 import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/models_v2/playlist/user_playlist.dart';
 import 'package:wakmusic/models_v2/profile.dart';
 import 'package:wakmusic/services/apis/api.dart';
 
@@ -66,7 +67,7 @@ class UserAPI extends API {
     throw status;
   }
 
-  Future<List<dynamic>> playlists({
+  Future<List<UserPlaylist>> playlists({
     required String token,
   }) async {
     final response = await request(
@@ -77,10 +78,9 @@ class UserAPI extends API {
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.get)) {
-      // return (jsonDecode(response.body) as List)
-      //     .map((e) => Profile.fromJson(e))
-      //     .toList();
-      throw 'API.user.playlists :: Update Playlist (models_v2)';
+      return (jsonDecode(response.body) as List)
+          .map((e) => UserPlaylist.fromJson(e))
+          .toList();
     }
 
     assert(status.isError);
@@ -88,7 +88,7 @@ class UserAPI extends API {
   }
 
   Future<void> editPlaylists({
-    required List<dynamic> playlists,
+    required List<UserPlaylist> playlists,
     required String token,
   }) async {
     final response = await request(
@@ -101,7 +101,7 @@ class UserAPI extends API {
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.patch)) {
-      throw 'API.user.editPlaylists :: Update required';
+      return;
     }
 
     assert(status.isError);
@@ -109,7 +109,7 @@ class UserAPI extends API {
   }
 
   Future<void> deletePlaylists({
-    required List<dynamic> playlists,
+    required List<UserPlaylist> playlists,
     required String token,
   }) async {
     final response = await request(
@@ -122,7 +122,7 @@ class UserAPI extends API {
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.delete)) {
-      throw 'API.user.deletePlaylists :: Update required';
+      return;
     }
 
     assert(status.isError);
