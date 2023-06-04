@@ -68,6 +68,9 @@ dependencies:
   amplify_auth_cognito: ^1.0.0
   amplify_storage_s3: ^1.0.0
   amplify_flutter: ^1.0.0
+  path_provider: ^2.0.15
+  flutter_oss_licenses: ^2.0.1
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:
@@ -92,6 +95,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - .env
     - assets/images/
     - assets/icons/
     - assets/lottie/

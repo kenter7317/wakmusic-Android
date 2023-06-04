@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:wakmusic/models/errors/http_error.dart';
+import 'package:wakmusic/models_v2/enums/http_status.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/models/playlist_detail.dart';
 import 'package:wakmusic/models/song.dart';
@@ -36,7 +36,7 @@ class UserRepository {
     } catch (e) {
       _storage.delete(key: 'token');
       switch (e) {
-        case HttpError.unauthorized:
+        case HttpStatus.unauthorized:
           return getUser(platform: platform);
         default:
           rethrow;
@@ -47,7 +47,7 @@ class UserRepository {
   Future<List<Playlist>> getPlaylists() async {
     final token = await _token;
     if (token == null) {
-      throw HttpError.unauthorized;
+      throw HttpStatus.unauthorized;
     }
 
     try {
@@ -60,7 +60,7 @@ class UserRepository {
   Future<List<Song>> getLikes() async {
     final token = await _token;
     if (token == null) {
-      throw HttpError.unauthorized;
+      throw HttpStatus.unauthorized;
     }
 
     try {
@@ -118,7 +118,7 @@ class UserRepository {
   Future<PlaylistDetail> addToMyPlaylist(String key) async {
     final token = await _token;
     if (token == null) {
-      throw HttpError.unauthorized;
+      throw HttpStatus.unauthorized;
     }
 
     try {
@@ -126,7 +126,7 @@ class UserRepository {
         return await _api.fetchPlaylistDetail(key: key);
       }
 
-      throw HttpError.badRequest;
+      throw HttpStatus.badRequest;
     } catch (e) {
       rethrow;
     }

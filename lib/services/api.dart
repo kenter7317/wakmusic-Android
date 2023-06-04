@@ -3,14 +3,15 @@ import 'package:http/http.dart' as http;
 import 'package:wakmusic/models/artist.dart';
 import 'package:wakmusic/models/faq.dart';
 import 'package:wakmusic/models/notice.dart';
-import 'package:wakmusic/models/errors/error.dart';
-import 'package:wakmusic/models/errors/http_error.dart';
+import 'package:wakmusic/models_v2/enums/error.dart';
+import 'package:wakmusic/models_v2/enums/http_status.dart';
 import 'package:wakmusic/models/playlist_detail.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/models/playlist.dart';
 import 'package:subtitle/subtitle.dart';
 import 'package:wakmusic/models/user.dart';
 import 'package:wakmusic/services/login.dart';
+import 'package:wakmusic/utils/dotenv.dart';
 import 'package:wakmusic/utils/json.dart';
 
 enum ChartType {
@@ -54,15 +55,16 @@ enum GroupType {
   final String locale;
 }
 
-const baseUrl = 'https://wakmusic.xyz/api';
-const testBaseUrl = 'https://test.wakmusic.xyz/api';
-const staticBaseUrl = 'https://static.wakmusic.xyz/static';
+get baseUrl => env['BASE_URL_v1'];
+get testBaseUrl => env['BASE_URL_TEST_v1'];
+get staticBaseUrl => env['BASE_URL_STATIC_v1'];
 
+@Deprecated('old')
 class API {
+  @Deprecated('')
   Future<http.Response> getResponse(
     String url, {
     String? token,
-    JSON? body,
   }) async {
     try {
       return await http.get(
@@ -74,6 +76,7 @@ class API {
     }
   }
 
+  @Deprecated('')
   Future<List<Song>> fetchTop({
     required ChartType type,
     int length = 100,
@@ -87,9 +90,10 @@ class API {
           .toList();
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<List<Song>> fetchNew({required GroupType type}) async {
     final response = await getResponse('$testBaseUrl/songs/new/${type.name}');
     if (response.statusCode == 200) {
@@ -101,6 +105,7 @@ class API {
     }
   }
 
+  @Deprecated('')
   Future<DateTime> fetchUpdatedTime() async {
     final response = await getResponse('$baseUrl/updated');
     if (response.statusCode == 200) {
@@ -108,9 +113,10 @@ class API {
           int.parse(response.body) * 1000);
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<List<Song>> search({
     required String keyword,
     required SearchType type,
@@ -124,13 +130,14 @@ class API {
           .toList();
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<SubtitleController> getLyrics({required String id}) async {
     var controller = SubtitleController(
         provider: SubtitleProvider.fromNetwork(
-            Uri.parse('https://wakmusic.xyz/static/lyrics/$id.vtt')));
+            Uri.parse('$staticBaseUrl/lyrics/$id.vtt')));
     await controller.initial();
     return controller;
   }
@@ -142,9 +149,10 @@ class API {
       return Playlist.fromJson(jsonDecode(response.body));
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<List<Reclist>> fetchReclists() async {
     final response = await getResponse('$testBaseUrl/playlist/recommended');
     if (response.statusCode == 200) {
@@ -153,18 +161,20 @@ class API {
           .toList();
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<PlaylistDetail> fetchPlaylistDetail({required String key}) async {
     final response = await getResponse('$testBaseUrl/playlist/$key/detail');
     if (response.statusCode == 200) {
       return PlaylistDetail.fromJson(jsonDecode(response.body));
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<ReclistDetail> fetchReclistDetail({required String key}) async {
     final response =
         await getResponse('$testBaseUrl/playlist/recommended/$key');
@@ -172,9 +182,10 @@ class API {
       return ReclistDetail.fromJson(jsonDecode(response.body));
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<List<String>> fetchFAQCategories() async {
     final response = await getResponse('$testBaseUrl/qna/categories');
     if (response.statusCode == 200) {
@@ -186,6 +197,7 @@ class API {
     }
   }
 
+  @Deprecated('')
   Future<List<FAQ>> fetchFAQ() async {
     final response = await getResponse('$testBaseUrl/qna');
     if (response.statusCode == 200) {
@@ -197,6 +209,7 @@ class API {
     }
   }
 
+  @Deprecated('')
   Future<List<Notice>> fetchNotice() async {
     final response = await getResponse('$testBaseUrl/notice/all');
     if (response.statusCode == 200) {
@@ -209,6 +222,7 @@ class API {
     }
   }
 
+  @Deprecated('')
   Future<List<Notice>> fetchNoticeDisplay() async {
     final response = await getResponse('$testBaseUrl/notice');
     if (response.statusCode == 200) {
@@ -218,9 +232,10 @@ class API {
           .reversed);
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<String> getToken(Login provider) async {
     final id = await provider.service.login();
     if (id == null) {
@@ -240,9 +255,10 @@ class API {
       return token;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<User> getUser({required String token}) async {
     final response = await getResponse('$testBaseUrl/auth', token: token);
 
@@ -250,9 +266,10 @@ class API {
       return User.fromJson(jsonDecode(response.body));
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<JSONType<int>> getUserProfiles() async {
     final response = await getResponse('$testBaseUrl/user/profile/list');
 
@@ -264,9 +281,10 @@ class API {
       return profiles;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<List<Artist>> fetchArtists() async {
     final response = await getResponse('$testBaseUrl/artist/list');
 
@@ -280,6 +298,7 @@ class API {
     }
   }
 
+  @Deprecated('')
   Future<List<Song>> fetchAlbums(String id, String sort, int start) async {
     final response = await getResponse(
         '$testBaseUrl/artist/albums?id=$id&sort=$sort&start=$start');
@@ -293,6 +312,7 @@ class API {
     }
   }
 
+  @Deprecated('')
   Future<List<Playlist>> getUserPlaylists({required String token}) async {
     final response =
         await getResponse('$testBaseUrl/user/playlists', token: token);
@@ -303,9 +323,10 @@ class API {
           .toList();
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<List<Song>> getLikes({required String token}) async {
     final response = await getResponse('$testBaseUrl/user/likes', token: token);
 
@@ -315,9 +336,10 @@ class API {
           .toList();
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<void> setUserProfile(
     String profile, {
     required String token,
@@ -332,9 +354,10 @@ class API {
       return;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<void> setUserName(
     String name, {
     required String token,
@@ -349,9 +372,10 @@ class API {
       return;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<String> createList(
     String title,
     int image, {
@@ -370,9 +394,10 @@ class API {
       return jsonDecode(response.body)['key'];
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<bool> addToMyPlaylist(
     key, {
     required String token,
@@ -387,9 +412,10 @@ class API {
       return true;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<bool> editPlaylists(
     List<String> playlists, {
     required String token,
@@ -407,9 +433,10 @@ class API {
       return true;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<bool> deletePlaylists(
     List<String> playlists, {
     required String token,
@@ -427,9 +454,10 @@ class API {
       return true;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<void> deletePlaylist(
     String key, {
     required String token,
@@ -443,9 +471,10 @@ class API {
       return;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<void> addPlaylistSongs(
     String key,
     List<String> songs, {
@@ -464,9 +493,10 @@ class API {
       return;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<void> editPlaylistSongs(
     String key,
     List<String> songs, {
@@ -485,9 +515,10 @@ class API {
       return;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<void> editPlaylistTitle(
     String key,
     String title, {
@@ -503,9 +534,10 @@ class API {
       return;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<void> editUserLikeSongs(
     List<String> songs, {
     required String token,
@@ -523,9 +555,10 @@ class API {
       return;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<void> deleteUserLikeSongs(
     List<String> songs, {
     required String token,
@@ -543,9 +576,10 @@ class API {
       return;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 
+  @Deprecated('')
   Future<void> removeUser({required String token}) async {
     final response = await http.delete(
       Uri.parse('$testBaseUrl/user/remove'),
@@ -556,6 +590,6 @@ class API {
       return;
     }
 
-    throw HttpError.byCode(response.statusCode);
+    throw HttpStatus.byCode(response.statusCode);
   }
 }

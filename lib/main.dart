@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/repository/notice_repo.dart';
 import 'package:wakmusic/repository/s3_repo.dart';
@@ -22,6 +23,7 @@ import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
 void main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 
