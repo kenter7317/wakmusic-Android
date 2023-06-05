@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -20,11 +21,11 @@ class S3Repository {
   /// if returns `false`, failed initializing with error
   Future<bool> configure() async {
     try {
-      final storage = AmplifyStorageS3();
       final auth = AmplifyAuthCognito();
-      await Amplify.addPlugins([storage, auth]);
+      final storage = AmplifyStorageS3();
+      await Amplify.addPlugins([auth, storage]);
 
-      // await Amplify.configure(amplifyconfig);
+      await Amplify.configure(amplifyconfig);
     } catch (e) {
       _error = true;
       print(e);
@@ -33,17 +34,22 @@ class S3Repository {
     return !_error;
   }
 
-  Future<String> uploadStorage(PlatformFile file) async {
+  Future<String> uploadStorage(File file) async {
     final uploaded = await Amplify.Storage.uploadFile(
-      localFile: AWSFile.fromStream(file.readStream!, size: file.size),
-      key: '${_randString(5)}_${DateFormat('yyyyMMddhhmmss').format(_now)}',
+      localFile: AWSFile.fromStream(file.openRead(), size: file.lengthSync()),
+      key: '${_randString(5)}_${DateFormat('yyyyMMddhhmmss').format(_now)}.jpg',
       onProgress: (progress) {
-        print('Uploading | ${file.name} :: ${progress.fractionCompleted}');
+        print('Uploading | ${progress.fractionCompleted * 100}%');
       },
     ).result;
-    final fileName = uploaded.uploadedItem.key;
-    print('Uploaded  | ${file.name} => $fileName');
+    final fileName = await getUrl(uploaded.uploadedItem.key);
+    print('Uploaded from | ${file.path} =>\nUploaded to   | $fileName');
     return fileName;
+  }
+
+  Future<String> getUrl(String fileName) async {
+    final result = await Amplify.Storage.getUrl(key: fileName).result;
+    return '${result.url}'.split('?').first;
   }
 }
 

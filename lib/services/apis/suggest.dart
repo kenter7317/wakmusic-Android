@@ -21,12 +21,12 @@ class SuggestAPI extends API {
       method: HttpMethod.put,
       strict: true,
       body: {
-        '"userId"': userId,
-        if (nickname != null) '"nickname"': nickname,
+        '"userId"': '"$userId"',
+        if (nickname != null) '"nickname"': '"$nickname"',
         if (attaches != null) '"attachs"': jsonEncode(attaches),
-        '"detainContent"': detailContent,
-        if (deviceModel != null) '"deviceModel"': deviceModel,
-        if (osVersion != null) '"osVersion"': osVersion,
+        '"detailContent"': '"$detailContent"',
+        if (deviceModel != null) '"deviceModel"': '"$deviceModel"',
+        if (osVersion != null) '"osVersion"': '"$osVersion"',
       },
     );
 
@@ -49,9 +49,9 @@ class SuggestAPI extends API {
       method: HttpMethod.put,
       strict: true,
       body: {
-        '"userId"': userId,
-        '"platform"': platform,
-        '"detainContent"': detailContent,
+        '"userId"': '"$userId"',
+        '"platform"': '"$platform"',
+        '"detailContent"': '"$detailContent"',
       },
     );
 
@@ -73,8 +73,8 @@ class SuggestAPI extends API {
       method: HttpMethod.put,
       strict: true,
       body: {
-        '"userId"': userId,
-        '"detainContent"': detailContent,
+        '"userId"': '"$userId"',
+        '"detailContent"': '"$detailContent"',
       },
     );
 
@@ -100,12 +100,12 @@ class SuggestAPI extends API {
       method: HttpMethod.put,
       strict: true,
       body: {
-        '"userId"': userId,
-        '"type"': update ? 'UPDATE' : 'ADD',
-        if (artist != null) '"artist"': artist,
-        if (title != null) '"title"': title,
-        if (youtubeLink != null) '"youtubeLink"': youtubeLink,
-        '"detainContent"': detailContent,
+        '"userId"': '"$userId"',
+        '"type"': update ? '"UPDATE"' : '"ADD"',
+        if (artist != null) '"artist"': '"$artist"',
+        if (title != null) '"title"': '"$title"',
+        if (youtubeLink != null) '"youtubeLink"': '"$youtubeLink"',
+        '"detailContent"': '"$detailContent"',
       },
     );
 
