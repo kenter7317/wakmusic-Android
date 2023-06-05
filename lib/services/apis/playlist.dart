@@ -45,7 +45,7 @@ class PlaylistAPI extends API {
     required String token,
   }) async {
     final response = await request(
-      url,
+      '$url/create',
       method: HttpMethod.post,
       token: token,
       body: {
