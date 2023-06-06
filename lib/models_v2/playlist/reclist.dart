@@ -27,6 +27,7 @@ class Reclist extends Playlist {
   @override
   final PlaylistImage image;
 
+  @override
   List<Song>? songs;
 
   Reclist({
@@ -49,5 +50,14 @@ class Reclist extends Playlist {
       image: PlaylistImage.fromJson(json['image_round_version']),
       songs: (json['songs'] as List?)?.map((e) => Song.fromJson(e)).toList(),
     );
+  }
+
+  @override
+  Playlist copyWith({
+    String? title,
+    PlaylistImage? image,
+    List<Song>? songs,
+  }) {
+    return this;
   }
 }

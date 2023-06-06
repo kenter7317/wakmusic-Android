@@ -1,14 +1,13 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:wakmusic/models_v2/enums/error.dart';
-import 'package:wakmusic/models/playlist.dart';
-import 'package:wakmusic/models/song.dart';
-import 'package:wakmusic/models/user.dart';
+import 'package:wakmusic/models_v2/playlist/playlist.dart';
+import 'package:wakmusic/models_v2/profile.dart';
+import 'package:wakmusic/models_v2/song.dart';
+import 'package:wakmusic/models_v2/user.dart';
 import 'package:wakmusic/repository/user_repo.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
+import 'package:wakmusic/services/apis/user.dart';
 import 'package:wakmusic/services/login.dart';
-import 'package:wakmusic/utils/json.dart';
 
 enum LoginStatus { before, after }
 
@@ -19,10 +18,9 @@ class KeepViewModel with ChangeNotifier {
   LoginStatus _loginStatus = LoginStatus.before;
   EditStatus _editStatus = EditStatus.none;
   String? _prevKeyword;
-  late final API _api;
   late final UserRepository _repo;
   late final Future<String> _version;
-  late final JSONType<int> profiles;
+  late final List<Profile> profiles;
   late List<Song?> _likes;
   late List<Song?> _tempLikes;
   late List<Playlist?> _playlists;
@@ -38,7 +36,6 @@ class KeepViewModel with ChangeNotifier {
   List<Playlist?> get tempPlaylists => _tempPlaylists;
 
   KeepViewModel() {
-    _api = API();
     _repo = UserRepository();
     getVersion();
     getProfileList();
@@ -62,7 +59,7 @@ class KeepViewModel with ChangeNotifier {
   }
 
   Future<void> getProfileList() async {
-    profiles = await _api.getUserProfiles();
+    profiles = await API.user.profiles;
   }
 
   Future<bool?> getUser({Login? platform}) async {
@@ -91,7 +88,7 @@ class KeepViewModel with ChangeNotifier {
     updateLoginStatus(LoginStatus.before);
   }
 
-  Future<void> updateUserProfile(String? profile) async {
+  Future<void> updateUserProfile(Profile? profile) async {
     if (profile == null) return;
     if (await _repo.setUserProfile(profile)) {
       _user.profile = profile;
@@ -116,7 +113,7 @@ class KeepViewModel with ChangeNotifier {
 
   Future<void> getLists() async {
     clear();
-    _likes = await _repo.getLikes();
+    _likes = [...(await _repo.getLikes()).keys];
     _playlists = await _repo.getPlaylists();
     _tempLikes = [..._likes];
     _tempPlaylists = [..._playlists];
@@ -139,8 +136,8 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeList(Playlist playlist) async {
-    if (await _repo.deletePlaylist(playlist.key!)) {
+  Future<void> removeList(UserPlaylist playlist) async {
+    if (await _repo.deletePlaylist([playlist])) {
       _playlists.remove(playlist);
       _tempPlaylists = [..._playlists];
     }
@@ -152,11 +149,9 @@ class KeepViewModel with ChangeNotifier {
       return false;
     }
 
-    if (await _repo.addPlaylistSongs(playlist.key!, songs)) {
-      final list = songs
-          .map((song) => song.id)
-          .where((e) => !playlist.songlist!.contains(e));
-      playlist.songlist!.addAll(list);
+    if (await _repo.addPlaylistSongs(playlist.key, songs)) {
+      final list = songs.where((e) => !playlist.songs!.contains(e));
+      playlist.songs!.addAll(list);
       notifyListeners();
       return true;
     }
@@ -191,7 +186,7 @@ class KeepViewModel with ChangeNotifier {
     if (apply == null) return;
     if (apply) {
       final res = await _repo.editPlaylists(
-        _tempPlaylists.whereType<Playlist>().toList(),
+        _tempPlaylists.whereType<UserPlaylist>().toList(),
       );
       if (res) {
         _playlists = [..._tempPlaylists];

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -15,7 +16,7 @@ import 'package:wakmusic/widgets/common/error_info.dart';
 import 'package:wakmusic/widgets/common/play_btns.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
-import 'package:wakmusic/models/playlist.dart';
+import 'package:wakmusic/models_v2/playlist/playlist.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/keep/bot_sheet.dart';
 import 'package:dismissible_page/dismissible_page.dart';
@@ -41,7 +42,7 @@ class PlaylistView extends StatelessWidget {
           context,
           playlist.copyWith(
             title: viewModel.title,
-            songlist: viewModel.songs.map((e) => e?.id ?? '').toList(),
+            songs: viewModel.songs.whereType<Song>().toList(),
           ),
         );
         viewModel.title = null;
@@ -164,8 +165,7 @@ class PlaylistView extends StatelessWidget {
                     context,
                     playlist.copyWith(
                       title: viewModel.title,
-                      songlist:
-                          viewModel.songs.map((e) => e?.id ?? '').toList(),
+                      songs: viewModel.songs.whereType<Song>().toList(),
                     ),
                   );
                 }
@@ -226,9 +226,9 @@ class PlaylistView extends StatelessWidget {
       child: Row(
         children: [
           ExtendedImage.network(
-            '$staticBaseUrl/playlist/'
-            '${(playlist is! Reclist) ? playlist.image : 'icon/square/${playlist.id}'}.png'
-            '?v=${playlist.imageVersion}',
+            '${API.static.url}/playlist/'
+            '${(playlist is Reclist) ? 'icon/square/' : ''}${playlist.image.name}.png'
+            '?v=${playlist.image.version}',
             fit: BoxFit.cover,
             shape: BoxShape.rectangle,
             width: 140,

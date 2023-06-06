@@ -1,10 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:wakmusic/models/faq.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/models_v2/faq.dart';
+import 'package:wakmusic/services/apis/api.dart';
 
 class FAQViewModel with ChangeNotifier {
-  late final API _api;
   late List<String> _categories;
   late Map<String, List<FAQ?>> _faqLists;
   bool _isFirst = true;
@@ -12,9 +11,7 @@ class FAQViewModel with ChangeNotifier {
   List<String> get categories => _categories;
   Map<String, List<FAQ?>> get faqLists => _faqLists;
 
-  FAQViewModel() {
-    _api = API();
-  }
+  FAQViewModel();
 
   void clear() {
     _categories = List.filled(5, '');
@@ -27,10 +24,10 @@ class FAQViewModel with ChangeNotifier {
     if (_isFirst) {
       clear();
       _isFirst = false;
-      _categories = await _api.fetchFAQCategories();
+      _categories = await API.faq.categories;
       _categories.insert(0, '전체');
       _faqLists = {
-        '전체': await _api.fetchFAQ(),
+        '전체': await API.faq.list,
       };
       _faqLists['전체']!.sort((a, b) {
         int categoryIdxA, categoryIdxB;
@@ -38,9 +35,12 @@ class FAQViewModel with ChangeNotifier {
         categoryIdxB = _categories.indexOf(b!.category);
         return categoryIdxA.compareTo(categoryIdxB);
       });
-      for(String category in _categories) {
+      for (String category in _categories) {
         if (category == '전체') continue;
-        _faqLists[category] = _faqLists['전체']!.where((faq) => faq!.category == category).map((faq) => FAQ.clone(faq!)).toList();
+        _faqLists[category] = _faqLists['전체']!
+            .where((faq) => faq!.category == category)
+            .map((faq) => FAQ.clone(faq!))
+            .toList();
       }
       notifyListeners();
     }
@@ -50,10 +50,10 @@ class FAQViewModel with ChangeNotifier {
     faq.isExpanded = !faq.isExpanded;
     notifyListeners();
   }
-  
+
   void collapseAll() {
-    for(String category in _categories) {
-      for(FAQ? faq in _faqLists[category]!) {
+    for (String category in _categories) {
+      for (FAQ? faq in _faqLists[category]!) {
         faq?.isExpanded = false;
       }
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:wakmusic/utils/json.dart';
 
+@Deprecated('use models_v2')
 class Playlist {
   final String? id;
   final String? key;
@@ -70,6 +71,7 @@ class Playlist {
   //     Object.hash(id, key, title, creator, image, songlist, imageVersion);
 }
 
+@Deprecated('use models_v2')
 class Reclist extends Playlist {
   final bool public;
 

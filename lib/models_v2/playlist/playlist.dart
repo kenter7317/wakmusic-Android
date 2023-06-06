@@ -1,4 +1,8 @@
+import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/utils/json.dart';
+
+export './reclist.dart';
+export './user_playlist.dart';
 
 class PlaylistImage {
   final String name;
@@ -22,6 +26,13 @@ abstract class Playlist {
   String get title;
   DateTime get createAt;
   PlaylistImage get image;
+  List<Song>? get songs;
 
   const Playlist();
+
+  Playlist copyWith({
+    String? title,
+    PlaylistImage? image,
+    List<Song>? songs,
+  });
 }

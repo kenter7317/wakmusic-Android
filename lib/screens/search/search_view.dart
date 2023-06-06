@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/screens/search/search_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/error_info.dart';
@@ -24,9 +24,9 @@ class SearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
+    final viewModel = Provider.of<SearchViewModel>(context);
     statusNavColor(context, ScreenType.search);
-    SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
+    final selectedList = Provider.of<SelectSongProvider>(context);
     _fieldText.text = viewModel.text;
     _fieldText.selection =
         TextSelection.collapsed(offset: viewModel.text.length);
@@ -69,7 +69,7 @@ class SearchView extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
-    SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
+    final selectedList = Provider.of<SelectSongProvider>(context);
     double statusBarHeight = MediaQuery.of(context).padding.top;
     return Container(
       height: 56 + statusBarHeight,

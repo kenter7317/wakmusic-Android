@@ -1,8 +1,8 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:wakmusic/models/notice.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/models_v2/notice.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/header.dart';
@@ -78,7 +78,7 @@ class NoticeDetailView extends StatelessWidget {
                         (image) => Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: ExtendedImage.network(
-                            '$staticBaseUrl/notice/$image',
+                            '${API.static.url}/notice/$image',
                             fit: BoxFit.cover,
                             loadStateChanged: (state) {
                               if (state.extendedImageLoadState !=
@@ -86,7 +86,8 @@ class NoticeDetailView extends StatelessWidget {
                                 return SkeletonBox(
                                   child: AspectRatio(
                                       aspectRatio: 1 / 1,
-                                      child: Container(color: WakColor.grey200)),
+                                      child:
+                                          Container(color: WakColor.grey200)),
                                 );
                               }
                               return null;

@@ -1,27 +1,19 @@
-import 'package:audio_service/models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
-import 'package:wakmusic/models/song.dart';
-import 'package:wakmusic/screens/keep/keep_view.dart';
+import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:wakmusic/widgets/common/keep_song_pop_up.dart';
-import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:lottie/lottie.dart';
-import 'package:wakmusic/widgets/page_route_builder.dart';
-import 'package:wakmusic/widgets/show_modal.dart';
 
 import '../../models/providers/audio_provider.dart';
-import '../../models/providers/nav_provider.dart';
-import '../../screens/player/player_view.dart';
 
 enum TileType {
   baseTile(
@@ -237,7 +229,7 @@ class SongTile extends StatelessWidget {
                 SizedBox(width: tileType.padding['middle']),
                 if (tileType.showViews)
                   Text(
-                    NumberFormat('###,###,###회').format(song!.views),
+                    NumberFormat('###,###,###회').format(song!.metadata.views),
                     style: WakText.num12L,
                     textAlign: TextAlign.right,
                   ),
@@ -320,9 +312,9 @@ class SongTile extends StatelessWidget {
   }
 
   Widget _rankChange(BuildContext context) {
-    int diff = song!.last - rank;
+    int diff = song!.metadata.last! - rank;
     /* NEW */
-    if (song!.last == 0) {
+    if (song!.metadata.last == 0) {
       return Text(
         'NEW',
         style: WakText.txt11M.copyWith(color: WakColor.orange),

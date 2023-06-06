@@ -7,7 +7,7 @@ import 'package:wakmusic/screens/player/player_playlist_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 
 import '../../models/providers/nav_provider.dart';
-import '../../models/song.dart';
+import '../../models_v2/song.dart';
 import '../../style/text_styles.dart';
 import '../../widgets/common/edit_btn.dart';
 import '../../widgets/common/song_tile.dart';
@@ -34,9 +34,8 @@ class PlayerPlayList extends StatelessWidget {
   }
 
   Widget _buildTitleRow(BuildContext context) {
-    PlayerPlayListViewModel viewModel = Provider.of<PlayerPlayListViewModel>(context);
-    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
-    NavProvider botNav = Provider.of<NavProvider>(context);
+    final viewModel = Provider.of<PlayerPlayListViewModel>(context);
+    final botNav = Provider.of<NavProvider>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
@@ -57,93 +56,98 @@ class PlayerPlayList extends StatelessWidget {
             ),
           ),
           Container(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Text(
-                '재생목록',
-                style: WakText.txt16M,
-                textAlign: TextAlign.center,
-              )),
-          (viewModel.state == PageState.edit) ?
-            GestureDetector(
-              onTap: () {
-                viewModel.updateStatus(PageState.normal);
-              },
-              child: const EditBtn(type: BtnType.done),
-            )
-          :
-            GestureDetector(
-              onTap: () {
-                viewModel.updateStatus(PageState.edit);
-              },
-              child: const EditBtn(type: BtnType.edit),
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Text(
+              '재생목록',
+              style: WakText.txt16M,
+              textAlign: TextAlign.center,
             ),
+          ),
+          GestureDetector(
+            onTap: () => viewModel.updateStatus(
+              (viewModel.state == PageState.edit)
+                  ? PageState.normal
+                  : PageState.edit,
+            ),
+            child: EditBtn(
+              type: (viewModel.state == PageState.edit)
+                  ? BtnType.done
+                  : BtnType.edit,
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget _buildPlayList(BuildContext context){
-    PlayerPlayListViewModel viewModel = Provider.of<PlayerPlayListViewModel>(context);
+  Widget _buildPlayList(BuildContext context) {
+    final viewModel = Provider.of<PlayerPlayListViewModel>(context);
     return Expanded(
-      child: (viewModel.state != PageState.edit)
-          ? Selector<AudioProvider, List<Song>>(
-              selector: (context, audioProvider) => audioProvider.queue,
-              builder: (context, queue, _){
-                return Selector<AudioProvider, int>(
-                  selector: (context, audioProvider) => audioProvider.currentIndex ?? 0,
-                  builder: (context, curIdx, _){
-                    return ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: queue.length,
-                      itemBuilder: (_, idx) => SongTile(
-                        song: queue[idx],
-                        tileType: idx == curIdx ? TileType.nowPlayTile : TileType.canPlayTile,
-                        //onLongPress: () => viewModel.updateStatus(PageState.edit)
-                      ),
-                    );
-                  },
+      child: Selector<AudioProvider, List<Song>>(
+        selector: (context, audioProvider) => audioProvider.queue,
+        builder: (context, queue, _) {
+          if (viewModel.state != PageState.edit) {
+            return Selector<AudioProvider, int>(
+              selector: (context, audioProvider) =>
+                  audioProvider.currentIndex ?? 0,
+              builder: (context, curIdx, _) {
+                return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: queue.length,
+                  itemBuilder: (_, idx) => SongTile(
+                    song: queue[idx],
+                    tileType: idx == curIdx
+                        ? TileType.nowPlayTile
+                        : TileType.canPlayTile,
+                    //onLongPress: () => viewModel.updateStatus(PageState.edit)
+                  ),
                 );
               },
-          )
-          : Selector<AudioProvider, List<Song>>(
-              selector: (context, audioProvider) => audioProvider.queue,
-              builder: (context, playList, _){
-                return ReorderableListView.builder(
-                  proxyDecorator: (child, _, animation) => AnimatedBuilder(
-                    animation: animation,
-                    builder: (_, child) => Material(
-                      elevation: 0,
-                      color: Colors.transparent,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: WakColor.dark.withOpacity(0.25),
-                              blurRadius: 20,
-                            ),
-                          ],
+            );
+          } else {
+            return ReorderableListView.builder(
+              proxyDecorator: (child, _, animation) => AnimatedBuilder(
+                animation: animation,
+                builder: (_, child) => Material(
+                  elevation: 0,
+                  color: Colors.transparent,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: WakColor.dark.withOpacity(0.25),
+                          blurRadius: 20,
                         ),
-                        child: child,
-                      ),
+                      ],
                     ),
                     child: child,
                   ),
-                  buildDefaultDragHandles: false,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: playList.length,
-                  itemBuilder: (_, idx) => SongTile(
-                    key: Key(idx.toString()),
-                    song: playList[idx],
-                    idx: idx,
-                    tileType: TileType.editTile,
-                  ),
-                  onReorder: (oldIdx, newIdx) {
-                    Provider.of<AudioProvider>(context, listen: false).swapQueueItem(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
-                  },
-                  //onReorderStart: (_) => HapticFeedback.lightImpact(),
+                ),
+                child: child,
+              ),
+              buildDefaultDragHandles: false,
+              physics: const BouncingScrollPhysics(),
+              itemCount: queue.length,
+              itemBuilder: (_, idx) => SongTile(
+                key: Key(idx.toString()),
+                song: queue[idx],
+                idx: idx,
+                tileType: TileType.editTile,
+              ),
+              onReorder: (oldIdx, newIdx) {
+                Provider.of<AudioProvider>(
+                  context,
+                  listen: false,
+                ).swapQueueItem(
+                  oldIdx,
+                  (oldIdx < newIdx) ? newIdx - 1 : newIdx,
                 );
               },
-          )
+              //onReorderStart: (_) => HapticFeedback.lightImpact(),
+            );
+          }
+        },
+      ),
     );
   }
 }

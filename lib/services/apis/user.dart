@@ -1,7 +1,9 @@
-import 'package:wakmusic/models/song.dart';
-import 'package:wakmusic/models_v2/playlist/user_playlist.dart';
+import 'package:wakmusic/models_v2/song.dart';
+import 'package:wakmusic/models_v2/playlist/playlist.dart';
 import 'package:wakmusic/models_v2/profile.dart';
 import 'package:wakmusic/services/apis/api.dart';
+
+typedef LikeSong = Map<Song, int>;
 
 class UserAPI extends API {
   @override
@@ -129,7 +131,7 @@ class UserAPI extends API {
     throw status;
   }
 
-  Future<List<Map<Song, int>>> likes({
+  Future<LikeSong> likes({
     required String token,
   }) async {
     final response = await request(
@@ -140,9 +142,10 @@ class UserAPI extends API {
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.get)) {
-      return (jsonDecode(response.body) as List)
-          .map((e) => {Song.fromJson(e['song']): e['likes'] as int})
-          .toList();
+      return {
+        for (var e in jsonDecode(response.body) as List)
+          Song.fromJson(e['song']): e['likes'] as int,
+      };
     }
 
     assert(status.isError);

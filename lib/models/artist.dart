@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:wakmusic/services/api.dart';
 
+@Deprecated('use models_v2')
 class Artist {
   final String id;
   final String name;

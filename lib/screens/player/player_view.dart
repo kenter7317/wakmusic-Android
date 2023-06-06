@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'dart:ui';
-import 'package:audio_service/models/enums.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -9,14 +7,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:scroll_snap_list/scroll_snap_list.dart';
-import 'package:subtitle/subtitle.dart';
 import 'package:wakmusic/screens/player/player_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/widgets/player/player_button.dart';
 
 import '../../models/providers/audio_provider.dart';
 import '../../models/providers/nav_provider.dart';
-import '../../models/song.dart';
+import '../../models_v2/song.dart';
 import '../../style/text_styles.dart';
 
 class Player extends StatelessWidget {

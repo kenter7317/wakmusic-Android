@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wakmusic/models/faq.dart';
+import 'package:wakmusic/models_v2/faq.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';

@@ -1,23 +1,20 @@
 import 'dart:math';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:wakmusic/models_v2/enums/http_status.dart';
-import 'package:wakmusic/models_v2/playlist.dart';
-import 'package:wakmusic/models/playlist_detail.dart';
+import 'package:wakmusic/models_v2/playlist/playlist.dart';
 import 'package:wakmusic/models_v2/profile.dart';
 import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/models_v2/user.dart';
 import 'package:wakmusic/services/apis/api.dart';
+import 'package:wakmusic/services/apis/user.dart';
 import 'package:wakmusic/services/login.dart';
 
 class UserRepository {
   final FlutterSecureStorage _storage;
-  final API _api;
 
   UserRepository({
     FlutterSecureStorage storage = const FlutterSecureStorage(),
-  })  : _storage = storage,
-        _api = const API();
+  }) : _storage = storage;
 
   Future<String?> get _token => _storage.read(key: 'token');
   Future<bool> get isLoggedIn async => await _token != null;
@@ -52,13 +49,13 @@ class UserRepository {
     }
 
     try {
-      return await API.user.playlists(token: token) as List<Playlist>;
+      return await API.user.playlists(token: token);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<List<Map<Song, int>>> getLikes() async {
+  Future<LikeSong> getLikes() async {
     final token = await _token;
     if (token == null) {
       throw HttpStatus.unauthorized;
@@ -104,19 +101,19 @@ class UserRepository {
   Future<bool> createList(String title) async {
     final token = await _token;
     if (token == null) {
-      return false;
+      throw HttpStatus.unauthorized;
     }
 
     try {
       final image = Random().nextInt(11) + 1;
-      final key = await API.playlist.create(title: title, image: image, token: token);
+      await API.playlist.create(title: title, image: image, token: token);
       return true;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<PlaylistDetail> addToMyPlaylist(String key) async {
+  Future<UserPlaylist> addToMyPlaylist(String key) async {
     final token = await _token;
     if (token == null) {
       throw HttpStatus.unauthorized;
@@ -125,14 +122,12 @@ class UserRepository {
     try {
       await API.playlist.addToMyPlaylist(key: key, token: token);
       return await API.playlist.detail(key: key);
-
-      //throw HttpStatus.badRequest;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<bool> editPlaylists(List<Playlist> playlists) async {
+  Future<bool> editPlaylists(List<UserPlaylist> playlists) async {
     final token = await _token;
     if (token == null) {
       return false;
@@ -146,7 +141,7 @@ class UserRepository {
     }
   }
 
-  Future<bool> deletePlaylist(List<Playlist> playlists) async {
+  Future<bool> deletePlaylist(List<UserPlaylist> playlists) async {
     final token = await _token;
     if (token == null) {
       return false;

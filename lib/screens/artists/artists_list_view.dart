@@ -2,7 +2,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import 'package:wakmusic/models/artist.dart';
+import 'package:wakmusic/models_v2/artist.dart';
 import 'package:wakmusic/screens/artists/artist_detail_view.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -123,49 +123,54 @@ class ArtistsListView extends StatelessWidget {
     );
   }
 
-  Widget artistListTile(BuildContext context, Artist artist,
-      {bool loading = false}) {
+  Widget artistListTile(
+    BuildContext context,
+    Artist artist, {
+    bool loading = false,
+  }) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
     return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ZoomTapAnimation(
-            onTap: () {
-              viewModel.setArtist(artist);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => ArtistView(artist: artist)),
-              );
-            },
-            child: ExtendedImage.network(artist.roundImg,
-                width: (MediaQuery.of(context).size.width - 56) / 3,
-                loadStateChanged: (state) {
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        ZoomTapAnimation(
+          onTap: () {
+            viewModel.setArtist(artist);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => ArtistView(artist: artist)),
+            );
+          },
+          child: ExtendedImage.network(
+            artist.roundImage,
+            width: (MediaQuery.of(context).size.width - 56) / 3,
+            loadStateChanged: (state) {
               if (state.extendedImageLoadState != LoadState.completed) {
+                final width = (MediaQuery.of(context).size.width - 56) / 3;
                 return Padding(
-                  padding: EdgeInsets.only(
-                      top: ((MediaQuery.of(context).size.width - 56) / 3) /
-                              106 *
-                              130 -
-                          (MediaQuery.of(context).size.width - 56) / 3),
+                  padding: EdgeInsets.only(top: width / 106 * 130 - width),
                   child: SkeletonBox(
-                      child: Container(
-                    decoration: BoxDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(90),
-                        color: WakColor.grey200),
-                    width: (MediaQuery.of(context).size.width - 56) / 3,
-                    height: (MediaQuery.of(context).size.width - 56) / 3,
-                  )),
+                        color: WakColor.grey200,
+                      ),
+                      width: width,
+                      height: width,
+                    ),
+                  ),
                 );
               }
-            }),
+            },
           ),
-          const SizedBox(height: 4),
-          Text(
-            artist.name,
-            style: WakText.txt14MH.copyWith(color: WakColor.grey600),
-            overflow: TextOverflow.visible,
-          )
-        ]);
+        ),
+        const SizedBox(height: 4),
+        Text(
+          artist.name,
+          style: WakText.txt14MH.copyWith(color: WakColor.grey600),
+          overflow: TextOverflow.visible,
+        ),
+      ],
+    );
   }
 }

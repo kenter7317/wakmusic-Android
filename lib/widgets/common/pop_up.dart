@@ -1,14 +1,20 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 
 enum PopUpType { txtOneBtn, txtTwoBtn, contentBtn }
 
 class PopUp extends StatelessWidget {
-  const PopUp(
-      {super.key, required this.type, this.msg, this.negFunc, this.posFunc});
+  const PopUp({
+    super.key,
+    required this.type,
+    this.msg,
+    this.negFunc,
+    this.posFunc,
+  });
+
   final PopUpType type;
   final String? msg;
   final void Function()? negFunc;
@@ -43,7 +49,7 @@ class PopUp extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               child: ExtendedImage.network(
-                '$staticBaseUrl/notice/$msg',
+                '${API.static.url}/notice/$msg',
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.width,
               ),
