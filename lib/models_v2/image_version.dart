@@ -1,7 +1,19 @@
 import 'package:wakmusic/utils/json.dart';
 
-class ImageVersion {
+class ImageQuery {
+  String get name => throw UnimplementedError();
+  int get round => throw UnimplementedError();
+  int get square => throw UnimplementedError();
+  int get version => throw UnimplementedError();
+
+  const ImageQuery();
+}
+
+class ImageVersion extends ImageQuery {
+  @override
   final int round;
+
+  @override
   final int square;
 
   const ImageVersion({

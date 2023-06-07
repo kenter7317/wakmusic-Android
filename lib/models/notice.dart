@@ -1,3 +1,4 @@
+@Deprecated('use models_v2')
 class Notice {
   final int id;
   final String category;

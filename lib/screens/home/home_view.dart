@@ -6,14 +6,14 @@ import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
-import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/common/rec_playlist.dart';
 import 'package:wakmusic/screens/home/home_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});

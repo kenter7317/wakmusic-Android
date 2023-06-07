@@ -1,6 +1,7 @@
 import 'package:wakmusic/services/login.dart';
 import 'package:wakmusic/utils/json.dart';
 
+@Deprecated('use models_v2')
 class User {
   final String id;
   final Login platform;
@@ -21,12 +22,13 @@ class User {
   });
 
   factory User.fromJson(JSON json) => User(
-    id: json['id'],
-    platform: Login.byName(json['platform']),
-    profile: json['profile'],
-    displayName: "${json['displayName']}",
-    firstLoginTime: DateTime.fromMillisecondsSinceEpoch(json['first_login_time']),
-    first: json['first'],
-    profileVersion: json['profile_version'],
-  );
+        id: json['id'],
+        platform: Login.byName(json['platform']),
+        profile: json['profile'],
+        displayName: "${json['displayName']}",
+        firstLoginTime:
+            DateTime.fromMillisecondsSinceEpoch(json['first_login_time']),
+        first: json['first'],
+        profileVersion: json['profile_version'],
+      );
 }

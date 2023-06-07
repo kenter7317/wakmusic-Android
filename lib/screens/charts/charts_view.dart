@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/screens/charts/charts_view_model.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
@@ -26,9 +24,9 @@ class ChartsView extends StatelessWidget {
       body: SafeArea(
         child: TabView(
           type: TabType.maxTab,
-          tabBarList: List.generate(5, (idx) => ChartType.values[idx].str),
-          tabViewList: List.generate(5, (idx) => _buildTab(context, ChartType.values[idx])),
-        )
+          tabBarList: [...ChartType.values.map((e) => e.str)],
+          tabViewList: [...ChartType.values.map((e) => _buildTab(context, e))],
+        ),
       ),
     );
   }
@@ -46,7 +44,7 @@ class ChartsView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 0, 4),
             child: FutureBuilder<DateTime>(
-              future: viewModel.updatedTime,
+              future: viewModel.updatedTime[type],
               builder: (_, snapshot) {
                 if (snapshot.hasData) {
                   return Row(
@@ -58,7 +56,8 @@ class ChartsView extends StatelessWidget {
                       ),
                       const SizedBox(width: 2),
                       Text(
-                        DateFormat('MM월 dd일 a hh시 업데이트', 'ko').format(snapshot.data!),
+                        DateFormat('MM월 dd일 a hh시 업데이트', 'ko')
+                            .format(snapshot.data!),
                         style: WakText.txt12L.copyWith(color: WakColor.grey600),
                       ),
                     ],

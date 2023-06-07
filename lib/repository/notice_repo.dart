@@ -1,13 +1,11 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wakmusic/models/notice.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/models_v2/notice.dart';
+import 'package:wakmusic/services/apis/api.dart';
 
 class NoticeRepository {
   static const String prefsKey = 'hideNotice';
 
-  final API _api;
-
-  NoticeRepository() : _api = API();
+  NoticeRepository();
 
   Future<List<int>> getHideHistory() async {
     final prefs = await SharedPreferences.getInstance();
@@ -17,7 +15,7 @@ class NoticeRepository {
   }
 
   Future<List<Notice>> getNoticeDisplay() async {
-    final notices = await _api.fetchNoticeDisplay();
+    final notices = await API.notice.display;
     final history = await getHideHistory();
     _cleanup([...history]);
 
@@ -25,7 +23,7 @@ class NoticeRepository {
   }
 
   Future<List<Notice>> getNoticeAll() async {
-    final notices = await _api.fetchNotice();
+    final notices = await API.notice.all;
     return notices;
   }
 

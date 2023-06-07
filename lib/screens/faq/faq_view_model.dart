@@ -1,46 +1,44 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:wakmusic/models/faq.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:wakmusic/models_v2/category.dart';
+import 'package:wakmusic/models_v2/faq.dart';
+import 'package:wakmusic/services/apis/api.dart';
 
 class FAQViewModel with ChangeNotifier {
-  late final API _api;
-  late List<String> _categories;
-  late Map<String, List<FAQ?>> _faqLists;
+  late List<Category> _categories;
+  late Map<Category, List<FAQ?>> _faqLists;
   bool _isFirst = true;
 
-  List<String> get categories => _categories;
-  Map<String, List<FAQ?>> get faqLists => _faqLists;
+  List<Category> get categories => _categories;
+  Map<Category, List<FAQ?>> get faqLists => _faqLists;
 
-  FAQViewModel() {
-    _api = API();
-  }
+  FAQViewModel();
 
   void clear() {
-    _categories = List.filled(5, '');
-    _faqLists = {
-      '': List.filled(10, null),
-    };
+    _categories = [Category.qnaAll];
+    _faqLists = {};
   }
 
   Future<void> getFAQ() async {
     if (_isFirst) {
       clear();
       _isFirst = false;
-      _categories = await _api.fetchFAQCategories();
-      _categories.insert(0, '전체');
+      _categories = await API.faq.categories;
+      _categories.insert(0, Category.qnaAll);
       _faqLists = {
-        '전체': await _api.fetchFAQ(),
+        Category.qnaAll: await API.faq.list,
       };
-      _faqLists['전체']!.sort((a, b) {
+      _faqLists[Category.qnaAll]!.sort((a, b) {
         int categoryIdxA, categoryIdxB;
         categoryIdxA = _categories.indexOf(a!.category);
         categoryIdxB = _categories.indexOf(b!.category);
         return categoryIdxA.compareTo(categoryIdxB);
       });
-      for(String category in _categories) {
-        if (category == '전체') continue;
-        _faqLists[category] = _faqLists['전체']!.where((faq) => faq!.category == category).map((faq) => FAQ.clone(faq!)).toList();
+      for (Category category in _categories) {
+        if (category == Category.qnaAll) continue;
+        _faqLists[category] = _faqLists[Category.qnaAll]!
+            .where((faq) => faq!.category == category)
+            .map((faq) => FAQ.clone(faq!))
+            .toList();
       }
       notifyListeners();
     }
@@ -50,10 +48,10 @@ class FAQViewModel with ChangeNotifier {
     faq.isExpanded = !faq.isExpanded;
     notifyListeners();
   }
-  
+
   void collapseAll() {
-    for(String category in _categories) {
-      for(FAQ? faq in _faqLists[category]!) {
+    for (Category category in _categories) {
+      for (FAQ? faq in _faqLists[category]!) {
         faq?.isExpanded = false;
       }
     }

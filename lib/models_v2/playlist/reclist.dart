@@ -1,3 +1,4 @@
+import 'package:wakmusic/models_v2/image_version.dart';
 import 'package:wakmusic/models_v2/playlist/playlist.dart';
 import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/utils/json.dart';
@@ -25,8 +26,9 @@ class Reclist extends Playlist {
   @override
   final DateTime createAt;
   @override
-  final PlaylistImage image;
+  final ImageVersion image;
 
+  @override
   List<Song>? songs;
 
   Reclist({
@@ -42,12 +44,21 @@ class Reclist extends Playlist {
 
   factory Reclist.fromJson(JSON json) {
     return Reclist(
-      key: json['id'],
+      key: json['key'],
       title: json['title'],
       public: json['public'],
       createAt: msEpoch(json['createAt']),
-      image: PlaylistImage.fromJson(json['image_round_version']),
+      image: ImageVersion.fromJson(json['image']),
       songs: (json['songs'] as List?)?.map((e) => Song.fromJson(e)).toList(),
     );
+  }
+
+  @override
+  Playlist copyWith({
+    String? title,
+    covariant PlaylistImage? image,
+    List<Song>? songs,
+  }) {
+    return this;
   }
 }

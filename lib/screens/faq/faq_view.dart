@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wakmusic/models/faq.dart';
+import 'package:wakmusic/models_v2/category.dart';
+import 'package:wakmusic/models_v2/faq.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -44,24 +45,22 @@ class FAQView extends StatelessWidget {
               child: FutureBuilder<void>(
                 future: viewModel.getFAQ(),
                 builder: (_, __) {
-                  if (viewModel.categories[0] == '') {
+                  if (viewModel.categories[0] == Category.qnaAll) {
                     return TabSkeletonView(
                       type: TabType.minTab,
                       tabLength: viewModel.categories.length,
-                      tabViewList: List.generate(
-                        viewModel.categories.length,
-                        (idx) => _buildTab(context, viewModel.categories[idx]),
-                      ),
+                      tabViewList: viewModel.categories
+                          .map((e) => _buildTab(context, e))
+                          .toList(),
                       physics: const ClampingScrollPhysics(),
                     );
                   }
                   return TabView(
                     type: TabType.minTab,
-                    tabBarList: viewModel.categories,
-                    tabViewList: List.generate(
-                      viewModel.categories.length,
-                      (idx) => _buildTab(context, viewModel.categories[idx]),
-                    ),
+                    tabBarList: [...viewModel.categories.map((e) => e.name)],
+                    tabViewList: viewModel.categories
+                        .map((e) => _buildTab(context, e))
+                        .toList(),
                     physics: const ClampingScrollPhysics(),
                     listener: () => viewModel.collapseAll(),
                   );
@@ -74,7 +73,7 @@ class FAQView extends StatelessWidget {
     );
   }
 
-  Widget _buildTab(BuildContext context, String category) {
+  Widget _buildTab(BuildContext context, Category category) {
     FAQViewModel viewModel = Provider.of<FAQViewModel>(context);
     List<FAQ?> faqList = viewModel.faqLists[category]!;
     return ListView.builder(
@@ -134,7 +133,7 @@ class FAQView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            faqList[idx]!.category,
+                            faqList[idx]!.category.name,
                             style: WakText.txt12L
                                 .copyWith(color: WakColor.grey500),
                           ),

@@ -15,4 +15,15 @@ class Category {
       name: json['category'],
     );
   }
+
+  static const qnaAll = Category(type: 'qna', name: '전체');
+  static const noticeAll = Category(type: 'notice', name: '전체');
+
+  @override
+  bool operator ==(covariant Category other) {
+    return type == other.type && name == other.name;
+  }
+
+  @override
+  int get hashCode => Object.hash(type, name);
 }

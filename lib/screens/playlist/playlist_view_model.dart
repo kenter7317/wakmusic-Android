@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:wakmusic/models/playlist.dart';
+import 'package:wakmusic/models_v2/playlist/playlist.dart';
+import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/repository/user_repo.dart';
-import 'package:wakmusic/services/api.dart';
-import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/services/apis/api.dart';
 
 enum EditStatus { none, more, editing }
 
@@ -13,7 +13,6 @@ class PlaylistViewModel with ChangeNotifier {
   bool _prevIsScrolled = false;
   String? _prevKeyword;
   String? title;
-  late final API _api;
   late final UserRepository _repo;
   late List<Song?> _songs;
   late List<Song?> _tempsongs;
@@ -25,7 +24,6 @@ class PlaylistViewModel with ChangeNotifier {
 
   PlaylistViewModel() {
     _isScrolled = StreamController<bool>.broadcast();
-    _api = API();
     _repo = UserRepository();
   }
 
@@ -48,14 +46,15 @@ class PlaylistViewModel with ChangeNotifier {
   }
 
   Future<void> getSongs(Playlist playlist) async {
-    final keyword = playlist is! Reclist ? playlist.key : playlist.id;
+    final keyword = playlist.key;
     if (keyword != _prevKeyword) {
       clear();
       _prevKeyword = keyword;
-      if (playlist is! Reclist) {
-        _songs = (await _api.fetchPlaylistDetail(key: keyword!)).songs;
+      if (playlist is Reclist) {
+        _songs = (await API.playlist.recommended(key: keyword)).songs!;
       } else {
-        _songs = (await _api.fetchReclistDetail(key: keyword!)).songs;
+        await Future.delayed(Duration.zero);
+        _songs = [...playlist.songs!];
       }
       _tempsongs = [..._songs];
       notifyListeners();

@@ -1,5 +1,6 @@
 import 'package:wakmusic/utils/json.dart';
 
+@Deprecated('use models_v2')
 class Song {
   final String id;
   final String title;

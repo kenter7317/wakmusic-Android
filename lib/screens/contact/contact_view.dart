@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -790,7 +792,7 @@ class _ContactViewState extends State<ContactView> {
                       ).whenComplete(() {
                         // send inquiry
                         for (int i = 0; i < _maxFields; i++) {
-                          print('${i}th field: "${_fieldTexts[i].text}"');
+                          log('${i}th field: "${_fieldTexts[i].text}"');
                         }
                         Navigator.pop(context);
                       }),
