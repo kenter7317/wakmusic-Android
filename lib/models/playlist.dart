@@ -66,9 +66,10 @@ class Playlist {
         imageVersion == other.imageVersion;
   }
 
-  // @override
-  // int get hashCode =>
-  //     Object.hash(id, key, title, creator, image, songlist, imageVersion);
+  @override
+  int get hashCode {
+    return Object.hash(id, key, title, creator, image, songlist, imageVersion);
+  }
 }
 
 @Deprecated('use models_v2')

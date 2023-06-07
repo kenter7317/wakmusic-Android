@@ -53,6 +53,7 @@ class PlaylistViewModel with ChangeNotifier {
       if (playlist is Reclist) {
         _songs = (await API.playlist.recommended(key: keyword)).songs!;
       } else {
+        await Future.delayed(Duration.zero);
         _songs = [...playlist.songs!];
       }
       _tempsongs = [..._songs];

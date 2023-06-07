@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:audio_service/audio_handler.dart';
 import 'package:audio_service/models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -207,10 +206,10 @@ class _SeekBar extends StatefulWidget {
     Key? key,
     required this.duration,
     required this.position,
-    this.bufferedPosition = Duration.zero,
     this.onChanged,
     this.onChangeEnd,
-  }) : super(key: key);
+  })  : bufferedPosition = Duration.zero,
+        super(key: key);
 
   @override
   State<_SeekBar> createState() => _SeekBarState();
@@ -311,8 +310,6 @@ class _SeekBarState extends State<_SeekBar> {
     String s = intl.NumberFormat('00').format(duration.inSeconds % 60);
     return '$h$m$s';
   }
-
-  Duration get _remaining => widget.duration - widget.position;
 }
 
 class HiddenThumbComponentShape extends SliderComponentShape {

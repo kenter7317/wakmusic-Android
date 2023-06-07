@@ -105,8 +105,8 @@ class RecPlaylist extends StatelessWidget {
               const SizedBox(width: 4),
               ExtendedImage.network(
                 '${API.static.url}/playlist/icon/round/'
-                '${playlist.image.name}.png'
-                '?v=${playlist.image.version}',
+                '${playlist.key}.png'
+                '?v=${playlist.image.round}',
                 fit: BoxFit.cover,
                 shape: BoxShape.circle,
                 width: 48,

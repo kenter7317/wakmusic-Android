@@ -110,10 +110,8 @@ class SongTile extends StatelessWidget {
     if (song == null) {
       return _buildSkeleton(context);
     } else {
-      SelectSongProvider selectedList =
-          Provider.of<SelectSongProvider>(context);
-      KeepViewModel viewModel =
-          Provider.of<KeepViewModel>(context); /* for test */
+      final selectedList = Provider.of<SelectSongProvider>(context);
+      final viewModel = Provider.of<KeepViewModel>(context); /* for test */
       AudioProvider audioProvider = Provider.of<AudioProvider>(context);
       NavProvider navProvider = Provider.of<NavProvider>(context);
       bool isSelected = selectedList.list.contains(song);
@@ -229,7 +227,7 @@ class SongTile extends StatelessWidget {
                 SizedBox(width: tileType.padding['middle']),
                 if (tileType.showViews)
                   Text(
-                    NumberFormat('###,###,###회').format(song!.metadata.views),
+                    NumberFormat('###,###,###회').format(song!.display),
                     style: WakText.num12L,
                     textAlign: TextAlign.right,
                   ),

@@ -48,8 +48,8 @@ class UserPlaylist extends Playlist {
       key: json['key'],
       title: json['title'],
       createAt: msEpoch(json['createAt']),
-      creator: json['user'],
-      image: json['image'],
+      creator: Creator.fromJson(json['user']),
+      image: PlaylistImage.fromJson(json['image']),
       songs: (json['songs'] as List).map((e) => Song.fromJson(e)).toList(),
     );
   }
@@ -57,7 +57,7 @@ class UserPlaylist extends Playlist {
   @override
   UserPlaylist copyWith({
     String? title,
-    PlaylistImage? image,
+    covariant PlaylistImage? image,
     List<Song>? songs,
   }) {
     return UserPlaylist(

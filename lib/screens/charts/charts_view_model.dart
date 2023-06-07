@@ -11,6 +11,7 @@ class ChartsViewModel extends ChangeNotifier {
 
   ChartsViewModel() {
     _charts = {};
+    _updatedTime = {};
     getCharts();
   }
 

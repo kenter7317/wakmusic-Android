@@ -171,8 +171,9 @@ class KeepView extends StatelessWidget {
     SelectSongProvider selectedLike = Provider.of<SelectSongProvider>(context);
     return GestureDetector(
       onTap: () async {
-        if (await _canTap(context, viewModel, selectedPlaylist, selectedLike))
+        if (await _canTap(context, viewModel, selectedPlaylist, selectedLike)) {
           onTap();
+        }
       },
       behavior: behavior,
       child: child,

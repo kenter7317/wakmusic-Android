@@ -161,6 +161,7 @@ class ArtistsListView extends StatelessWidget {
                   ),
                 );
               }
+              return null;
             },
           ),
         ),

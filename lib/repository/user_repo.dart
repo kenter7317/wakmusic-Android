@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -78,7 +79,7 @@ class UserRepository {
       await API.user.setProfile(profile: profile, token: token);
       return true;
     } catch (e) {
-      print(e);
+      dev.log('$e');
       rethrow;
     }
   }
@@ -93,7 +94,7 @@ class UserRepository {
       await API.user.setUsername(username: name, token: token);
       return true;
     } catch (e) {
-      print(e);
+      dev.log('$e');
       rethrow;
     }
   }

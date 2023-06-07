@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
 
-import 'package:audio_service/audio_handler.dart';
 import 'package:audio_service/models/enums.dart';
 import 'package:audio_service/player/youtube_audio_player.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +33,9 @@ class WebViewEventHandler {
         });
         this.controller.init(controller);
       },
-      onConsoleMessage: (controller, msg) {
-        log(msg.toString());
-      },
+      // onConsoleMessage: (controller, msg) {
+      //   log(msg.toString());
+      // },
     );
   }
 

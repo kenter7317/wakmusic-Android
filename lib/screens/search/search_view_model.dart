@@ -11,7 +11,7 @@ class SearchViewModel extends ChangeNotifier {
   List<String> _history = [];
   String _text = '';
   late Map<SearchType, Future<List<Song>>> _resultLists;
-  
+
   SearchStatus get curStatus => _status;
   List<String> get history => _history;
   String get text => _text;
@@ -26,7 +26,11 @@ class SearchViewModel extends ChangeNotifier {
     _text = keyword;
     for (SearchType type in SearchType.values) {
       if (type == SearchType.ids) continue;
-      _resultLists[type] = API.songs.search(type: type, sort: AlbumType.popular, keyword: keyword);
+      _resultLists[type] = API.songs.search(
+        type: type,
+        sort: AlbumType.popular,
+        keyword: keyword,
+      );
     }
     _status = SearchStatus.after;
     addHistory(keyword);
@@ -42,7 +46,7 @@ class SearchViewModel extends ChangeNotifier {
     _text = text;
     notifyListeners();
   }
-  
+
   Future<void> getHistory() async {
     final prefs = await SharedPreferences.getInstance();
     _history = prefs.getStringList('history') ?? _history;

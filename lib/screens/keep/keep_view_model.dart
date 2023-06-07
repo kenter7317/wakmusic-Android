@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wakmusic/models_v2/playlist/playlist.dart';
@@ -6,7 +8,6 @@ import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/models_v2/user.dart';
 import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/services/apis/api.dart';
-import 'package:wakmusic/services/apis/user.dart';
 import 'package:wakmusic/services/login.dart';
 
 enum LoginStatus { before, after }
@@ -17,7 +18,6 @@ class KeepViewModel with ChangeNotifier {
   late User _user;
   LoginStatus _loginStatus = LoginStatus.before;
   EditStatus _editStatus = EditStatus.none;
-  String? _prevKeyword;
   late final UserRepository _repo;
   late final Future<String> _version;
   late final List<Profile> profiles;
@@ -74,7 +74,7 @@ class KeepViewModel with ChangeNotifier {
         case WakError.loginCancelled:
           return true;
         default:
-          print(e);
+          log('$e');
           return false;
       }
     }

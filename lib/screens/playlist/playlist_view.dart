@@ -227,8 +227,8 @@ class PlaylistView extends StatelessWidget {
         children: [
           ExtendedImage.network(
             '${API.static.url}/playlist/'
-            '${(playlist is Reclist) ? 'icon/square/' : ''}${playlist.image.name}.png'
-            '?v=${playlist.image.version}',
+            '${(playlist is Reclist) ? 'icon/square/${playlist.key}' : playlist.image.name}.png'
+            '?v=${(playlist is Reclist) ? playlist.image.square : playlist.image.version}',
             fit: BoxFit.cover,
             shape: BoxShape.rectangle,
             width: 140,

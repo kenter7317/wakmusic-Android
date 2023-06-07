@@ -128,7 +128,7 @@ class AudioService {
   }
 
   static Future<void> stop() async {
-    print("WakMusicFlutter: AudioService.stop() called");
+    // log("WakMusicFlutter: AudioService.stop() called");
     await AudioServicePlatform.instance.stopService();
   }
 }
@@ -168,14 +168,14 @@ class _HandlerCallbacks extends AudioHandlerCallbacks {
 
   @override
   Future<void> onNotiDeleted() async {
-    print("WakMusicFlutter: onNotiDeleted() called");
+    // log("WakMusicFlutter: onNotiDeleted() called");
     (await handlerFuture).stop();
     AudioService.stop();
   }
 
   @override
   Future<void> onTaskRemoved() async {
-    print("WakMusicFlutter: onTaskRemoved() called");
+    // log("WakMusicFlutter: onTaskRemoved() called");
     (await handlerFuture).stop();
     AudioService.stop();
   }

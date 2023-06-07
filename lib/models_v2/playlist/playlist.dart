@@ -1,11 +1,15 @@
+import 'package:wakmusic/models_v2/image_version.dart';
 import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/utils/json.dart';
 
 export './reclist.dart';
 export './user_playlist.dart';
 
-class PlaylistImage {
+class PlaylistImage extends ImageQuery {
+  @override
   final String name;
+
+  @override
   final int version;
 
   const PlaylistImage({
@@ -25,14 +29,14 @@ abstract class Playlist {
   String get key;
   String get title;
   DateTime get createAt;
-  PlaylistImage get image;
+  ImageQuery get image;
   List<Song>? get songs;
 
   const Playlist();
 
   Playlist copyWith({
     String? title,
-    PlaylistImage? image,
+    ImageQuery? image,
     List<Song>? songs,
   });
 }
