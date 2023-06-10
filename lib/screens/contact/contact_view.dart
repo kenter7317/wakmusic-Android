@@ -487,15 +487,14 @@ class _ContactViewState extends State<ContactView> {
                     };
                     final keys = [...btnTexts.keys];
                     return _buildCheckButton(
-                      onTap: () => setState(() {
-                        _fieldTexts[1].text =
-                            (isSelected) ? '' : btnTexts[keys[idx]]!;
-                        _checkList[1] = !isSelected;
-                        _enable = _checkList
-                            .sublist(0, _about.checkN)
-                            .every((check) => check);
-                        _selectIdx = (isSelected) ? -1 : idx;
-                      }),
+                      onTap: () {
+                        if (!isSelected) {
+                          setState(() {
+                            _fieldTexts[1].text = btnTexts[keys[idx]]!;
+                            _selectIdx = idx;
+                          });
+                        }
+                      },
                       isSelected: isSelected,
                       btnText: keys[idx],
                     );
@@ -736,6 +735,11 @@ class _ContactViewState extends State<ContactView> {
                 }
                 _checkList.fillRange(0, _maxFields, false);
                 _enable = false;
+                if (_about == ContactAbout.feature) {
+                  _selectIdx = 0;
+                  _fieldTexts[1].text = 'MOBILE';
+                  _checkList[1] = true;
+                }
               });
             }
           },

@@ -1,3 +1,5 @@
+import 'package:wakmusic/models_v2/playlist/reclist.dart';
+import 'package:wakmusic/models_v2/playlist/user_playlist.dart';
 import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/services/apis/api.dart';
 
@@ -7,23 +9,22 @@ class PlaylistAPI extends API {
 
   const PlaylistAPI();
 
-  Future<List<dynamic>> get recommendedAll async {
+  Future<List<Reclist>> get recommendedAll async {
     final url = dotenv.get('API_RECOMMEND');
     final response = await request(url, method: HttpMethod.get);
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.get)) {
-      // return (jsonDecode(response.body) as List)
-      //     .map((e) => Reclist.fromJson(e))
-      //     .toList();
-      throw 'API.playlist.detail :: Update Reclist (models_v2)';
+      return (jsonDecode(response.body) as List)
+          .map((e) => Reclist.fromJson(e))
+          .toList();
     }
 
     assert(status.isError);
     throw status;
   }
 
-  Future<dynamic> recommended({
+  Future<Reclist> recommended({
     required String key,
   }) async {
     final url = dotenv.get('API_RECOMMEND');
@@ -31,8 +32,7 @@ class PlaylistAPI extends API {
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.get)) {
-      // return Reclist.fromJson(jsonDecode(response.body));
-      throw 'API.playlist.detail :: Update Reclist (models_v2)';
+      return Reclist.fromJson(jsonDecode(response.body));
     }
 
     assert(status.isError);
@@ -63,23 +63,21 @@ class PlaylistAPI extends API {
     throw status;
   }
 
-  Future<dynamic> detail({
+  Future<UserPlaylist> detail({
     required String key,
   }) async {
-    final url = dotenv.get('API_RECOMMEND');
     final response = await request('$url/$key', method: HttpMethod.get);
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.get)) {
-      // return Playlist.fromJson(jsonDecode(response.body));
-      throw 'API.playlist.detail :: Update Playlist (models_v2)';
+      return UserPlaylist.fromJson(jsonDecode(response.body));
     }
 
     assert(status.isError);
     throw status;
   }
 
-  Future<dynamic> addSongs({
+  Future<int> addSongs({
     required String key,
     required List<Song> songs,
     required String token,
@@ -94,10 +92,7 @@ class PlaylistAPI extends API {
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.post)) {
-      // return jsonDecode(response.body)['addedSongsLength'];
-      // return jsonDecode(response.body)['duplicated'];
-      // return;
-      throw 'API.playlist.addSongs :: Update required';
+      return jsonDecode(response.body)['addedSongsLength'];
     }
 
     assert(status.isError);

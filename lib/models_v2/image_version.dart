@@ -1,12 +1,12 @@
 import 'package:wakmusic/utils/json.dart';
 
 class ImageVersion {
-  final int? round;
-  final int? square;
+  final int round;
+  final int square;
 
   const ImageVersion({
-    this.round,
-    this.square,
+    this.round = 1,
+    this.square = 1,
   });
 
   factory ImageVersion.fromJson(JSON json) {
