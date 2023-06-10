@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/models_v2/playlist/playlist.dart';
 import 'package:wakmusic/models_v2/profile.dart';
 import 'package:wakmusic/utils/json.dart';
@@ -31,6 +31,7 @@ class UserPlaylist extends Playlist {
   final Creator creator;
   @override
   final PlaylistImage image;
+  @override
   final List<Song> songs;
 
   const UserPlaylist({
@@ -47,20 +48,20 @@ class UserPlaylist extends Playlist {
       key: json['key'],
       title: json['title'],
       createAt: msEpoch(json['createAt']),
-      creator: json['user'],
-      image: json['image'],
+      creator: Creator.fromJson(json['user']),
+      image: PlaylistImage.fromJson(json['image']),
       songs: (json['songs'] as List).map((e) => Song.fromJson(e)).toList(),
     );
   }
 
+  @override
   UserPlaylist copyWith({
-    String? key,
     String? title,
-    PlaylistImage? image,
+    covariant PlaylistImage? image,
     List<Song>? songs,
   }) {
     return UserPlaylist(
-      key: key ?? this.key,
+      key: key,
       title: title ?? this.title,
       createAt: createAt,
       creator: creator,

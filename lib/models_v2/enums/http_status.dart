@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:wakmusic/models_v2/enums/http_method.dart';
 
 enum HttpStatus {
@@ -31,7 +33,7 @@ enum HttpStatus {
     return values.singleWhere(
       (e) => e.statusCode == code,
       orElse: () {
-        print('Unknown Http Status Code: $code');
+        log('Unknown Http Status Code: $code');
         return unknown;
       },
     );

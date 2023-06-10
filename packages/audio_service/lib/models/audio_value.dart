@@ -1,4 +1,3 @@
-import 'package:audio_service/audio_handler.dart';
 import 'package:audio_service/models/enums.dart';
 
 class AudioMetadata {

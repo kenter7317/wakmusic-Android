@@ -2,6 +2,7 @@ import 'package:wakmusic/models/playlist.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/utils/json.dart';
 
+@Deprecated('use models_v2')
 class PlaylistDetail {
   final String? key;
   final String title;
@@ -42,6 +43,7 @@ class PlaylistDetail {
   }
 }
 
+@Deprecated('use models_v2')
 class ReclistDetail extends PlaylistDetail {
   final String id;
   final bool public;

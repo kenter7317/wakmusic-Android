@@ -1,5 +1,6 @@
 import 'package:wakmusic/utils/json.dart';
 
+@Deprecated('use models_v2')
 class FAQ {
   final String category;
   final String question;

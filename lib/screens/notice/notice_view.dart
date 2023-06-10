@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:wakmusic/models/notice.dart';
+import 'package:wakmusic/models_v2/notice.dart';
 import 'package:wakmusic/screens/notice/notice_detail_view.dart';
 import 'package:wakmusic/screens/notice/notice_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -39,8 +39,10 @@ class NoticeView extends StatelessWidget {
               builder: (_, snapshot) => ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 itemCount: snapshot.data?.length ?? 5,
-                itemBuilder: (context, idx) =>
-                    _buildNotice(context, snapshot.data?[idx]),
+                itemBuilder: (context, idx) => _buildNotice(
+                  context,
+                  snapshot.data?[idx],
+                ),
               ),
             ),
           ),

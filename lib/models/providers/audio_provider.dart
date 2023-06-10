@@ -8,7 +8,7 @@ import 'package:audio_service/models/enums.dart';
 import 'package:audio_service/player/youtube_audio_player.dart';
 import 'package:audio_service/models/audio_value.dart';
 import 'package:flutter/material.dart';
-import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/models_v2/song.dart';
 
 class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
   late final YoutubeAudioPlayer _player;
@@ -300,7 +300,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
   Future<void> swapQueueItem(int oldIdx, int newIdx) async {
     var song = _queue.removeAt(oldIdx);
     _queue.insert(newIdx, song);
-    if(oldIdx == _index) _index = newIdx;
+    if (oldIdx == _index) _index = newIdx;
     notifyListeners();
   }
 }

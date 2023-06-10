@@ -29,10 +29,15 @@ class ChartsAPI extends API {
     throw status;
   }
 
-  Future<DateTime> get updatedTime async {
+  Future<DateTime> updatedTime({
+    required ChartType type,
+  }) async {
     final url = dotenv.get('API_UPDATED');
 
-    final response = await request(url, method: HttpMethod.get);
+    final response = await request(
+      '$url/${type.name}',
+      method: HttpMethod.get,
+    );
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.get)) {

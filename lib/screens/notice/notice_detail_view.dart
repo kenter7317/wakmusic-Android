@@ -1,8 +1,8 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:wakmusic/models/notice.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/models_v2/notice.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/header.dart';
@@ -77,27 +77,25 @@ class NoticeDetailView extends StatelessWidget {
                       ),
                     ),
                   ]
-                      .followedBy(
-                        notice.images.map(
-                          (image) => Padding(
-                            padding: EdgeInsets.only(
-                                bottom: (image != notice.images.last) ? 20 : 0),
-                            child: ExtendedImage.network(
-                              '$staticBaseUrl/notice/$image',
-                              fit: BoxFit.cover,
-                              loadStateChanged: (state) {
-                                if (state.extendedImageLoadState !=
-                                    LoadState.completed) {
-                                  return SkeletonBox(
-                                    child: AspectRatio(
+                    .followedBy(
+                      notice.images.map(
+                        (image) => Padding(
+                          padding: EdgeInsets.only(bottom: (image != notice.images.last) ? 20 : 0)),
+                          child: ExtendedImage.network(
+                            '${API.static.url}/notice/$image',
+                            fit: BoxFit.cover,
+                            loadStateChanged: (state) {
+                              if (state.extendedImageLoadState !=
+                                  LoadState.completed) {
+                                return SkeletonBox(
+                                  child: AspectRatio(
                                       aspectRatio: 1 / 1,
-                                      child: Container(color: WakColor.grey200),
-                                    ),
-                                  );
-                                }
-                                return null;
-                              },
-                            ),
+                                      child:
+                                          Container(color: WakColor.grey200)),
+                                );
+                              }
+                              return null;
+                            },
                           ),
                         ),
                       )

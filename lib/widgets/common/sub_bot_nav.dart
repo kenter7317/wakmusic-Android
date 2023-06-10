@@ -134,7 +134,7 @@ class _SubBotNavState extends State<SubBotNav> {
           botNav.subChange(0);
           Navigator.push(
             botNav.pageContext,
-            MaterialPageRoute(builder: (context) => Player()),
+            MaterialPageRoute(builder: (context) => const Player()),
           );
         }
       },

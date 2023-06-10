@@ -39,7 +39,7 @@ class SongsAPI extends API {
   }) async {
     final url = dotenv.get('API_SEARCH');
     final response = await request(
-      '$url/search'
+      '$url'
       '?type=${type.name}'
       '&sort=${sort.name}'
       '&keyword=$keyword',
