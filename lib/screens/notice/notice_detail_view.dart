@@ -72,15 +72,16 @@ class NoticeDetailView extends StatelessWidget {
                       padding: const EdgeInsets.all(20),
                       child: Text(
                         notice.mainText,
-                        style: WakText.txt14MH.copyWith(color: WakColor.grey900),
+                        style:
+                            WakText.txt14MH.copyWith(color: WakColor.grey900),
                         maxLines: 40,
                       ),
                     ),
                   ]
-                    .followedBy(
-                      notice.images.map(
+                      .followedBy(notice.images.map(
                         (image) => Padding(
-                          padding: EdgeInsets.only(bottom: (image != notice.images.last) ? 20 : 0)),
+                          padding: EdgeInsets.only(
+                              bottom: (image != notice.images.last) ? 20 : 0),
                           child: ExtendedImage.network(
                             '${API.static.url}/notice/$image',
                             fit: BoxFit.cover,
@@ -98,7 +99,7 @@ class NoticeDetailView extends StatelessWidget {
                             },
                           ),
                         ),
-                      )
+                      ))
                       .toList(),
                 ),
               ),
