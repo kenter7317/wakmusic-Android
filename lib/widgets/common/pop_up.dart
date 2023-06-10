@@ -4,19 +4,29 @@ import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 
-enum PopUpType { txtOneBtn, txtTwoBtn, contentBtn }
+enum PopUpType {
+  txtOneBtn('', '확인'),
+  txtTwoBtn('취소', '확인'),
+  contentBtn('다시보지 않기', '닫기');
+
+  const PopUpType(this.negText, this.posText);
+
+  final String negText, posText;
+}
 
 class PopUp extends StatelessWidget {
   const PopUp({
     super.key,
     required this.type,
     this.msg,
+    this.negText,
+    this.posText,
     this.negFunc,
     this.posFunc,
   });
 
   final PopUpType type;
-  final String? msg;
+  final String? msg, negText, posText;
   final void Function()? negFunc;
   final void Function()? posFunc;
 
@@ -37,7 +47,7 @@ class PopUp extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(40, 60, 40, 32),
               child: Text(
                 msg ?? '',
-                maxLines: 4,
+                maxLines: 10,
                 style: WakText.txt18M,
                 textAlign: TextAlign.center,
               ),
@@ -59,11 +69,10 @@ class PopUp extends StatelessWidget {
             child: Row(
               children: [
                 if (type != PopUpType.txtOneBtn)
-                  _buildButton(context, negFunc, false,
-                      (type == PopUpType.contentBtn) ? '다시보지 않기' : '취소'),
+                  _buildButton(
+                      context, negFunc, false, negText ?? type.negText),
                 if (type != PopUpType.txtOneBtn) const SizedBox(width: 8),
-                _buildButton(context, posFunc, true,
-                    (type == PopUpType.contentBtn) ? '닫기' : '확인'),
+                _buildButton(context, posFunc, true, posText ?? type.posText),
               ],
             ),
           ),
