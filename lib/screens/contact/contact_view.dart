@@ -474,14 +474,14 @@ class _ContactViewState extends State<ContactView> {
                     bool isSelected = (_selectIdx == idx);
                     List<String> btnTexts = ['모바일 앱', 'PC 웹'];
                     return _buildCheckButton(
-                      onTap: () => setState(() {
-                        _fieldTexts[1].text = (isSelected) ? '' : btnTexts[idx];
-                        _checkList[1] = !isSelected;
-                        _enable = _checkList
-                            .sublist(0, _about.checkN)
-                            .every((check) => check);
-                        _selectIdx = (isSelected) ? -1 : idx;
-                      }),
+                      onTap: () {
+                        if (!isSelected) {
+                          setState(() {
+                            _fieldTexts[1].text = btnTexts[idx];
+                            _selectIdx = idx;
+                          });
+                        }
+                      },
                       isSelected: isSelected,
                       btnText: btnTexts[idx],
                     );
@@ -722,6 +722,11 @@ class _ContactViewState extends State<ContactView> {
                 }
                 _checkList.fillRange(0, _maxFields, false);
                 _enable = false;
+                if (_about == ContactAbout.feature) {
+                  _selectIdx = 0;
+                  _fieldTexts[1].text = '모바일 앱';
+                  _checkList[1] = true;
+                }
               });
             }
           },
