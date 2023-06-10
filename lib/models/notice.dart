@@ -24,8 +24,7 @@ class Notice {
         id: json['id'],
         category: json['category'],
         title: json['title'],
-        mainText: json['main_text'] ??
-            '공지사항 내용이 나옵니다.\n위아래 여백에 맞춰 답변 길이가 유동적으로 바뀝니다.\n\n자주 묻는 질문 답변이 나옵니다.\n위아래 여백에 맞춰 답변 길이가 유동적으로 바뀝니다.', // for test
+        mainText: json['main_text'],
         images:
             (json['images'] as List).map((image) => image as String).toList(),
         createAt: DateTime.fromMillisecondsSinceEpoch(json['create_at']),

@@ -65,6 +65,9 @@ dependencies:
   file_picker: ^5.2.10
   video_thumbnail: ^0.5.3
   mime: ^1.0.4
+  amplify_auth_cognito: ^1.0.1
+  amplify_storage_s3: ^1.0.1
+  amplify_flutter: ^1.0.1
   path_provider: ^2.0.15
   flutter_oss_licenses: ^2.0.1
   flutter_dotenv: ^5.0.2

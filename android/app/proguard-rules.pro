@@ -7,4 +7,6 @@
 -keep class io.flutter.plugins.**  { *; }
 -keep class com.waktaverse.music.** { *; }
 -keep class com.waktaverse.music.audio_service.** { *; }
+-keep class kotlinx.coroutines.android.** { *; }
+-keep class kotlinx.coroutines.core.** { *; }
 -dontwarn io.flutter.embedding.**
