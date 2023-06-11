@@ -70,7 +70,9 @@ class PlaylistViewModel with ChangeNotifier {
   }
 
   void removeSongs(List<Song> songs) async {
-    songs.map((e) => tempsongs.remove(e));
+    for (var song in songs) {
+      tempsongs.remove(song);
+    }
     await applySongs(true);
     print(tempsongs.length);
     _status = EditStatus.none;

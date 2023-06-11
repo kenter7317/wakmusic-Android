@@ -453,6 +453,11 @@ class _SubBotNavState extends State<SubBotNav> {
                     } else {
                       keepViewModel.deleteLikeSongs(selProvider.list);
                     }
+                    if (audioProvider.isEmpty) {
+                      navProvider.subSwitchForce(false);
+                    } else {
+                      navProvider.subChange(1);
+                    }
                   } else {
                     for (var list in selListProvider.list) {
                       keepViewModel.removeList(list);
