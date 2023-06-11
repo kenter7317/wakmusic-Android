@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/main.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wakmusic/repository/s3_repo.dart';
+import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/services/etc_repo.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
@@ -27,12 +29,13 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     _controller = AnimationController(vsync: this);
 
+    S3Repository().configure();
     Provider.of<AudioProvider>(context, listen: false).init();
     Provider.of<KeepViewModel>(context, listen: false).getUser();
   }
 
   void _preRunBehavior() async {
-    if(!await EtcRepository().appAuthorityCheck()){
+    if (!await EtcRepository().appAuthorityCheck()) {
       await _showDialog();
     }
     _navigateToHomeScreen();
@@ -43,15 +46,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         context: context,
         builder: (BuildContext context) {
           return const AppAuthorityPopUp();
-        }
-    );
+        });
   }
 
   void _navigateToHomeScreen() {
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Main())
-    );
+        context, MaterialPageRoute(builder: (context) => const Main()));
   }
 
   @override
@@ -69,14 +69,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         child: Column(
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-            Lottie.asset(
-              'assets/lottie/splash_logo_main.json',
-              controller: _controller,
-              width: MediaQuery.of(context).size.width * 5 / 12,
-              onLoaded: (composition) => _controller
-                ..duration = composition.duration
-                ..forward().whenComplete(() => _preRunBehavior())
-            ),
+            Lottie.asset('assets/lottie/splash_logo_main.json',
+                controller: _controller,
+                width: MediaQuery.of(context).size.width * 5 / 12,
+                onLoaded: (composition) => _controller
+                  ..duration = composition.duration
+                  ..forward().whenComplete(() => _preRunBehavior())),
           ],
         ),
       ),

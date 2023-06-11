@@ -1,10 +1,15 @@
 import 'dart:developer';
 
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:wakmusic/repository/s3_repo.dart';
+import 'package:wakmusic/screens/keep/keep_view_model.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/header.dart';
@@ -50,6 +55,7 @@ class _ContactViewState extends State<ContactView> {
   late final List<ScrollController> _scrolls;
   late final List<FocusNode> _focusNodes;
   late final List<bool> _checkList;
+  final S3Repository _repo = S3Repository();
 
   @override
   void initState() {
@@ -98,7 +104,10 @@ class _ContactViewState extends State<ContactView> {
     FilePickerStatus.done;
     if (result != null) {
       File file = File(result.files.single.path!);
-      if (file.lengthSync() / (1024 * 1024) > 100) {
+      final storedSize = _files.isNotEmpty
+          ? _files.map((f) => f.lengthSync()).reduce((o, n) => o + n)
+          : 0;
+      if ((file.lengthSync() + storedSize) / (1024 * 1024) > 100) {
         showToastWidget(
           context: context,
           position: const StyledToastPosition(
@@ -474,18 +483,22 @@ class _ContactViewState extends State<ContactView> {
                   ),
                   itemBuilder: (_, idx) {
                     bool isSelected = (_selectIdx == idx);
-                    List<String> btnTexts = ['모바일 앱', 'PC 웹'];
+                    Map<String, String> btnTexts = {
+                      '모바일 앱': 'MOBILE',
+                      'PC 웹': 'PC',
+                    };
+                    final keys = [...btnTexts.keys];
                     return _buildCheckButton(
-                      onTap: () => setState(() {
-                        _fieldTexts[1].text = (isSelected) ? '' : btnTexts[idx];
-                        _checkList[1] = !isSelected;
-                        _enable = _checkList
-                            .sublist(0, _about.checkN)
-                            .every((check) => check);
-                        _selectIdx = (isSelected) ? -1 : idx;
-                      }),
+                      onTap: () {
+                        if (!isSelected) {
+                          setState(() {
+                            _fieldTexts[1].text = btnTexts[keys[idx]]!;
+                            _selectIdx = idx;
+                          });
+                        }
+                      },
                       isSelected: isSelected,
-                      btnText: btnTexts[idx],
+                      btnText: keys[idx],
                     );
                   },
                 ),
@@ -724,6 +737,11 @@ class _ContactViewState extends State<ContactView> {
                 }
                 _checkList.fillRange(0, _maxFields, false);
                 _enable = false;
+                if (_about == ContactAbout.feature) {
+                  _selectIdx = 0;
+                  _fieldTexts[1].text = 'MOBILE';
+                  _checkList[1] = true;
+                }
               });
             }
           },
@@ -783,19 +801,7 @@ class _ContactViewState extends State<ContactView> {
                     builder: (_) => PopUp(
                       type: PopUpType.txtTwoBtn,
                       msg: '작성하신 내용으로 등록하시겠습니까?',
-                      posFunc: () => showModal(
-                        context: context,
-                        builder: (_) => const PopUp(
-                          type: PopUpType.txtOneBtn,
-                          msg: '문의가 등록되었습니다.\n도움을 주셔서 감사합니다.',
-                        ),
-                      ).whenComplete(() {
-                        // send inquiry
-                        for (int i = 0; i < _maxFields; i++) {
-                          log('${i}th field: "${_fieldTexts[i].text}"');
-                        }
-                        Navigator.pop(context);
-                      }),
+                      posFunc: () => _submit(context),
                     ),
                   );
                 }
@@ -818,6 +824,57 @@ class _ContactViewState extends State<ContactView> {
         ],
       ),
     );
+  }
+
+  Future<void> _submit(BuildContext context) async {
+    final user = Provider.of<KeepViewModel>(context, listen: false).user;
+    String msg = '';
+    switch (_about) {
+      case ContactAbout.bug:
+        final queue = await Future.wait(
+          _files.map((e) => _repo.uploadStorage(e)),
+        );
+        msg = await API.suggest.bugReport(
+          userId: user.id,
+          nickname: _fieldTexts[1].text,
+          attaches: queue,
+          detailContent: _fieldTexts[0].text,
+        );
+        break;
+      case ContactAbout.feature:
+        msg = await API.suggest.feature(
+          userId: user.id,
+          platform: _fieldTexts[1].text,
+          detailContent: _fieldTexts[0].text,
+        );
+        break;
+      case ContactAbout.addSong:
+      case ContactAbout.editSong:
+        msg = await API.suggest.music(
+          userId: user.id,
+          update: _about == ContactAbout.editSong,
+          artist: _fieldTexts[0].text,
+          title: _fieldTexts[1].text,
+          youtubeLink: _fieldTexts[2].text,
+          detailContent: _fieldTexts[3].text,
+        );
+        break;
+      case ContactAbout.chart:
+        msg = await API.suggest.weekly(
+          userId: user.id,
+          detailContent: _fieldTexts[0].text,
+        );
+        break;
+      default:
+        break;
+    }
+    showModal(
+      context: context,
+      builder: (_) => PopUp(
+        type: PopUpType.txtOneBtn,
+        msg: msg,
+      ),
+    ).whenComplete(() => Navigator.pop(context));
   }
 }
 

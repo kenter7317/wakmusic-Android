@@ -61,22 +61,27 @@ class NoticeDetailView extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView(
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      notice.mainText,
-                      style: WakText.txt14MH.copyWith(color: WakColor.grey900),
-                      maxLines: 40,
+              child: NotificationListener<OverscrollIndicatorNotification>(
+                onNotification: (notification) {
+                  notification.disallowIndicator();
+                  return true;
+                },
+                child: ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        notice.mainText,
+                        style:
+                            WakText.txt14MH.copyWith(color: WakColor.grey900),
+                        maxLines: 40,
+                      ),
                     ),
-                  ),
-                ]
-                    .followedBy(
-                      notice.images.map(
+                  ]
+                      .followedBy(notice.images.map(
                         (image) => Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
+                          padding: EdgeInsets.only(
+                              bottom: (image != notice.images.last) ? 20 : 0),
                           child: ExtendedImage.network(
                             '${API.static.url}/notice/$image',
                             fit: BoxFit.cover,
@@ -94,9 +99,9 @@ class NoticeDetailView extends StatelessWidget {
                             },
                           ),
                         ),
-                      ),
-                    )
-                    .toList(),
+                      ))
+                      .toList(),
+                ),
               ),
             ),
           ],
