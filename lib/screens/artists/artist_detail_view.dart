@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models_v2/artist.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -12,6 +13,7 @@ import 'package:flip_card/flip_card.dart';
 import 'package:wakmusic/utils/txt_size.dart';
 import 'package:wakmusic/widgets/common/play_btns.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
+import 'package:wakmusic/widgets/exitable.dart';
 
 class ArtistView extends StatefulWidget {
   const ArtistView({super.key, required this.artist});
@@ -54,69 +56,80 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     double artistImgRatio = (MediaQuery.of(context).size.width - 48) / 327;
     final artist = widget.artist;
-    return Scaffold(
-      body: Stack(
-        children: [
-          albumsTabView(tabController),
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                stops: [...artist.colors.map((e) => e.stop)],
-                colors: [
-                  ...artist.colors.map((e) => e.color.withOpacity(e.opacity))
+    return Exitable(
+      onExitable: (scope) {
+        if (scope == ExitScope.artistDetail) {
+          ExitScope.remove = ExitScope.artistDetail;
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            albumsTabView(tabController),
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  stops: [...artist.colors.map((e) => e.stop)],
+                  colors: [
+                    ...artist.colors.map((e) => e.color.withOpacity(e.opacity))
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+            Positioned(
+              top: () {
+                final ctrl = scrollControllers[tabController.index];
+                return ctrl.hasClients ? -ctrl.position.pixels : 0.0;
+              }(),
+              child: Opacity(
+                opacity: opacity,
+                child: artistInfo(context),
+              ),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).viewPadding.top + 8,
+              left: 20,
+              child: GestureDetector(
+                onTap: () {
+                  ExitScope.remove = ExitScope.artistDetail;
+                  Navigator.pop(context);
+                },
+                child: SvgPicture.asset(
+                  "assets/icons/ic_32_arrow_bottom.svg",
+                  width: 32,
+                  height: 32,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).viewPadding.top +
+                    56 +
+                    () {
+                      final ctrl = scrollControllers[tabController.index];
+                      final ratio = artistImgRatio * 180 + 24;
+                      if (!ctrl.hasClients) {
+                        return ratio;
+                      }
+                      if (ratio <= ctrl.position.pixels) {
+                        return 0;
+                      }
+                      return ratio - ctrl.position.pixels;
+                    }(),
+              ),
+              child: Column(
+                children: [
+                  albumsTabBar(tabController),
+                  const PlayBtns(),
                 ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
               ),
             ),
-          ),
-          Positioned(
-            top: () {
-              final ctrl = scrollControllers[tabController.index];
-              return ctrl.hasClients ? -ctrl.position.pixels : 0.0;
-            }(),
-            child: Opacity(
-              opacity: opacity,
-              child: artistInfo(context),
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).viewPadding.top + 8,
-            left: 20,
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: SvgPicture.asset(
-                "assets/icons/ic_32_arrow_bottom.svg",
-                width: 32,
-                height: 32,
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).viewPadding.top +
-                  56 +
-                  () {
-                    final ctrl = scrollControllers[tabController.index];
-                    final ratio = artistImgRatio * 180 + 24;
-                    if (!ctrl.hasClients) {
-                      return ratio;
-                    }
-                    if (ratio <= ctrl.position.pixels) {
-                      return 0;
-                    }
-                    return ratio - ctrl.position.pixels;
-                  }(),
-            ),
-            child: Column(
-              children: [
-                albumsTabBar(tabController),
-                const PlayBtns(),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -4,37 +4,37 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 enum ExitScope {
-  @Bit(0x0001 | 1)
+  @Bit(0x0001 | 1) // in_action
   searchDuring,
 
-  @Bit(0x0002 | 2)
+  @Bit(0x0002 | 2) // pending_action
   editMode,
 
-  @Bit(0x0004 | 4)
+  @Bit(0x0004 | 4) // pending_action
   selectedSong,
 
-  @Bit(0x0008 | 8)
+  @Bit(0x0008 | 8) // pending_action
   selectedPlaylist,
 
-  @Bit(0x0010 | 16)
+  @Bit(0x0010 | 16) // pending_action
   playerPlaylist,
 
-  @Bit(0x0020 | 32)
+  @Bit(0x0020 | 32) // pending_action
   player,
 
-  @Bit(0x0040 | 64)
+  @Bit(0x0040 | 64) // in_action
   openedPageRouteBuilder,
 
-  @Bit(0x0080 | 128)
+  @Bit(0x0080 | 128) // required_confirm
   suggestion,
 
-  @Bit(0x0100 | 256)
+  @Bit(0x0100 | 256) // in_action
   artistDetail,
 
-  @Bit(0x0200 | 512)
+  @Bit(0x0200 | 512) // in_action
   searchAfter,
 
-  @Bit(0x0400 | 1024)
+  @Bit(0x0400 | 1024) // in_action
   pageIsNotHome,
 
   @Bit(0x0800 | 2048)
