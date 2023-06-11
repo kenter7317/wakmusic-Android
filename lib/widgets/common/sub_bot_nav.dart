@@ -8,9 +8,14 @@ import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models/providers/tab_provider.dart';
+import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/screens/artists/artists_view_model.dart';
+import 'package:wakmusic/screens/charts/charts_view_model.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/player/player_playlist_view.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart' as playlist;
+import 'package:wakmusic/services/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/utils/number_format.dart';
@@ -348,6 +353,9 @@ class _SubBotNavState extends State<SubBotNav> {
     final audioProvider = Provider.of<AudioProvider>(context);
     final keepViewModel = Provider.of<KeepViewModel>(context);
     final playListViewModel = Provider.of<playlist.PlaylistViewModel>(context);
+    final chartViewModel = Provider.of<ChartsViewModel>(context);
+    final artistViewModel = Provider.of<ArtistsViewModel>(context);
+    final tabProvider = Provider.of<TabProvider>(context);
 
     return Stack(
       clipBehavior: Clip.none,
@@ -361,8 +369,25 @@ class _SubBotNavState extends State<SubBotNav> {
             children: [
               if (type.showSelect)
                 selProvider.selNum != selProvider.maxSel
-                    ? editBarBtn("ic_32_check_off", "전체선택",
-                        onTap: () => selProvider.addAllSong([])) // 수정
+                    ? editBarBtn("ic_32_check_off", "전체선택", onTap: () async {
+                        switch (navProvider.curIdx) {
+                          case 1:
+                            List<Song>? songlist = await chartViewModel
+                                .charts[ChartType.values[tabProvider.curIdx]];
+                            selProvider.addAllSong(
+                                songlist!.whereType<Song>().toList());
+                            break;
+                          case 3:
+                            selProvider.addAllSong(artistViewModel
+                                .albums[AlbumType.values[tabProvider.curIdx]]!
+                                .whereType<Song>()
+                                .toList());
+                            break;
+                          default:
+                            selProvider.addAllSong(playListViewModel.tempsongs.whereType<Song>().toList());
+                            break;
+                        }
+                      })
                     : editBarBtn("ic_32_check_on", "전체선택해제",
                         onTap: selProvider.clearList),
               if (type.showSongAdd)
@@ -422,7 +447,8 @@ class _SubBotNavState extends State<SubBotNav> {
               if (type.showDelete)
                 editBarBtn("ic_32_delete", "삭제", onTap: () {
                   if (selProvider.list.isNotEmpty) {
-                    if (playListViewModel.curStatus == playlist.EditStatus.editing) {
+                    if (playListViewModel.curStatus ==
+                        playlist.EditStatus.editing) {
                       playListViewModel.removeSongs(selProvider.list);
                     } else {
                       keepViewModel.deleteLikeSongs(selProvider.list);

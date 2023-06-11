@@ -8,6 +8,7 @@ import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models/song.dart';
 import 'package:wakmusic/screens/keep/keep_view.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:intl/intl.dart';
@@ -124,6 +125,7 @@ class SongTile extends StatelessWidget {
           Provider.of<KeepViewModel>(context); /* for test */
       AudioProvider audioProvider = Provider.of<AudioProvider>(context);
       NavProvider navProvider = Provider.of<NavProvider>(context);
+      PlaylistViewModel playlistViewModel = Provider.of<PlaylistViewModel>(context);
       bool isSelected = selectedList.contains(song!);
       return GestureDetector(
         onTap: () {
@@ -136,16 +138,22 @@ class SongTile extends StatelessWidget {
               }
             } else {
               switch (navProvider.curIdx) {
+                case 0:
+                  selectedList.setMaxSel(playlistViewModel.songs.length);
+                  navProvider.subChange(4);
+                  break;
                 case 1:
                   navProvider.subChange(4);
                   break;
                 case 2:
+                  selectedList.setMaxSel(playlistViewModel.songs.length);
                   navProvider.subChange(9);
                   break;
                 case 3:
                   navProvider.subChange(4);
                   break;
                 case 4:
+                  selectedList.setMaxSel(playlistViewModel.songs.length);
                   navProvider.subChange(5);
                   break;
                 default:

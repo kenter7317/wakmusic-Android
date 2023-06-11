@@ -31,7 +31,10 @@ class PlaylistView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
+    NavProvider navProvider = Provider.of<NavProvider>(context);
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
     SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
+
     return DismissibleView(
       onDismissed: () => _canPop(
         context,
@@ -47,6 +50,11 @@ class PlaylistView extends StatelessWidget {
           ),
         );
         viewModel.title = null;
+        if (audioProvider.isEmpty) {
+          navProvider.subSwitchForce(false);
+        } else {
+          navProvider.subChange(1);
+        }
       }),
       maxTransformValue: 0.1,
       dismissThresholds: const {
@@ -333,6 +341,7 @@ class PlaylistView extends StatelessWidget {
 
   Widget _buildSonglist(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
+
     return (viewModel.curStatus != EditStatus.editing)
         ? SliverList(
             delegate: SliverChildBuilderDelegate(

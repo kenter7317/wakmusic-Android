@@ -5,7 +5,7 @@ class SelectSongProvider extends ChangeNotifier {
   final List<Song> _list = [];
   List<Song> get list => _list;
 
-  int _maxSel = -1; // 수정 (임시로 max 설정)
+  int _maxSel = -1;
   int get maxSel => _maxSel;
 
   int get selNum => _list.length;
@@ -20,12 +20,14 @@ class SelectSongProvider extends ChangeNotifier {
   }
 
   void addSong(Song song) {
-    _list.add(song);
+    if (!_list.contains(song)) {
+      _list.add(song);
+    }
     notifyListeners();
   }
 
   void addAllSong(List<Song> songs) {
-    _list.addAll(songs);
+    _list.addAll(songs.where((element) => !_list.contains(element)).toList());
     notifyListeners();
   }
 
