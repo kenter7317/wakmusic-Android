@@ -1,5 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';

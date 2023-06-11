@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/models_v2/song.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,12 +8,12 @@ import 'dart:math';
 enum SearchStatus { before, during, after }
 
 class SearchViewModel extends ChangeNotifier {
-  SearchStatus _status = SearchStatus.before;
+  SearchStatus __status = SearchStatus.before;
   List<String> _history = [];
   String _text = '';
   late Map<SearchType, Future<List<Song>>> _resultLists;
 
-  SearchStatus get curStatus => _status;
+  SearchStatus get curStatus => __status;
   List<String> get history => _history;
   String get text => _text;
   Map<SearchType, Future<List<Song>>> get resultLists => _resultLists;
@@ -20,6 +21,24 @@ class SearchViewModel extends ChangeNotifier {
   SearchViewModel() {
     _resultLists = {};
     getHistory();
+  }
+
+  set _status(SearchStatus s) {
+    switch (s) {
+      case SearchStatus.after:
+        ExitScope.add = ExitScope.searchAfter;
+        ExitScope.remove = ExitScope.searchDuring;
+        break;
+      case SearchStatus.during:
+        ExitScope.add = ExitScope.searchDuring;
+        break;
+      case SearchStatus.before:
+        _text = '';
+        ExitScope.remove = ExitScope.searchDuring;
+        ExitScope.remove = ExitScope.searchAfter;
+        break;
+    }
+    __status = s;
   }
 
   Future<void> search(String keyword) async {
@@ -38,7 +57,6 @@ class SearchViewModel extends ChangeNotifier {
 
   void updateStatus(SearchStatus status) {
     _status = status;
-    if (_status == SearchStatus.before) _text = '';
     notifyListeners();
   }
 

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:wakmusic/models_v2/playlist/playlist.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
 import 'package:wakmusic/services/apis/api.dart';

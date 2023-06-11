@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/screens/service_info/oss_detail_view.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/oss_licenses.dart';
 import 'package:wakmusic/widgets/common/item.dart';
+import 'package:wakmusic/widgets/exitable.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 
 class OSSView extends StatelessWidget {
@@ -12,9 +14,20 @@ class OSSView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DismissibleView(
-      onDismissed: () => Navigator.pop(context),
+      onDismissed: () {
+        ExitScope.remove = ExitScope.openedPageRouteBuilder;
+        Navigator.pop(context);
+      },
       child: Scaffold(
-        body: _buildBody(),
+        body: Exitable(
+          onExitable: (scope) {
+            if (scope == ExitScope.openedPageRouteBuilder) {
+              ExitScope.remove = ExitScope.openedPageRouteBuilder;
+              Navigator.pop(context);
+            }
+          },
+          child: _buildBody(),
+        ),
       ),
     );
   }
