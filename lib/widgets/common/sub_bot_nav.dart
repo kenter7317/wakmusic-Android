@@ -83,7 +83,7 @@ class _SubBotNavState extends State<SubBotNav> {
                   "ic_32_heart_on",
                   koreanNumberFormater(audioProvider.currentSong == null
                       ? 0
-                      : audioProvider.currentSong!.last),
+                      : audioProvider.currentSong!.last), // 수정(좋아요 연결 필요)
                   txtColor: WakColor.pink, onTap: () {
                   setState(() {
                     tempLike = !tempLike;

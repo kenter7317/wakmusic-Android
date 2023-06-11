@@ -145,22 +145,18 @@ class HomeView extends StatelessWidget {
           ),
           Expanded(
             child: GestureDetector(
-              onTap: () {
+              onTap: () async {
                 if (toplist != null) {
-                  /* play all the songs */
-                }
-              },
-              child: GestureDetector(
-                onTap: () async {
                   botNav.subChange(1);
                   botNav.subSwitchForce(true);
-                  audioProvider.addQueueItems(await viewModel.topList, override: true, autoplay: true);
-                },
-                child: Text(
-                  '전체듣기',
-                  style: WakText.txt14MH.copyWith(color: WakColor.grey25),
-                  textAlign: TextAlign.right,
-                ),
+                  audioProvider.addQueueItems(await viewModel.topList,
+                      override: true, autoplay: true);
+                }
+              },
+              child: Text(
+                '전체듣기',
+                style: WakText.txt14MH.copyWith(color: WakColor.grey25),
+                textAlign: TextAlign.right,
               ),
             ),
           ),
@@ -250,7 +246,8 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildNewListItem(BuildContext context, Song? song) {
-    AudioProvider audioProvider = Provider.of<AudioProvider>(context, listen: false);
+    AudioProvider audioProvider =
+        Provider.of<AudioProvider>(context, listen: false);
     NavProvider navProvider = Provider.of<NavProvider>(context);
     if (song == null) {
       return SizedBox(
@@ -291,8 +288,8 @@ class HomeView extends StatelessWidget {
         child: Column(
           children: [
             GestureDetector(
-              onTap: () { 
-                audioProvider.addQueueItem(song, autoplay: true); 
+              onTap: () {
+                audioProvider.addQueueItem(song, autoplay: true);
                 navProvider.subChange(1);
                 navProvider.subSwitchForce(true);
               },
