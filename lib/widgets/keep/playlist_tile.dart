@@ -87,6 +87,17 @@ class PlaylistTile extends StatelessWidget {
                 } else {
                   navProvider.subChange(1);
                 }
+              } else if (value == 0) {
+                showToastWidget(
+                  context: context,
+                  position: const StyledToastPosition(
+                    align: Alignment.bottomCenter,
+                    offset: 56,
+                  ),
+                  animation: StyledToastAnimation.slideFromBottomFade,
+                  reverseAnimation: StyledToastAnimation.fade,
+                  const ToastMsg(msg: '이미 리스트에 담긴 곡들입니다.'),
+                );
               }
               Navigator.pop(context);
             });

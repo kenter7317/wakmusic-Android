@@ -248,6 +248,7 @@ class _SubBotNavState extends State<SubBotNav> {
                             iconBtn("ic_32_close", edgePadding: false,
                                 onTap: () {
                               botNav.subSwitch();
+                              audioProvider.stop();
                               audioProvider.clear();
                             }),
                           ],
