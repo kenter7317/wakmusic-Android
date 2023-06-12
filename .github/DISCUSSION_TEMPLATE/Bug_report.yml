@@ -1,0 +1,48 @@
+title: "[Bug] : "
+labels: ["Bug_report"]
+
+body:
+  - type: input
+    id: android-version
+    attributes:
+      label: Android 버전
+      description: "사용하고 계신 기기의 Android 버전을 입력해 주세요."
+      placeholder: ex) 13
+    validations:
+      required: true
+  - type: input
+    id: phone-num
+    attributes:
+      label: 휴대폰 기종
+      description: "사용하고 계신 휴대폰 기종을 입력해 주세요."
+      placeholder: ex) Galaxy S23 Ultra
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: 로그인 플랫폼
+      description: "로그인한 방식을 선택해 주세요."
+      options:
+        - 로그인 안함
+        - Google
+        - Naver
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 버그 상세설명
+      description: |
+        버그를 상세히 설명해 주세요!
+      placeholder: |
+        ex) 이전에 어떤 행동을 한 후 해당 액션을 취하니 이런 버그가 뜸
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 첨부파일
+      description: |
+        버그 내용을 사진이나 영상으로 첨부해 주세요. 용량이 큰 경우 디스코드 URL을 첨부해 주세요
+      placeholder: |
+        ex) 사진 혹은 [http:.....]\
+    validations:
+      required: true

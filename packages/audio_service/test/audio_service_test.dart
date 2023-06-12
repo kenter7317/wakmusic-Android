@@ -36,7 +36,7 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    AudioService audioServicePlugin = AudioService();
+    // AudioService audioServicePlugin = AudioService();
     MockAudioServicePlatform fakePlatform = MockAudioServicePlatform();
     AudioServicePlatform.instance = fakePlatform;
 

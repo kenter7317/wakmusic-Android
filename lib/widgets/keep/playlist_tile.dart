@@ -3,14 +3,12 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
-import 'package:wakmusic/models/playlist.dart';
+import 'package:wakmusic/models_v2/playlist/playlist.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
-import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
-import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -63,7 +61,7 @@ class PlaylistTile extends StatelessWidget {
                   ),
                   animation: StyledToastAnimation.slideFromBottomFade,
                   reverseAnimation: StyledToastAnimation.fade,
-                  ToastMsg(msg: '${playlist?.songlist?.length}곡을 리스트에 담았습니다.'),
+                  ToastMsg(msg: '${playlist?.songs?.length}곡을 리스트에 담았습니다.'),
                 );
               }
               Navigator.pop(context);
@@ -96,8 +94,8 @@ class PlaylistTile extends StatelessWidget {
             child: Row(
               children: [
                 ExtendedImage.network(
-                  '$staticBaseUrl/playlist/${playlist!.image}.png'
-                  '?v=${playlist!.imageVersion}',
+                  '${API.static.url}/playlist/${playlist!.image.name}.png'
+                  '?v=${playlist!.image.version}',
                   fit: BoxFit.cover,
                   shape: BoxShape.rectangle,
                   width: 40,
@@ -136,7 +134,7 @@ class PlaylistTile extends StatelessWidget {
                       SizedBox(
                         height: 18,
                         child: Text(
-                          '${playlist!.songlist!.where((songId) => songId.isNotEmpty).length}곡',
+                          '${playlist!.songs!.length}곡',
                           style: WakText.txt12L,
                         ),
                       ),

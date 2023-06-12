@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wakmusic/models/playlist.dart';
+import 'package:wakmusic/models_v2/playlist/playlist.dart';
 
 class SelectPlaylistProvider extends ChangeNotifier {
   final List<Playlist> _list = [];

@@ -53,6 +53,14 @@ class Song {
       ),
     );
   }
+
+  int get display => metadata.display;
+
+  @override
+  bool operator ==(covariant Song other) => id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class SongMetadata {
@@ -62,6 +70,7 @@ class SongMetadata {
   final int? last;
 
   bool get rankable => (type != null) && (increase != null) && (last != null);
+  int get display => rankable && type != ChartType.total ? increase! : views;
 
   const SongMetadata({
     this.type,

@@ -132,7 +132,7 @@ class YoutubeAudioPlayer {
     PlaybackState? playbackState,
     YoutubeError? error,
   }) {
-    if (error != null) print('ZZZZ!!!XAFAFSDF ${error.code}');
+    if (error != null) log('Youtube Player ERROR :: ${error.code}');
     if (duration != null) {
       final metadata = AudioMetadata(
         id: _id,

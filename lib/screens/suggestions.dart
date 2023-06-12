@@ -7,7 +7,6 @@ import 'package:wakmusic/screens/faq/faq_view.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/notice/notice_view.dart';
 import 'package:wakmusic/screens/service_info/service_info_view.dart';
-import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/btn_with_icon.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
@@ -142,14 +141,14 @@ class Suggestions extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       BtnWithIcon(
-                        onTap: () { 
+                        onTap: () {
                           Navigator.push(
                             context,
                             pageRouteBuilder(page: const ServiceInfoView()),
                           );
                         },
-                        type: BtnSizeType.big, 
-                        iconName: 'ic_24_document_off', 
+                        type: BtnSizeType.big,
+                        iconName: 'ic_24_document_off',
                         btnText: '서비스 정보',
                       ),
                     ],
@@ -157,7 +156,9 @@ class Suggestions extends StatelessWidget {
                 ),
                 const Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                  child: TextWithDot(text: '왁타버스 뮤직 팀에 속한 모든 팀원들은 부아내비 (부려먹는 게 아니라 내가 비빈거다)라는 모토를 가슴에 새기고 일하고 있습니다.'),
+                  child: TextWithDot(
+                      text:
+                          '왁타버스 뮤직 팀에 속한 모든 팀원들은 부아내비 (부려먹는 게 아니라 내가 비빈거다)라는 모토를 가슴에 새기고 일하고 있습니다.'),
                 ),
               ],
             ),

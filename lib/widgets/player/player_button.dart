@@ -112,7 +112,7 @@ class PlayCircleButton extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                       color: WakColor.dark.withOpacity(0.08),
-                      offset: Offset(0, 8),
+                      offset: const Offset(0, 8),
                       blurRadius: 40,
                     ),
                   ],
@@ -182,7 +182,7 @@ class PlayerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: const [

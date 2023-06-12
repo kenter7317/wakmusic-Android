@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:internet_file/internet_file.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/error_info.dart';
@@ -31,7 +31,7 @@ class _PDFViewState extends State<PDFView> {
     super.initState();
     _pdfController = PdfController(
       document: PdfDocument.openData(
-        InternetFile.get('$staticBaseUrl/document/${widget.type.name}.pdf'),
+        InternetFile.get('${API.static.url}/document/${widget.type.name}.pdf'),
       ),
     );
   }
@@ -50,7 +50,7 @@ class _PDFViewState extends State<PDFView> {
         child: Column(
           children: [
             Header(
-              type: HeaderType.close, 
+              type: HeaderType.close,
               headerTxt: widget.type.str,
             ),
             Expanded(
@@ -63,14 +63,17 @@ class _PDFViewState extends State<PDFView> {
                       physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.vertical,
                       builders: PdfViewBuilders<DefaultBuilderOptions>(
-                        options: const DefaultBuilderOptions(loaderSwitchDuration: Duration.zero),
+                        options: const DefaultBuilderOptions(
+                            loaderSwitchDuration: Duration.zero),
                         documentLoaderBuilder: (_) => const Center(
-                          child: CircularProgressIndicator(color: WakColor.grey25),
+                          child:
+                              CircularProgressIndicator(color: WakColor.grey25),
                         ),
                         errorBuilder: (_, error) => Container(
                           alignment: Alignment.center,
                           color: WakColor.grey100,
-                          child: const ErrorInfo(errorMsg: '파일을 불러오는 데 문제가 발생했습니다.'),
+                          child: const ErrorInfo(
+                              errorMsg: '파일을 불러오는 데 문제가 발생했습니다.'),
                         ),
                       ),
                     ),

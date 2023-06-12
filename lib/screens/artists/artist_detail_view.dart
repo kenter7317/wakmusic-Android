@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-import 'package:wakmusic/models/artist.dart';
+import 'package:wakmusic/models_v2/artist.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flip_card/flip_card.dart';
@@ -41,87 +41,87 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
     double artistImgRatio = (MediaQuery.of(context).size.width - 48) / 327;
+    final artist = widget.artist;
     return Scaffold(
       body: NestedScrollView(
         controller: scrollController,
         clipBehavior: Clip.none,
         headerSliverBuilder: (context, isScrolled) => [
-          SliverStack(children: [
-            SliverAppBar(
-              pinned: true,
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              collapsedHeight: MediaQuery.of(context).viewPadding.top + 172,
-              expandedHeight: MediaQuery.of(context).viewPadding.top + 194,
-              flexibleSpace: Stack(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).viewPadding.top + 172,
-                    color: WakColor.grey100,
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).viewPadding.top + 144,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          stops: List.generate(
-                              widget.artist.colors.length,
-                              (idx) =>
-                                  double.parse(widget.artist.colors[idx][2])),
-                          colors: List.generate(
-                              widget.artist.colors.length,
-                              (idx) => Color(int.parse(
-                                      "0xFF${widget.artist.colors[idx][0]}"))
-                                  .withOpacity(
-                                      int.parse(widget.artist.colors[idx][1]) *
-                                          0.6 /
-                                          100)),
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter),
+          SliverStack(
+            children: [
+              SliverAppBar(
+                pinned: true,
+                automaticallyImplyLeading: false,
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                collapsedHeight: MediaQuery.of(context).viewPadding.top + 172,
+                expandedHeight: MediaQuery.of(context).viewPadding.top + 194,
+                flexibleSpace: Stack(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).viewPadding.top + 172,
+                      color: WakColor.grey100,
                     ),
+                    Container(
+                      height: MediaQuery.of(context).viewPadding.top + 144,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          stops: [...artist.colors.map((e) => e.stop)],
+                          colors: [
+                            ...artist.colors
+                                .map((e) => e.color.withOpacity(e.opacity))
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              MultiSliver(
+                children: [
+                  PreferredSize(
+                    preferredSize: const Size.fromHeight(48),
+                    child: SliverAppBar(
+                      pinned: true,
+                      toolbarHeight: 48,
+                      leadingWidth: 72,
+                      leading: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          viewModel.clear();
+                        },
+                        icon: Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: SvgPicture.asset(
+                            "assets/icons/ic_32_arrow_bottom.svg",
+                            width: 32,
+                            height: 32,
+                          ),
+                        ),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      expandedHeight: 72 +
+                          artistImgRatio *
+                              180, // appBar + 8 + artistImg + 16 = 80 + artistImg
+                      collapsedHeight: 48, // appBar + 8
+                      shadowColor: Colors.transparent,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: artistInfo(context),
+                      ),
+                    ),
+                  ),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: TabBarDelegate(tabController: tabController),
                   ),
                 ],
               ),
-            ),
-            MultiSliver(children: [
-              PreferredSize(
-                preferredSize: const Size.fromHeight(48),
-                child: SliverAppBar(
-                  pinned: true,
-                  toolbarHeight: 48,
-                  leadingWidth: 72,
-                  leading: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        viewModel.clear();
-                      },
-                      icon: Padding(
-                        padding: const EdgeInsets.only(left: 4),
-                        child: SvgPicture.asset(
-                          "assets/icons/ic_32_arrow_bottom.svg",
-                          width: 32,
-                          height: 32,
-                        ),
-                      )),
-                  backgroundColor: Colors.transparent,
-                  expandedHeight: 72 +
-                      artistImgRatio *
-                          180, // appBar + 8 + artistImg + 16 = 80 + artistImg
-                  collapsedHeight: 48, // appBar + 8
-                  shadowColor: Colors.transparent,
-                  flexibleSpace:
-                      FlexibleSpaceBar(background: artistInfo(context)),
-                ),
-              ),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: TabBarDelegate(tabController: tabController),
-              ),
-            ])
-          ]),
+            ],
+          ),
         ],
-        body: albumsTabView(tabController,
-            Color(int.parse("0xFF${widget.artist.colors[0][0]}"))),
+        body: albumsTabView(tabController, widget.artist.colors[0].color),
       ),
     );
   }
@@ -136,8 +136,10 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
           Row(
             children: [
               ExtendedImage.network(
-                  "https://static.wakmusic.xyz/static/artist/square/${widget.artist.id}.png",
-                  width: artistImgRatio * 140),
+                "${API.static.url}/artist/square/${widget.artist.id}.png"
+                "?v=${widget.artist.imageVersion.square}",
+                width: artistImgRatio * 140,
+              ),
               const SizedBox(width: 8),
               FlipCard(
                 controller: cardController,
@@ -170,11 +172,11 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                         top: 4,
                         right: 0,
                         child: GestureDetector(
-                            onTap: () {
-                              cardController.toggleCard();
-                            },
-                            child: SvgPicture.asset(
-                                "assets/icons/ic_24_document_off.svg")),
+                          onTap: () => cardController.toggleCard(),
+                          child: SvgPicture.asset(
+                            "assets/icons/ic_24_document_off.svg",
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -197,13 +199,12 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                             children: [
                               Text("소개글", style: WakText.txt16B),
                               GestureDetector(
-                                onTap: () {
-                                  cardController.toggleCard();
-                                },
+                                onTap: () => cardController.toggleCard(),
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 8),
                                   child: SvgPicture.asset(
-                                      "assets/icons/ic_24_document_on.svg"),
+                                    "assets/icons/ic_24_document_on.svg",
+                                  ),
                                 ),
                               ),
                             ],
@@ -211,18 +212,17 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                           const SizedBox(height: 8),
                           Expanded(
                             child: NotificationListener(
-                              onNotification: ((notification) {
+                              onNotification: (notification) {
                                 descScrollController.addListener(() {
                                   setState(() {
+                                    final pos = descScrollController.position;
                                     descScrollHeight =
-                                        (descScrollController.position.pixels /
-                                                descScrollController
-                                                    .position.maxScrollExtent) *
+                                        (pos.pixels / pos.maxScrollExtent) *
                                             (artistImgRatio * 120 - 80);
                                   });
                                 });
                                 return false;
-                              }),
+                              },
                               child: SingleChildScrollView(
                                 controller: descScrollController,
                                 scrollDirection: Axis.vertical,
@@ -231,7 +231,8 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                                   child: Text(
                                     widget.artist.description,
                                     style: WakText.txt12L.copyWith(
-                                        overflow: TextOverflow.visible),
+                                      overflow: TextOverflow.visible,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -278,24 +279,25 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
   }
 
   Widget artistInfoCard(BuildContext context) {
-    if (widget.artist.id == "woowakgood") {
+    final artist = widget.artist;
+    if (artist.id == "woowakgood") {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.artist.name,
+            artist.name,
             style: WakText.txt24B,
           ),
           Text(
-            widget.artist.id.substring(0, 1).toUpperCase() +
-                widget.artist.id.substring(1),
+            artist.id.substring(0, 1).toUpperCase() + artist.id.substring(1),
             style: WakText.txt14LS
                 .copyWith(color: WakColor.grey900.withOpacity(0.6)),
           ),
           const SizedBox(height: 24),
         ],
       );
-    } else if (widget.artist.id == "KCMDBYTSSG") {
+    }
+    if (artist.id == "KCMDBYTSSG") {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -311,7 +313,7 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                   right: 2,
                   bottom: 4,
                   child: Text(
-                    widget.artist.id,
+                    artist.id,
                     style: WakText.txt12L
                         .copyWith(color: WakColor.grey900.withOpacity(0.6)),
                   ),
@@ -323,18 +325,20 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
           Row(
             children: [
               Text(
-                widget.artist.groupKr,
+                artist.group.kr,
                 style: WakText.txt14MH,
               ),
-              if (widget.artist.graduated) Text(" · 졸업", style: WakText.txt14MH)
+              if (artist.graduated) Text(" · 졸업", style: WakText.txt14MH)
             ],
           ),
           const SizedBox(height: 12),
         ],
       );
-    } else if (getTxtSize(widget.artist.name, WakText.txt24B).width +
-            getTxtSize(widget.artist.id, WakText.txt14L).width <
-        127) {
+    }
+
+    if (127 >
+        getTxtSize(artist.name, WakText.txt24B).width +
+            getTxtSize(artist.id, WakText.txt14L).width) {
       return Column(
         children: [
           Row(
@@ -342,13 +346,13 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                widget.artist.name,
+                artist.name,
                 style: WakText.txt24B,
               ),
               const SizedBox(width: 4),
               Text(
-                widget.artist.id.substring(0, 1).toUpperCase() +
-                    widget.artist.id.substring(1),
+                artist.id.substring(0, 1).toUpperCase() +
+                    artist.id.substring(1),
                 style: WakText.txt12L
                     .copyWith(color: WakColor.grey900.withOpacity(0.6)),
               ),
@@ -358,47 +362,46 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
           Row(
             children: [
               Text(
-                widget.artist.groupKr,
+                artist.group.kr,
                 style: WakText.txt14MH,
               ),
-              if (widget.artist.graduated) Text(" · 졸업", style: WakText.txt14MH)
-            ],
-          ),
-          const SizedBox(height: 12),
-        ],
-      );
-    } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (getTxtSize(widget.artist.name, WakText.txt24B).width < 131)
-            Text(widget.artist.name, style: WakText.txt24B)
-          else if (getTxtSize(widget.artist.name, WakText.txt20B).width < 131)
-            Text(widget.artist.name, style: WakText.txt20B)
-          else
-            Text(widget.artist.name, style: WakText.txt18B),
-          Text(
-            widget.artist.id.substring(0, 1).toUpperCase() +
-                widget.artist.id.substring(1),
-            style: WakText.txt14LS
-                .copyWith(color: WakColor.grey900.withOpacity(0.6)),
-          ),
-          getTxtSize(widget.artist.name, WakText.txt20B).width < 131
-              ? const SizedBox(height: 12)
-              : const SizedBox(height: 16),
-          Row(
-            children: [
-              Text(
-                widget.artist.groupKr,
-                style: WakText.txt14MH,
-              ),
-              if (widget.artist.graduated) Text(" · 졸업", style: WakText.txt14MH)
+              if (artist.graduated) Text(" · 졸업", style: WakText.txt14MH)
             ],
           ),
           const SizedBox(height: 12),
         ],
       );
     }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (getTxtSize(artist.name, WakText.txt24B).width < 131)
+          Text(artist.name, style: WakText.txt24B)
+        else if (getTxtSize(artist.name, WakText.txt20B).width < 131)
+          Text(artist.name, style: WakText.txt20B)
+        else
+          Text(artist.name, style: WakText.txt18B),
+        Text(
+          artist.id.substring(0, 1).toUpperCase() + artist.id.substring(1),
+          style: WakText.txt14LS
+              .copyWith(color: WakColor.grey900.withOpacity(0.6)),
+        ),
+        getTxtSize(artist.name, WakText.txt20B).width < 131
+            ? const SizedBox(height: 12)
+            : const SizedBox(height: 16),
+        Row(
+          children: [
+            Text(
+              artist.group.kr,
+              style: WakText.txt14MH,
+            ),
+            if (artist.graduated) Text(" · 졸업", style: WakText.txt14MH)
+          ],
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
   }
 
   Widget albumsTabView(TabController tabController, Color color) {
@@ -416,49 +419,47 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
       );
     } else {
       return TabBarView(
-          controller: tabController,
-          children: List.generate(
-            3,
-            (index) => Stack(
-              key: PageStorageKey(index),
-              children: [
-                ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.zero,
-                  itemCount: viewModel.albums[AlbumType.values[index]] == null
-                      ? 0
-                      : viewModel.albums[AlbumType.values[index]]!.length +
-                          (viewModel.isLastAlbum[index] ? 0 : 1),
-                  itemBuilder: (_, idx) {
-                    if (idx ==
-                        viewModel.albums[AlbumType.values[index]]!.length) {
-                      viewModel.getAlbums(AlbumType.values[index], idx);
-                    }
-                    if (idx ==
-                            viewModel.albums[AlbumType.values[index]]!.length &&
-                        !viewModel.isLastAlbum[index]) {
-                      return const Center(
-                        child: SizedBox(
-                          height: 60,
-                          width: 60,
-                          child: Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: CircularProgressIndicator(
-                              color: WakColor.grey300,
-                            ),
+        controller: tabController,
+        children: AlbumType.values.map((type) {
+          return Stack(
+            key: PageStorageKey(type.index),
+            children: [
+              ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.zero,
+                itemCount: viewModel.albums[type] == null
+                    ? 0
+                    : viewModel.albums[type]!.length +
+                        (viewModel.isLastAlbum[type.index] ? 0 : 1),
+                itemBuilder: (_, idx) {
+                  if (idx == viewModel.albums[type]!.length) {
+                    viewModel.getAlbums(type, idx);
+                  }
+                  if (idx == viewModel.albums[type]!.length &&
+                      !viewModel.isLastAlbum[type.index]) {
+                    return const Center(
+                      child: SizedBox(
+                        height: 60,
+                        width: 60,
+                        child: Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: CircularProgressIndicator(
+                            color: WakColor.grey300,
                           ),
                         ),
-                      );
-                    }
-                    return SongTile(
-                      song: viewModel.albums[AlbumType.values[index]]![idx],
-                      tileType: TileType.dateTile,
+                      ),
                     );
-                  },
-                ),
-              ],
-            ),
-          ));
+                  }
+                  return SongTile(
+                    song: viewModel.albums[type]![idx],
+                    tileType: TileType.dateTile,
+                  );
+                },
+              ),
+            ],
+          );
+        }).toList(),
+      );
     }
   }
 }
@@ -496,20 +497,19 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
                       MaterialStateProperty.all<Color>(Colors.transparent),
                   splashFactory: NoSplash.splashFactory,
                   labelPadding: EdgeInsets.zero,
-                  tabs: List.generate(
-                    3,
-                    (idx) => Tab(
+                  tabs: AlbumType.values.map((type) {
+                    return Tab(
                       height: 34,
                       child: Container(
                         height: 34,
                         padding: const EdgeInsets.fromLTRB(0, 2, 0, 8),
                         child: Text(
-                          AlbumType.values[idx].kor,
+                          type.kor,
                           textAlign: TextAlign.center,
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }).toList(),
                 ),
               ),
             ],

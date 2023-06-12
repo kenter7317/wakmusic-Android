@@ -26,18 +26,18 @@ class AppVersion {
   final int minor;
   final int? patch;
 
-  const AppVersion({
-    required this.major,
-    required this.minor,
+  const AppVersion(
+    this.major,
+    this.minor, [
     this.patch,
-  });
+  ]);
 
   factory AppVersion.parse(String str) {
     final raw = str.split('.');
     return AppVersion(
-      major: int.parse(raw[0]),
-      minor: int.parse(raw[1]),
-      patch: (raw.length < 3) ? null : int.parse(raw[2]),
+      int.parse(raw[0]),
+      int.parse(raw[1]),
+      (raw.length < 3) ? null : int.parse(raw[2]),
     );
   }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/models_v2/song.dart';
 
 enum PageState { normal, edit }
 

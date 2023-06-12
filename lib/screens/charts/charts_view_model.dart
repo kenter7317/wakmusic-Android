@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:wakmusic/services/api.dart';
-import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/services/apis/api.dart';
+import 'package:wakmusic/models_v2/song.dart';
 
 class ChartsViewModel extends ChangeNotifier {
-  late final API _api;
-  late Future<DateTime> _updatedTime;
+  late Map<ChartType, Future<DateTime>> _updatedTime;
   late Map<ChartType, Future<List<Song>>> _charts;
-  
-  Future<DateTime> get updatedTime => _updatedTime;
+
+  Map<ChartType, Future<DateTime>> get updatedTime => _updatedTime;
   Map<ChartType, Future<List<Song>>> get charts => _charts;
 
   ChartsViewModel() {
-    _api = API();
     _charts = {};
+    _updatedTime = {};
     getCharts();
   }
 
   Future<void> getCharts() async {
     for (ChartType type in ChartType.values) {
-      _charts[type] = _api.fetchTop(type: type);
+      _charts[type] = API.charts.top(type: type);
+      _updatedTime[type] = API.charts.updatedTime(type: type);
     }
-    _updatedTime = _api.fetchUpdatedTime();
     notifyListeners();
   }
 }

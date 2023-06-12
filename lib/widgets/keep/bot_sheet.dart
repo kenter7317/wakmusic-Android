@@ -2,13 +2,12 @@ import 'dart:math';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:wakmusic/repository/user_repo.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:wakmusic/utils/json.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/text_with_dot.dart';
@@ -119,8 +118,9 @@ class _BotSheetState extends State<BotSheet> {
                           }
 
                           final repo = UserRepository();
-                          await repo.addToMyPlaylist(_fieldText.text).then(
-                              (list) => Navigator.pop(context, list.simplify));
+                          await repo
+                              .addToMyPlaylist(_fieldText.text)
+                              .then((list) => Navigator.pop(context, list));
                         } catch (_) {
                           showToastWidget(
                             context: context,
@@ -132,9 +132,7 @@ class _BotSheetState extends State<BotSheet> {
                             reverseAnimation: StyledToastAnimation.fade,
                             const ToastMsg(msg: '잘못된 리스트 코드입니다.'),
                           );
-                          setState(() {
-                            _type = FormType.enable;
-                          });
+                          setState(() => _type = FormType.enable);
                         }
                       } else {
                         Navigator.pop(
@@ -416,7 +414,7 @@ class _BotSheetState extends State<BotSheet> {
     return GestureDetector(
       onTap: () => setState(() => _profile = profile),
       child: ExtendedImage.network(
-        '$staticBaseUrl/profile/$profile.png'
+        '${API.static.url}/profile/$profile.png'
         '?v=${widget.profiles![profile]}',
         fit: BoxFit.cover,
         shape: BoxShape.circle,

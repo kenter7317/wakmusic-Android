@@ -2,7 +2,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import 'package:wakmusic/models/artist.dart';
+import 'package:wakmusic/models_v2/artist.dart';
 import 'package:wakmusic/screens/artists/artist_detail_view.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -18,160 +18,150 @@ class ArtistsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark));
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
     return Scaffold(
       body: FutureBuilder(
-          future: viewModel.artistsList,
-          builder: ((context, snapshot) {
-            if (snapshot.hasData) {
-              return Column(
-                children: [
-                  Expanded(
-                    child: MasonryGridView.count(
-                        padding: EdgeInsets.fromLTRB(
-                            15,
-                            MediaQuery.of(context).viewPadding.top + 12,
-                            15,
-                            30),
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 2,
-                        itemCount: snapshot.data!.length + 2,
-                        itemBuilder: (context, index) {
-                          if (index == 0 || index == 2) {
-                            return Container(
-                                height:
-                                    ((MediaQuery.of(context).size.width - 56) /
-                                                3) /
-                                            106 *
-                                            79 -
-                                        12);
-                          } else if (index == 1) {
-                            return artistListTile(
-                                context, snapshot.data![index - 1]);
-                          } else {
-                            return artistListTile(
-                                context, snapshot.data![index - 2]);
-                          }
-                        }),
+        future: viewModel.artistsList,
+        builder: (context, snapshot) {
+          final calcPadTop = MediaQuery.of(context).viewPadding.top + 12;
+          final calculated = (MediaQuery.of(context).size.width - 56) / 3;
+          if (snapshot.hasData) {
+            return Column(
+              children: [
+                Expanded(
+                  child: MasonryGridView.count(
+                    padding: EdgeInsets.fromLTRB(15, calcPadTop, 15, 30),
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 2,
+                    itemCount: snapshot.data!.length + 2,
+                    itemBuilder: (context, index) {
+                      if (index == 0 || index == 2) {
+                        return Container(height: calculated / 106 * 79 - 12);
+                      } else if (index == 1) {
+                        return artistListTile(
+                            context, snapshot.data![index - 1]);
+                      } else {
+                        return artistListTile(
+                            context, snapshot.data![index - 2]);
+                      }
+                    },
                   ),
-                ],
-              );
-            } else {
-              return Column(
-                children: [
-                  Expanded(
-                    child: MasonryGridView.count(
-                        padding: EdgeInsets.fromLTRB(
-                            15,
-                            MediaQuery.of(context).viewPadding.top + 12,
-                            15,
-                            30),
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 8,
-                        itemCount: 33,
-                        itemBuilder: (context, index) {
-                          if (index == 0 || index == 2) {
-                            return Container(
-                                height:
-                                    ((MediaQuery.of(context).size.width - 56) /
-                                                3) /
-                                            106 *
-                                            79 -
-                                        12);
-                          } else {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: ((MediaQuery.of(context).size.width -
-                                                      56) /
-                                                  3) /
-                                              106 *
-                                              130 -
-                                          (MediaQuery.of(context).size.width -
-                                                  56) /
-                                              3),
-                                  child: SkeletonBox(
-                                      child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(90),
-                                        color: WakColor.grey200),
-                                    width: (MediaQuery.of(context).size.width -
-                                            56) /
-                                        3,
-                                    height: (MediaQuery.of(context).size.width -
-                                            56) /
-                                        3,
-                                  )),
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              children: [
+                Expanded(
+                  child: MasonryGridView.count(
+                    padding: EdgeInsets.fromLTRB(15, calcPadTop, 15, 30),
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 8,
+                    itemCount: 33,
+                    itemBuilder: (context, index) {
+                      if (index == 0 || index == 2) {
+                        return Container(
+                          height: calculated / 106 * 79 - 12,
+                        );
+                      } else {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: calculated / 106 * 130 - calculated,
+                              ),
+                              child: SkeletonBox(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(90),
+                                    color: WakColor.grey200,
+                                  ),
+                                  width: calculated,
+                                  height: calculated,
                                 ),
-                                const SizedBox(height: 4),
-                                SkeletonText(
-                                  wakTxtStyle: WakText.txt14MH,
-                                  width: 50,
-                                )
-                              ],
-                            );
-                          }
-                        }),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            SkeletonText(
+                              wakTxtStyle: WakText.txt14MH,
+                              width: 50,
+                            )
+                          ],
+                        );
+                      }
+                    },
                   ),
-                ],
-              );
-            }
-          })),
+                ),
+              ],
+            );
+          }
+        },
+      ),
     );
   }
 
-  Widget artistListTile(BuildContext context, Artist artist,
-      {bool loading = false}) {
+  Widget artistListTile(
+    BuildContext context,
+    Artist artist, {
+    bool loading = false,
+  }) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
+    final calculated = (MediaQuery.of(context).size.width - 56) / 3;
     return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ZoomTapAnimation(
-            onTap: () {
-              viewModel.setArtist(artist);
-              Navigator.push(
-                context,
-                pageRouteBuilder(
-                  page: ArtistView(artist: artist),
-                  offset: const Offset(0.0, 1.0),
-                ),
-              );
-            },
-            child: ExtendedImage.network(artist.roundImg,
-                width: (MediaQuery.of(context).size.width - 56) / 3,
-                loadStateChanged: (state) {
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        ZoomTapAnimation(
+          onTap: () {
+            viewModel.setArtist(artist);
+            Navigator.push(
+              context,
+              pageRouteBuilder(
+                page: ArtistView(artist: artist),
+                offset: const Offset(0.0, 1.0),
+              ),
+            );
+          },
+          child: ExtendedImage.network(
+            artist.roundImage,
+            width: calculated,
+            loadStateChanged: (state) {
               if (state.extendedImageLoadState != LoadState.completed) {
                 return Padding(
                   padding: EdgeInsets.only(
-                      top: ((MediaQuery.of(context).size.width - 56) / 3) /
-                              106 *
-                              130 -
-                          (MediaQuery.of(context).size.width - 56) / 3),
+                    top: calculated / 106 * 130 - calculated,
+                  ),
                   child: SkeletonBox(
-                      child: Container(
-                    decoration: BoxDecoration(
+                    child: Container(
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(90),
-                        color: WakColor.grey200),
-                    width: (MediaQuery.of(context).size.width - 56) / 3,
-                    height: (MediaQuery.of(context).size.width - 56) / 3,
-                  )),
+                        color: WakColor.grey200,
+                      ),
+                      width: calculated,
+                      height: calculated,
+                    ),
+                  ),
                 );
               }
-            }),
+              return null;
+            },
           ),
-          const SizedBox(height: 4),
-          Text(
-            artist.name,
-            style: WakText.txt14MH.copyWith(color: WakColor.grey600),
-            overflow: TextOverflow.visible,
-          )
-        ]);
+        ),
+        const SizedBox(height: 4),
+        Text(
+          artist.name,
+          style: WakText.txt14MH.copyWith(color: WakColor.grey600),
+          overflow: TextOverflow.visible,
+        ),
+      ],
+    );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:wakmusic/models/notice.dart';
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/models_v2/notice.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/header.dart';
@@ -61,24 +61,29 @@ class NoticeDetailView extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView(
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      notice.mainText,
-                      style: WakText.txt14MH.copyWith(color: WakColor.grey900),
-                      maxLines: 40,
+              child: NotificationListener<OverscrollIndicatorNotification>(
+                onNotification: (notification) {
+                  notification.disallowIndicator();
+                  return true;
+                },
+                child: ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        notice.mainText,
+                        style:
+                            WakText.txt14MH.copyWith(color: WakColor.grey900),
+                        maxLines: 40,
+                      ),
                     ),
-                  ),
-                ]
-                    .followedBy(
-                      notice.images.map(
+                  ]
+                      .followedBy(notice.images.map(
                         (image) => Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
+                          padding: EdgeInsets.only(
+                              bottom: (image != notice.images.last) ? 20 : 0),
                           child: ExtendedImage.network(
-                            '$staticBaseUrl/notice/$image',
+                            '${API.static.url}/notice/$image',
                             fit: BoxFit.cover,
                             loadStateChanged: (state) {
                               if (state.extendedImageLoadState !=
@@ -86,16 +91,17 @@ class NoticeDetailView extends StatelessWidget {
                                 return SkeletonBox(
                                   child: AspectRatio(
                                       aspectRatio: 1 / 1,
-                                      child: Container(color: WakColor.grey200)),
+                                      child:
+                                          Container(color: WakColor.grey200)),
                                 );
                               }
                               return null;
                             },
                           ),
                         ),
-                      ),
-                    )
-                    .toList(),
+                      ))
+                      .toList(),
+                ),
               ),
             ),
           ],
