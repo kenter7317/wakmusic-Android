@@ -5,6 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:wakmusic/models_v2/artist.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models/providers/tab_provider.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -40,8 +44,25 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
+    TabProvider tabProvider = Provider.of<TabProvider>(context);
+    SelectSongProvider selProvider = Provider.of<SelectSongProvider>(context);
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+    NavProvider navProvider = Provider.of<NavProvider>(context);
     double artistImgRatio = (MediaQuery.of(context).size.width - 48) / 327;
     final artist = widget.artist;
+
+    tabController.addListener(() {
+      if (tabController.previousIndex != tabController.index) {
+        tabProvider.update(tabController.index);
+        selProvider.clearList();
+        if (audioProvider.isEmpty) {
+          navProvider.subSwitchForce(false);
+        } else {
+          navProvider.subChange(1);
+        }
+      }
+    });
+
     return Scaffold(
       body: NestedScrollView(
         controller: scrollController,

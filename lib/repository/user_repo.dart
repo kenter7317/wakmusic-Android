@@ -156,15 +156,14 @@ class UserRepository {
     }
   }
 
-  Future<bool> addPlaylistSongs(String key, List<Song> songs) async {
+  Future<int> addPlaylistSongs(String key, List<Song> songs) async {
     final token = await _token;
     if (token == null) {
-      return false;
+      return -1;
     }
 
     try {
-      await API.playlist.addSongs(key: key, songs: songs, token: token);
-      return true;
+      return await API.playlist.addSongs(key: key, songs: songs, token: token);
     } catch (e) {
       rethrow;
     }

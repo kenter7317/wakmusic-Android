@@ -144,19 +144,21 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addSongs(Playlist playlist, List<Song> songs) async {
+  Future<int> addSongs(Playlist playlist, List<Song> songs) async {
     if (playlist is Reclist || songs.isEmpty) {
-      return false;
+      return -1;
     }
 
-    if (await _repo.addPlaylistSongs(playlist.key, songs)) {
+    final addedSongsNum = await _repo.addPlaylistSongs(playlist.key, songs);
+
+    if (addedSongsNum != -1) {
       final list = songs.where((e) => !playlist.songs!.contains(e));
       playlist.songs!.addAll(list);
       notifyListeners();
-      return true;
+      return addedSongsNum;
     }
 
-    return false;
+    return -1;
   }
 
   void moveSong(int oldIdx, int newIdx) {
@@ -201,6 +203,11 @@ class KeepViewModel with ChangeNotifier {
   Future<void> updatePlaylist(Playlist old, Playlist updated) async {
     if (old == updated) return;
     _playlists[_playlists.indexOf(old)] = updated;
+    notifyListeners();
+  }
+
+  void deleteLikeSongs(List<Song> songs) {
+    _repo.deleteLikeSongs(songs);
     notifyListeners();
   }
 }

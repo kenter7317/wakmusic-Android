@@ -475,7 +475,7 @@ class API {
   }
 
   @Deprecated('')
-  Future<void> addPlaylistSongs(
+  Future<int> addPlaylistSongs(
     String key,
     List<String> songs, {
     required String token,
@@ -490,7 +490,7 @@ class API {
     );
 
     if (response.statusCode == 201) {
-      return;
+      return jsonDecode(response.body)["added_songs_length"];
     }
 
     throw HttpStatus.byCode(response.statusCode);

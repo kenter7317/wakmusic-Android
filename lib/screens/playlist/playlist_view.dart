@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
@@ -30,7 +32,10 @@ class PlaylistView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
+    NavProvider navProvider = Provider.of<NavProvider>(context);
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
     SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
+
     return DismissibleView(
       onDismissed: () => _canPop(
         context,
@@ -46,6 +51,11 @@ class PlaylistView extends StatelessWidget {
           ),
         );
         viewModel.title = null;
+        if (audioProvider.isEmpty) {
+          navProvider.subSwitchForce(false);
+        } else {
+          navProvider.subChange(1);
+        }
       }),
       maxTransformValue: 0.1,
       dismissThresholds: const {
@@ -151,6 +161,8 @@ class PlaylistView extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
     SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
+    NavProvider navProvider = Provider.of<NavProvider>(context);
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Row(
@@ -160,6 +172,11 @@ class PlaylistView extends StatelessWidget {
             padding: const EdgeInsets.only(right: 13),
             child: GestureDetector(
               onTap: () async {
+                if (audioProvider.isEmpty) {
+                  navProvider.subSwitchForce(false);
+                } else {
+                  navProvider.subChange(1);
+                }
                 if (await _canPop(context, viewModel, selectedList)) {
                   Navigator.pop(
                     context,
@@ -181,12 +198,23 @@ class PlaylistView extends StatelessWidget {
             (viewModel.curStatus != EditStatus.editing)
                 ? GestureDetector(
                     onTap: () {
-                      if (viewModel.curStatus == EditStatus.editing) {
-                        /* editing <= for test */
-                        viewModel.updateStatus(EditStatus.none);
+                      if (navProvider.subState == true &&
+                          navProvider.subIdx == 6) {
+                        if (audioProvider.isEmpty) {
+                          navProvider.subSwitchForce(false);
+                        } else {
+                          navProvider.subChange(1);
+                        }
                       } else {
-                        viewModel.updateStatus(EditStatus.editing);
+                        navProvider.subChange(6);
+                        navProvider.subSwitchForce(true);
                       }
+                      // if (viewModel.curStatus == EditStatus.editing) {
+                      //   /* editing <= for test */
+                      //   viewModel.updateStatus(EditStatus.none);
+                      // } else {
+                      //   viewModel.updateStatus(EditStatus.editing);
+                      // }
                     },
                     child: SvgPicture.asset(
                       'assets/icons/ic_32_more.svg',
@@ -313,6 +341,7 @@ class PlaylistView extends StatelessWidget {
 
   Widget _buildSonglist(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
+
     return (viewModel.curStatus != EditStatus.editing)
         ? SliverList(
             delegate: SliverChildBuilderDelegate(
