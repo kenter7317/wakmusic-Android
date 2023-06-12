@@ -8,6 +8,7 @@ import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
+import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 import 'package:flutter/services.dart';
 
@@ -17,108 +18,92 @@ class ArtistsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark));
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(15, 12, 15, 0),
-        child: FutureBuilder(
-            future: viewModel.artistsList,
-            builder: ((context, snapshot) {
-              if (snapshot.hasData) {
-                return Column(
-                  children: [
-                    Expanded(
-                      child: MasonryGridView.count(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 2,
-                          itemCount: snapshot.data!.length + 2,
-                          itemBuilder: (context, index) {
-                            if (index == 0 || index == 2) {
-                              return Container(
-                                  height: ((MediaQuery.of(context).size.width -
-                                                  56) /
-                                              3) /
-                                          106 *
-                                          79 -
-                                      12);
-                            } else if (index == 1) {
-                              return artistListTile(
-                                  context, snapshot.data![index - 1]);
-                            } else {
-                              return artistListTile(
-                                  context, snapshot.data![index - 2]);
-                            }
-                          }),
-                    ),
-                  ],
-                );
-              } else {
-                return Column(
-                  children: [
-                    Expanded(
-                      child: MasonryGridView.count(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 8,
-                          itemCount: 33,
-                          itemBuilder: (context, index) {
-                            if (index == 0 || index == 2) {
-                              return Container(
-                                  height: ((MediaQuery.of(context).size.width -
-                                                  56) /
-                                              3) /
-                                          106 *
-                                          79 -
-                                      12);
-                            } else {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: ((MediaQuery.of(context)
-                                                            .size
-                                                            .width -
-                                                        56) /
-                                                    3) /
-                                                106 *
-                                                130 -
-                                            (MediaQuery.of(context).size.width -
-                                                    56) /
-                                                3),
-                                    child: SkeletonBox(
-                                        child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(90),
-                                          color: WakColor.grey200),
-                                      width:
-                                          (MediaQuery.of(context).size.width -
-                                                  56) /
-                                              3,
-                                      height:
-                                          (MediaQuery.of(context).size.width -
-                                                  56) /
-                                              3,
-                                    )),
+      body: FutureBuilder(
+        future: viewModel.artistsList,
+        builder: (context, snapshot) {
+          final calcPadTop = MediaQuery.of(context).viewPadding.top + 12;
+          final calculated = (MediaQuery.of(context).size.width - 56) / 3;
+          if (snapshot.hasData) {
+            return Column(
+              children: [
+                Expanded(
+                  child: MasonryGridView.count(
+                    padding: EdgeInsets.fromLTRB(15, calcPadTop, 15, 30),
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 2,
+                    itemCount: snapshot.data!.length + 2,
+                    itemBuilder: (context, index) {
+                      if (index == 0 || index == 2) {
+                        return Container(height: calculated / 106 * 79 - 12);
+                      } else if (index == 1) {
+                        return artistListTile(
+                            context, snapshot.data![index - 1]);
+                      } else {
+                        return artistListTile(
+                            context, snapshot.data![index - 2]);
+                      }
+                    },
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              children: [
+                Expanded(
+                  child: MasonryGridView.count(
+                    padding: EdgeInsets.fromLTRB(15, calcPadTop, 15, 30),
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 8,
+                    itemCount: 33,
+                    itemBuilder: (context, index) {
+                      if (index == 0 || index == 2) {
+                        return Container(
+                          height: calculated / 106 * 79 - 12,
+                        );
+                      } else {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: calculated / 106 * 130 - calculated,
+                              ),
+                              child: SkeletonBox(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(90),
+                                    color: WakColor.grey200,
                                   ),
-                                  const SizedBox(height: 4),
-                                  SkeletonText(
-                                    wakTxtStyle: WakText.txt14MH,
-                                    width: 50,
-                                  )
-                                ],
-                              );
-                            }
-                          }),
-                    ),
-                  ],
-                );
-              }
-            })),
+                                  width: calculated,
+                                  height: calculated,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            SkeletonText(
+                              wakTxtStyle: WakText.txt14MH,
+                              width: 50,
+                            )
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            );
+          }
+        },
       ),
     );
   }
@@ -129,6 +114,7 @@ class ArtistsListView extends StatelessWidget {
     bool loading = false,
   }) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
+    final calculated = (MediaQuery.of(context).size.width - 56) / 3;
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -138,25 +124,29 @@ class ArtistsListView extends StatelessWidget {
             viewModel.setArtist(artist);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => ArtistView(artist: artist)),
+              pageRouteBuilder(
+                page: ArtistView(artist: artist),
+                offset: const Offset(0.0, 1.0),
+              ),
             );
           },
           child: ExtendedImage.network(
             artist.roundImage,
-            width: (MediaQuery.of(context).size.width - 56) / 3,
+            width: calculated,
             loadStateChanged: (state) {
               if (state.extendedImageLoadState != LoadState.completed) {
-                final width = (MediaQuery.of(context).size.width - 56) / 3;
                 return Padding(
-                  padding: EdgeInsets.only(top: width / 106 * 130 - width),
+                  padding: EdgeInsets.only(
+                    top: calculated / 106 * 130 - calculated,
+                  ),
                   child: SkeletonBox(
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(90),
                         color: WakColor.grey200,
                       ),
-                      width: width,
-                      height: width,
+                      width: calculated,
+                      height: calculated,
                     ),
                   ),
                 );
