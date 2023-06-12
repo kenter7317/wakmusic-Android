@@ -10,6 +10,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:wakmusic/screens/player/player_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
+import 'package:wakmusic/widgets/player/player_bottom.dart';
 import 'package:wakmusic/widgets/player/player_button.dart';
 
 import '../../models/providers/audio_provider.dart';
@@ -25,6 +26,7 @@ class Player extends StatelessWidget {
     return Scaffold(
       backgroundColor: WakColor.grey100,
       body: _buildBody(context),
+      bottomNavigationBar: const PlayerViewBottom(),
     );
   }
 

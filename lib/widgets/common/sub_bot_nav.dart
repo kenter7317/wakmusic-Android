@@ -10,6 +10,7 @@ import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/utils/number_format.dart';
 
 import '../../screens/player/player_view.dart';
+import '../page_route_builder.dart';
 
 class SubBotNav extends StatefulWidget {
   const SubBotNav({super.key});
@@ -125,17 +126,11 @@ class _SubBotNavState extends State<SubBotNav> {
 
   /* 임시 노래 재생 바 */
   Widget playerBar(PlayerBarType type) {
-    final botNav = Provider.of<NavProvider>(context);
     return GestureDetector(
       onTap: () {
         if (type == PlayerBarType.main) {
-          botNav.mainSwitchForce(false);
-          botNav.subSwitchForce(true);
-          botNav.subChange(0);
-          Navigator.push(
-            botNav.pageContext,
-            MaterialPageRoute(builder: (context) => const Player()),
-          );
+          Navigator.of(context, rootNavigator: true)
+              .push(pageRouteBuilder(page: const Player()));
         }
       },
       child: Stack(

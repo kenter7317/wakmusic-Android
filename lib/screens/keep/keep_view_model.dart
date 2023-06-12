@@ -203,4 +203,32 @@ class KeepViewModel with ChangeNotifier {
     _playlists[_playlists.indexOf(old)] = updated;
     notifyListeners();
   }
+
+  Future<bool> addLikeSong(String songId) async {
+    print('진입');
+    if(songId.isEmpty) return false;
+
+
+    var result = await _repo.addLikeSong(songId);
+
+    if(result){
+      _likes = [...(await _repo.getLikes()).keys];
+      notifyListeners();
+    }
+
+    return result;
+  }
+
+  Future<bool> removeLikeSong(String songId) async {
+    if(songId.isEmpty) return false;
+
+    var result = await _repo.removeLikeSong(songId);
+
+    if(result){
+      _likes = [...(await _repo.getLikes()).keys];
+      notifyListeners();
+    }
+
+    return result;
+  }
 }
