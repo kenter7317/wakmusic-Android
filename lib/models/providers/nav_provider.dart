@@ -14,7 +14,7 @@ class NavProvider extends IdxProvider {
   bool _mainState = true; 
   bool get mainState => _mainState;
 
-  bool _subState = true;
+  bool _subState = false;
   bool get subState => _subState;
   
   int _subIdx = 0;

@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:wakmusic/models_v2/playlist/playlist.dart';
 
 class SelectPlaylistProvider extends ChangeNotifier {
-  final List<Playlist> _list = [];
-  List<Playlist> get list => _list;
+  final List<UserPlaylist> _list = [];
 
-  void addPlaylist(Playlist playlist) {
+  List<UserPlaylist> get list => _list;
+
+  void addPlaylist(UserPlaylist playlist) {
     _list.add(playlist);
     notifyListeners();
   }
 
-  void removePlaylist(Playlist playlist) {
+  void removePlaylist(UserPlaylist playlist) {
     _list.remove(playlist);
     notifyListeners();
   }

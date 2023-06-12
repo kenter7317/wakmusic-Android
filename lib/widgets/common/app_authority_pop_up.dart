@@ -15,7 +15,7 @@ class AppAuthorityPopUp extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
       child: SizedBox(
         width: 335,
-        height: 407,
+        height: 463,
         child: Column(
           children: [
             Container(

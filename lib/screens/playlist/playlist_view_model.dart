@@ -21,6 +21,7 @@ class PlaylistViewModel with ChangeNotifier {
   StreamController<bool> get isScrolled => _isScrolled;
   List<Song?> get songs => _songs;
   List<Song?> get tempsongs => _tempsongs;
+  String? get prevKeyword => _prevKeyword;
 
   PlaylistViewModel() {
     _isScrolled = StreamController<bool>.broadcast();
@@ -64,6 +65,16 @@ class PlaylistViewModel with ChangeNotifier {
   void moveSong(int oldIdx, int newIdx) {
     Song? song = _tempsongs.removeAt(oldIdx);
     _tempsongs.insert(newIdx, song);
+    notifyListeners();
+  }
+
+  void removeSongs(List<Song> songs) async {
+    for (var song in songs) {
+      tempsongs.remove(song);
+    }
+    await applySongs(true);
+    print(tempsongs.length);
+    _status = EditStatus.none;
     notifyListeners();
   }
 

@@ -5,6 +5,7 @@ import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/rec_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models/providers/tab_provider.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/screens/charts/charts_view_model.dart';
 import 'package:wakmusic/screens/home/home_view_model.dart';
@@ -41,6 +42,7 @@ class Providers extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PlayerViewModel()),
         ChangeNotifierProvider(create: (_) => PlayerPlayListViewModel()),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => TabProvider()),
       ],
       child: child,
     );

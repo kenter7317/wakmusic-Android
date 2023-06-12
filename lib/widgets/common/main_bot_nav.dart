@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
@@ -73,11 +76,29 @@ class _MainBotNavState extends State<MainBotNav> with TickerProviderStateMixin {
 
   Widget botNavItem(BuildContext context, int idx, String icon, String label) {
     final botNav = Provider.of<NavProvider>(context);
+    final audioProvider = Provider.of<AudioProvider>(context);
+    final selProvider = Provider.of<SelectSongProvider>(context);
 
     return Expanded(
       child: GestureDetector(
         onTap: () {
           if (botNav.curIdx != idx) {
+            selProvider.clearList();
+            if (audioProvider.isEmpty) {
+              botNav.subSwitchForce(false);
+            } else {
+              botNav.subChange(1);
+            }
+            switch (idx) {
+              case 1:
+                selProvider.setMaxSel(100);
+                break;
+              case 3: 
+                selProvider.setMaxSel(30); // 임시
+                break;
+              default:
+                selProvider.setMaxSel(-1);
+            }
             botNav.update(idx);
             for (var e in animeList) {
               if (e.status != AnimationStatus.forward) {

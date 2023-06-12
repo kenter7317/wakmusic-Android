@@ -6,6 +6,7 @@ import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:intl/intl.dart';
@@ -114,13 +115,40 @@ class SongTile extends StatelessWidget {
       final viewModel = Provider.of<KeepViewModel>(context); /* for test */
       AudioProvider audioProvider = Provider.of<AudioProvider>(context);
       NavProvider navProvider = Provider.of<NavProvider>(context);
-      bool isSelected = selectedList.list.contains(song);
+      PlaylistViewModel playlistViewModel = Provider.of<PlaylistViewModel>(context);
+      bool isSelected = selectedList.contains(song!);
       return GestureDetector(
         onTap: () {
-          /*if (tileType.canSelect) {
+          if (tileType.canSelect) {
             if (isSelected) {
               selectedList.removeSong(song!);
+              if (selectedList.list.isEmpty) {
+                navProvider.subChange(1);
+                if (audioProvider.isEmpty) navProvider.subSwitchForce(false);
+              }
             } else {
+              switch (navProvider.curIdx) {
+                case 0:
+                  selectedList.setMaxSel(playlistViewModel.songs.length);
+                  navProvider.subChange(4);
+                  break;
+                case 1:
+                  navProvider.subChange(4);
+                  break;
+                case 2:
+                  selectedList.setMaxSel(playlistViewModel.songs.length);
+                  navProvider.subChange(9);
+                  break;
+                case 3:
+                  navProvider.subChange(4);
+                  break;
+                case 4:
+                  selectedList.setMaxSel(playlistViewModel.songs.length);
+                  navProvider.subChange(5);
+                  break;
+                default:
+              }
+              navProvider.subSwitchForce(true);
               selectedList.addSong(song!);
             }
             /* for test */
@@ -141,8 +169,7 @@ class SongTile extends StatelessWidget {
                   ),
                 );
               }*/
-          } else */
-          if (tileType != TileType.nowPlayTile) {
+          } else if (tileType != TileType.nowPlayTile) {
             if (song != null) {
               audioProvider.addQueueItem(song!, autoplay: true);
               navProvider.subChange(1);
