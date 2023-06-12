@@ -43,7 +43,7 @@ class UserRepository {
     }
   }
 
-  Future<List<Playlist>> getPlaylists() async {
+  Future<List<UserPlaylist>> getPlaylists() async {
     final token = await _token;
     if (token == null) {
       throw HttpStatus.unauthorized;

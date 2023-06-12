@@ -9,13 +9,13 @@ import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models/providers/tab_provider.dart';
-import 'package:wakmusic/models/song.dart';
+import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/screens/charts/charts_view_model.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/player/player_playlist_view.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart' as playlist;
-import 'package:wakmusic/services/api.dart';
+import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/utils/number_format.dart';
@@ -83,7 +83,8 @@ class _SubBotNavState extends State<SubBotNav> {
                   "ic_32_heart_on",
                   koreanNumberFormater(audioProvider.currentSong == null
                       ? 0
-                      : audioProvider.currentSong!.last), // 수정(좋아요 연결 필요)
+                      : audioProvider
+                          .currentSong!.metadata.last!), // 수정(좋아요 연결 필요)
                   txtColor: WakColor.pink, onTap: () {
                   setState(() {
                     tempLike = !tempLike;
@@ -93,7 +94,7 @@ class _SubBotNavState extends State<SubBotNav> {
                   "ic_32_heart_off",
                   koreanNumberFormater(audioProvider.currentSong == null
                       ? 0
-                      : audioProvider.currentSong!.last), onTap: () {
+                      : audioProvider.currentSong!.metadata.last!), onTap: () {
                   setState(() {
                     tempLike = !tempLike;
                   });
@@ -102,7 +103,7 @@ class _SubBotNavState extends State<SubBotNav> {
             "ic_32_views",
             koreanNumberFormater(audioProvider.currentSong == null
                 ? 0
-                : audioProvider.currentSong!.views),
+                : audioProvider.currentSong!.metadata.views),
           ), // 수정 (조회수 연결)
           playDetailBarBtn(
             "ic_32_playadd_900",
@@ -112,9 +113,11 @@ class _SubBotNavState extends State<SubBotNav> {
               onTap: () {
             botNav.subChange(2);
             Navigator.push(
-                botNav.pageContext,
-                MaterialPageRoute(
-                    builder: (context) => const PlayerPlayList()));
+              botNav.pageContext,
+              MaterialPageRoute(
+                builder: (context) => const PlayerPlayList(),
+              ),
+            );
           }),
         ],
       ),
@@ -256,54 +259,53 @@ class _SubBotNavState extends State<SubBotNav> {
                       )
                     : Expanded(
                         child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              () {
-                                switch (audioProvider.loopMode) {
-                                  case LoopMode.all:
-                                    return iconBtn("ic_32_repeat_on_all",
-                                        onTap: () {
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            () {
+                              switch (audioProvider.loopMode) {
+                                case LoopMode.all:
+                                  return iconBtn("ic_32_repeat_on_all",
+                                      onTap: () {
+                                    audioProvider.nextLoopMode();
+                                  });
+                                case LoopMode.single:
+                                  return iconBtn("ic_32_repeat_on_1",
+                                      onTap: () {
+                                    audioProvider.nextLoopMode();
+                                  });
+                                default:
+                                  return iconBtn("ic_32_repeat_off", onTap: () {
+                                    setState(() {
                                       audioProvider.nextLoopMode();
                                     });
-                                  case LoopMode.single:
-                                    return iconBtn("ic_32_repeat_on_1",
-                                        onTap: () {
-                                      audioProvider.nextLoopMode();
-                                    });
-                                  default:
-                                    return iconBtn("ic_32_repeat_off",
-                                        onTap: () {
-                                      setState(() {
-                                        audioProvider.nextLoopMode();
-                                      });
-                                    });
-                                }
-                              }(),
-                              iconBtn("ic_32_prev_on", onTap: () {
-                                audioProvider.toPrevious();
-                              }),
-                              audioProvider.playbackState ==
-                                      PlaybackState.playing
-                                  ? iconBtn("ic_32_stop", onTap: () {
-                                      audioProvider.pause();
-                                    })
-                                  : iconBtn("ic_32_play_900", onTap: () {
-                                      audioProvider.play();
-                                    }),
-                              iconBtn("ic_32_next_on", onTap: () {
-                                audioProvider.toNext();
-                              }),
-                              audioProvider.shuffle
-                                  ? iconBtn("ic_32_random_on",
-                                      edgePadding: true, onTap: () {
-                                      audioProvider.toggleShuffle();
-                                    })
-                                  : iconBtn("ic_32_random_off",
-                                      edgePadding: true, onTap: () {
-                                      audioProvider.toggleShuffle();
-                                    }),
-                            ]),
+                                  });
+                              }
+                            }(),
+                            iconBtn("ic_32_prev_on", onTap: () {
+                              audioProvider.toPrevious();
+                            }),
+                            audioProvider.playbackState == PlaybackState.playing
+                                ? iconBtn("ic_32_stop", onTap: () {
+                                    audioProvider.pause();
+                                  })
+                                : iconBtn("ic_32_play_900", onTap: () {
+                                    audioProvider.play();
+                                  }),
+                            iconBtn("ic_32_next_on", onTap: () {
+                              audioProvider.toNext();
+                            }),
+                            audioProvider.shuffle
+                                ? iconBtn("ic_32_random_on", edgePadding: true,
+                                    onTap: () {
+                                    audioProvider.toggleShuffle();
+                                  })
+                                : iconBtn("ic_32_random_off", edgePadding: true,
+                                    onTap: () {
+                                    audioProvider.toggleShuffle();
+                                  }),
+                          ],
+                        ),
                       ),
               ],
             ),
@@ -385,7 +387,9 @@ class _SubBotNavState extends State<SubBotNav> {
                                 .toList());
                             break;
                           default:
-                            selProvider.addAllSong(playListViewModel.tempsongs.whereType<Song>().toList());
+                            selProvider.addAllSong(playListViewModel.tempsongs
+                                .whereType<Song>()
+                                .toList());
                             break;
                         }
                       })
@@ -424,12 +428,9 @@ class _SubBotNavState extends State<SubBotNav> {
                     );
                     selProvider.clearList();
                   } else {
-                    await selListProvider.getDetailPlaylist();
-                    for (var i = 0;
-                        i < selListProvider.detailList.length;
-                        i++) {
+                    for (var i = 0; i < selListProvider.list.length; i++) {
                       audioProvider
-                          .addQueueItems(selListProvider.detailList[i].songs);
+                          .addQueueItems(selListProvider.list[i].songs);
                     }
                     selListProvider.clearList();
                   }
@@ -500,8 +501,11 @@ class _SubBotNavState extends State<SubBotNav> {
                     context: context,
                     builder: (_) => BotSheet(
                       type: BotSheetType.selProfile,
-                      initialValue: keepViewModel.user.profile,
-                      profiles: keepViewModel.profiles,
+                      initialValue: keepViewModel.user.profile.type,
+                      profiles: {
+                        for (var e in keepViewModel.profiles)
+                          e.type: e.imageVersion,
+                      },
                     ),
                   ));
                   if (audioProvider.isEmpty) {

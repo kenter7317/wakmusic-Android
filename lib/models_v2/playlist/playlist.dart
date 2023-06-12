@@ -25,6 +25,7 @@ class PlaylistImage extends ImageQuery {
   }
 }
 
+@Deprecated('')
 abstract class Playlist {
   String get key;
   String get title;
