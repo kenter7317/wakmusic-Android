@@ -15,7 +15,9 @@ class FAQViewModel with ChangeNotifier {
 
   void clear() {
     _categories = [Category.qnaAll];
-    _faqLists = {};
+    _faqLists = {
+      Category.qnaAll: [],
+    };
   }
 
   Future<void> getFAQ() async {

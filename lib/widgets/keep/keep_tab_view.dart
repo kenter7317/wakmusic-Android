@@ -9,6 +9,7 @@ import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/tab_view.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 
 class KeepTabView extends StatefulWidget {
   const KeepTabView({
@@ -63,106 +64,138 @@ class _KeepTabViewState extends State<KeepTabView>
     SelectSongProvider selectedLike = Provider.of<SelectSongProvider>(context);
     NavProvider navProvider = Provider.of<NavProvider>(context);
     AudioProvider audioProvider = Provider.of<AudioProvider>(context);
-    return DefaultTabController(
-      length: _length,
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: 52,
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: WakColor.grey200),
-                  ),
-                ),
-              ),
-              TabBar(
-                controller: _controller,
-                indicatorColor: WakColor.lightBlue,
-                labelStyle: WakText.txt16B,
-                unselectedLabelStyle: WakText.txt16M,
-                labelColor: WakColor.grey900,
-                unselectedLabelColor: WakColor.grey400,
-                overlayColor:
-                    MaterialStateProperty.all<Color>(Colors.transparent),
-                splashFactory: NoSplash.splashFactory,
-                indicatorSize: widget.type.indicatorSize,
-                labelPadding: widget.type.labelPadding,
-                padding: widget.type.padding,
-                isScrollable: widget.type.isScrollable,
-                onTap: (idx) async {
-                  if (widget.onPause == null &&
-                      viewModel.playlists.isEmpty != viewModel.likes.isEmpty)
-                    setState(() {});
-                  if (widget.onPause != null && idx != _controller.index) {
-                    if (await widget.onPause!()) {
-                      _play = true;
-                      _controller.index = idx;
-                      _play = false;
-                    }
-                  }
-                  if (audioProvider.isEmpty) {
-                    navProvider.subSwitchForce(false);
-                  } else {
-                    navProvider.subChange(1);
-                  }
-                },
-                tabs: List.generate(
-                  _length,
-                  (idx) => Container(
-                    height: 34,
-                    padding: const EdgeInsets.fromLTRB(0, 2, 0, 8),
-                    child: Text(
-                      widget.tabBarList[idx],
-                      textAlign: TextAlign.center,
+    return Exitable(
+      scopes: const [
+        ExitScope.editMode,
+        ExitScope.selectedSong,
+        ExitScope.selectedPlaylist,
+      ],
+      onExitable: (scope) {
+        if (scope == ExitScope.editMode) {
+          ExitScope.remove = ExitScope.editMode;
+          ExitScope.remove = ExitScope.selectedSong;
+          ExitScope.remove = ExitScope.selectedPlaylist;
+          if (_controller.index == 0) {
+            viewModel.applyPlaylists(true);
+            selectedPlaylist.clearList();
+          } else {
+            viewModel.applyLikes(true);
+            selectedLike.clearList();
+          }
+          if (audioProvider.isEmpty) {
+            navProvider.subSwitchForce(false);
+          } else {
+            navProvider.subChange(1);
+          }
+        }
+      },
+      child: DefaultTabController(
+        length: _length,
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: 52,
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: WakColor.grey200),
                     ),
                   ),
                 ),
-              ),
-              if ((viewModel.playlists.isNotEmpty && _controller.index == 0) ||
-                  (viewModel.likes.isNotEmpty && _controller.index == 1))
-                Positioned(
-                  top: 19,
-                  right: 20,
-                  child: (widget.onPause != null)
-                      ? GestureDetector(
-                          onTap: () {
-                            if (_controller.index == 0) {
-                              viewModel.applyPlaylists(true);
-                              selectedPlaylist.clearList();
-                            } else {
-                              viewModel.applyLikes(true);
-                              selectedLike.clearList();
-                            }
-                            if (audioProvider.isEmpty) {
-                              navProvider.subSwitchForce(false);
-                            } else {
-                              navProvider.subChange(1);
-                            }
-                          },
-                          child: const EditBtn(type: BtnType.done),
-                        )
-                      : GestureDetector(
-                          onTap: () {
-                            viewModel.updateEditStatus((_controller.index == 0)
-                                ? EditStatus.playlists
-                                : EditStatus.likes);
-                          },
-                          child: const EditBtn(type: BtnType.edit),
-                        ),
+                TabBar(
+                  controller: _controller,
+                  indicatorColor: WakColor.lightBlue,
+                  labelStyle: WakText.txt16B,
+                  unselectedLabelStyle: WakText.txt16M,
+                  labelColor: WakColor.grey900,
+                  unselectedLabelColor: WakColor.grey400,
+                  overlayColor:
+                      MaterialStateProperty.all<Color>(Colors.transparent),
+                  splashFactory: NoSplash.splashFactory,
+                  indicatorSize: widget.type.indicatorSize,
+                  labelPadding: widget.type.labelPadding,
+                  padding: widget.type.padding,
+                  isScrollable: widget.type.isScrollable,
+                  onTap: (idx) async {
+                    if (widget.onPause == null &&
+                        viewModel.playlists.isEmpty != viewModel.likes.isEmpty)
+                      setState(() {});
+                    if (widget.onPause != null && idx != _controller.index) {
+                      if (await widget.onPause!()) {
+                        _play = true;
+                        _controller.index = idx;
+                        _play = false;
+                      }
+                    }
+                    if (audioProvider.isEmpty) {
+                      navProvider.subSwitchForce(false);
+                    } else {
+                      navProvider.subChange(1);
+                    }
+                  },
+                  tabs: List.generate(
+                    _length,
+                    (idx) => Container(
+                      height: 34,
+                      padding: const EdgeInsets.fromLTRB(0, 2, 0, 8),
+                      child: Text(
+                        widget.tabBarList[idx],
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
                 ),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              key: UniqueKey(),
-              controller: _controller,
-              physics: const NeverScrollableScrollPhysics(),
-              children: widget.tabViewList,
+                if ((viewModel.playlists.isNotEmpty &&
+                        _controller.index == 0) ||
+                    (viewModel.likes.isNotEmpty && _controller.index == 1))
+                  Positioned(
+                    top: 19,
+                    right: 20,
+                    child: (widget.onPause != null)
+                        ? GestureDetector(
+                            onTap: () {
+                              ExitScope.remove = ExitScope.editMode;
+                              ExitScope.remove = ExitScope.selectedSong;
+                              ExitScope.remove = ExitScope.selectedPlaylist;
+                              if (_controller.index == 0) {
+                                viewModel.applyPlaylists(true);
+                                selectedPlaylist.clearList();
+                              } else {
+                                viewModel.applyLikes(true);
+                                selectedLike.clearList();
+                              }
+                              if (audioProvider.isEmpty) {
+                                navProvider.subSwitchForce(false);
+                              } else {
+                                navProvider.subChange(1);
+                              }
+                            },
+                            child: const EditBtn(type: BtnType.done),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              ExitScope.add = ExitScope.editMode;
+                              viewModel.updateEditStatus(
+                                  (_controller.index == 0)
+                                      ? EditStatus.playlists
+                                      : EditStatus.likes);
+                            },
+                            child: const EditBtn(type: BtnType.edit),
+                          ),
+                  ),
+              ],
             ),
-          ),
-        ],
+            Expanded(
+              child: TabBarView(
+                key: UniqueKey(),
+                controller: _controller,
+                physics: const NeverScrollableScrollPhysics(),
+                children: widget.tabViewList,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

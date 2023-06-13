@@ -17,6 +17,7 @@ import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/text_with_dot.dart';
 import 'package:wakmusic/widgets/common/toast_msg.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:file_picker/file_picker.dart';

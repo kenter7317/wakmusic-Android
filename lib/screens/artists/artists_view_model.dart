@@ -55,6 +55,9 @@ class ArtistsViewModel with ChangeNotifier {
   }
 
   void setArtist(Artist artist) async {
+    if (artist.id != _artist.id) {
+      clear();
+    }
     _artist = artist;
     _isLastAlbum = [false, false, false];
     await initAlbums();

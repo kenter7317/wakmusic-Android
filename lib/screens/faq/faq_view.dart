@@ -10,6 +10,7 @@ import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/tab_view.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 
 class FAQView extends StatelessWidget {
   const FAQView({super.key});
@@ -28,10 +29,14 @@ class FAQView extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     FAQViewModel viewModel = Provider.of<FAQViewModel>(context);
-    return WillPopScope(
-      onWillPop: () async {
-        viewModel.collapseAll();
-        return true;
+    return Exitable(
+      scopes: const [ExitScope.openedPageRouteBuilder],
+      onExitable: (scope) {
+        if (scope == ExitScope.openedPageRouteBuilder) {
+          viewModel.collapseAll();
+          ExitScope.remove = ExitScope.openedPageRouteBuilder;
+          Navigator.pop(context);
+        }
       },
       child: SafeArea(
         child: Column(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/repository/notice_repo.dart';
 import 'package:wakmusic/screens/charts/charts_view.dart';
 import 'package:wakmusic/utils/error_catch.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Providers(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: '왁타버스 뮤직',
         builder: (context, child) {
           return MediaQuery(
@@ -105,21 +107,37 @@ class _MainState extends State<Main> {
     NavProvider botNav = Provider.of<NavProvider>(context);
     statusNavColor(context, ScreenType.etc);
     return Scaffold(
-      body: IndexedStack(
-        index: botNav.curIdx,
-        children: navList.map((page) {
-          return Navigator(
-            key: navKeyList[navList.indexOf(page)],
-            onGenerateRoute: (_) {
-              return MaterialPageRoute(builder: (context) {
-                if (page == navList[botNav.curIdx]) {
-                  botNav.setPageContext(context);
-                }
-                return page;
-              });
-            },
-          );
-        }).toList(),
+      body: WillPopScope(
+        onWillPop: () async {
+          print('EXIT SCOPE :: ${ExitScope.scope} ${ExitScope.scopes}');
+          if (ExitScope.exitable) {
+            return true;
+          }
+
+          final action = ExitScope.scopes.first;
+          if (action == ExitScope.pageIsNotHome) {
+            botNav.update(0);
+            ExitScope.remove = ExitScope.pageIsNotHome;
+          }
+          action.pop();
+          return false;
+        },
+        child: IndexedStack(
+          index: botNav.curIdx,
+          children: navList.map((page) {
+            return Navigator(
+              key: navKeyList[navList.indexOf(page)],
+              onGenerateRoute: (_) {
+                return MaterialPageRoute(builder: (context) {
+                  if (page == navList[botNav.curIdx]) {
+                    botNav.setPageContext(context);
+                  }
+                  return page;
+                });
+              },
+            );
+          }).toList(),
+        ),
       ),
       bottomNavigationBar: const MainBotNav(),
     );

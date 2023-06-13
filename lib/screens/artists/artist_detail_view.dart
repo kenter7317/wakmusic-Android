@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:wakmusic/models_v2/artist.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
@@ -18,6 +19,7 @@ import 'package:wakmusic/utils/txt_size.dart';
 import 'package:wakmusic/widgets/common/play_btns.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 
 class ArtistView extends StatefulWidget {
   const ArtistView({super.key, required this.artist});
@@ -63,86 +65,113 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
       }
     });
 
-    return Scaffold(
-      body: NestedScrollView(
-        controller: scrollController,
-        clipBehavior: Clip.none,
-        headerSliverBuilder: (context, isScrolled) => [
-          SliverStack(
-            children: [
-              SliverAppBar(
-                pinned: true,
-                automaticallyImplyLeading: false,
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                collapsedHeight: MediaQuery.of(context).viewPadding.top + 172,
-                expandedHeight: MediaQuery.of(context).viewPadding.top + 194,
-                flexibleSpace: Stack(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).viewPadding.top + 172,
-                      color: WakColor.grey100,
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).viewPadding.top + 144,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          stops: [...artist.colors.map((e) => e.stop)],
-                          colors: [
-                            ...artist.colors
-                                .map((e) => e.color.withOpacity(e.opacity))
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
+    return Exitable(
+      scopes: const [
+        ExitScope.selectedSong,
+        ExitScope.artistDetail,
+      ],
+      onExitable: (scope) {
+        if (scope == ExitScope.selectedSong && ExitScope.artistDetail.contain) {
+          () async {
+            final botNav = Provider.of<NavProvider>(context, listen: false);
+            final selectedList =
+                Provider.of<SelectSongProvider>(context, listen: false);
+            final audioProvider =
+                Provider.of<AudioProvider>(context, listen: false);
+            selectedList.clearList();
+            botNav.subChange(1);
+            if (audioProvider.isEmpty) botNav.subSwitchForce(false);
+            ExitScope.remove = ExitScope.selectedSong;
+          }();
+          ExitScope.remove = ExitScope.artistDetail;
+          Navigator.pop(context);
+        }
+        if (scope == ExitScope.artistDetail) {
+          ExitScope.remove = ExitScope.artistDetail;
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        body: NestedScrollView(
+          controller: scrollController,
+          clipBehavior: Clip.none,
+          headerSliverBuilder: (context, isScrolled) => [
+            SliverStack(
+              children: [
+                SliverAppBar(
+                  pinned: true,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  collapsedHeight: MediaQuery.of(context).viewPadding.top + 172,
+                  expandedHeight: MediaQuery.of(context).viewPadding.top + 194,
+                  flexibleSpace: Stack(
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).viewPadding.top + 172,
+                        color: WakColor.grey100,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              MultiSliver(
-                children: [
-                  PreferredSize(
-                    preferredSize: const Size.fromHeight(48),
-                    child: SliverAppBar(
-                      pinned: true,
-                      toolbarHeight: 48,
-                      leadingWidth: 72,
-                      leading: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          viewModel.clear();
-                        },
-                        icon: Padding(
-                          padding: const EdgeInsets.only(left: 4),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_32_arrow_bottom.svg",
-                            width: 32,
-                            height: 32,
+                      Container(
+                        height: MediaQuery.of(context).viewPadding.top + 144,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            stops: [...artist.colors.map((e) => e.stop)],
+                            colors: [
+                              ...artist.colors
+                                  .map((e) => e.color.withOpacity(e.opacity))
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
                           ),
                         ),
                       ),
-                      backgroundColor: Colors.transparent,
-                      expandedHeight: 72 +
-                          artistImgRatio *
-                              180, // appBar + 8 + artistImg + 16 = 80 + artistImg
-                      collapsedHeight: 48, // appBar + 8
-                      shadowColor: Colors.transparent,
-                      flexibleSpace: FlexibleSpaceBar(
-                        background: artistInfo(context),
+                    ],
+                  ),
+                ),
+                MultiSliver(
+                  children: [
+                    PreferredSize(
+                      preferredSize: const Size.fromHeight(48),
+                      child: SliverAppBar(
+                        pinned: true,
+                        toolbarHeight: 48,
+                        leadingWidth: 72,
+                        leading: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            viewModel.clear();
+                          },
+                          icon: Padding(
+                            padding: const EdgeInsets.only(left: 4),
+                            child: SvgPicture.asset(
+                              "assets/icons/ic_32_arrow_bottom.svg",
+                              width: 32,
+                              height: 32,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        expandedHeight: 72 +
+                            artistImgRatio *
+                                180, // appBar + 8 + artistImg + 16 = 80 + artistImg
+                        collapsedHeight: 48, // appBar + 8
+                        shadowColor: Colors.transparent,
+                        flexibleSpace: FlexibleSpaceBar(
+                          background: artistInfo(context),
+                        ),
                       ),
                     ),
-                  ),
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: TabBarDelegate(tabController: tabController),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-        body: albumsTabView(tabController, widget.artist.colors[0].color),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: TabBarDelegate(tabController: tabController),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+          body: albumsTabView(tabController, widget.artist.colors[0].color),
+        ),
       ),
     );
   }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
-import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
@@ -35,7 +35,8 @@ class _MainBotNavState extends State<MainBotNav> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final botNav = Provider.of<NavProvider>(context);
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
       child: Wrap(
         children: [
           if (botNav.subState) const SubBotNav(),
@@ -83,6 +84,11 @@ class _MainBotNavState extends State<MainBotNav> with TickerProviderStateMixin {
       child: GestureDetector(
         onTap: () {
           if (botNav.curIdx != idx) {
+            if (idx == 0) {
+              ExitScope.remove = ExitScope.pageIsNotHome;
+            } else {
+              ExitScope.add = ExitScope.pageIsNotHome;
+            }
             selProvider.clearList();
             if (audioProvider.isEmpty) {
               botNav.subSwitchForce(false);
@@ -93,7 +99,7 @@ class _MainBotNavState extends State<MainBotNav> with TickerProviderStateMixin {
               case 1:
                 selProvider.setMaxSel(100);
                 break;
-              case 3: 
+              case 3:
                 selProvider.setMaxSel(30); // 임시
                 break;
               default:

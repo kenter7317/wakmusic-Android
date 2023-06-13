@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models_v2/artist.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/screens/artists/artist_detail_view.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -126,6 +127,7 @@ class ArtistsListView extends StatelessWidget {
               context,
               pageRouteBuilder(
                 page: ArtistView(artist: artist),
+                scope: ExitScope.artistDetail,
                 offset: const Offset(0.0, 1.0),
               ),
             );

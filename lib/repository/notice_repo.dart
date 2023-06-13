@@ -46,14 +46,13 @@ class NoticeRepository {
 
     prefs.setInt('hideTime', now.millisecondsSinceEpoch);
     if (timestamp != 0) {
-      final notices = await getNoticeAll();
-      prefs.setString(
-        prefsKey,
-        notices
-            .where((n) => history.contains(n.id) && n.endAt.isAfter(now))
-            .map((n) => '${n.id}')
-            .reduce((o, n) => '$o,$n'),
-      );
+      final notices = (await getNoticeAll())
+          .where((n) => history.contains(n.id) && n.endAt.isAfter(now))
+          .map((n) => '${n.id}');
+
+      if (notices.isNotEmpty) {
+        prefs.setString(prefsKey, notices.reduce((o, n) => '$o,$n'));
+      }
     }
   }
 }

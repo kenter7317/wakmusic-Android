@@ -1,5 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -15,6 +20,7 @@ import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/tab_view.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
 class SearchView extends StatelessWidget {
@@ -30,15 +36,34 @@ class SearchView extends StatelessWidget {
     _fieldText.text = viewModel.text;
     _fieldText.selection =
         TextSelection.collapsed(offset: viewModel.text.length);
-    return WillPopScope(
-      onWillPop: () async {
-        if (viewModel.curStatus != SearchStatus.before) {
-          FocusManager.instance.primaryFocus?.unfocus();
-          viewModel.updateStatus(SearchStatus.before);
+    return Exitable(
+      scopes: const [
+        ExitScope.selectedSong,
+        ExitScope.openedPageRouteBuilder,
+        ExitScope.searchDuring,
+        ExitScope.searchAfter,
+      ],
+      onExitable: (scope) {
+        if (scope == ExitScope.selectedSong && ExitScope.searchAfter.contain) {
+          ExitScope.remove = ExitScope.selectedSong;
           selectedList.clearList();
-          return false;
+          final navProvider = Provider.of<NavProvider>(context, listen: false);
+          final audioProvider =
+              Provider.of<AudioProvider>(context, listen: false);
+          navProvider.subChange(1);
+          if (audioProvider.isEmpty) navProvider.subSwitchForce(false);
+          viewModel.updateStatus(SearchStatus.before);
         }
-        return true;
+        if (scope == ExitScope.searchDuring) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          viewModel.updateStatus(ExitScope.searchAfter.contain
+              ? SearchStatus.after
+              : SearchStatus.before);
+          return;
+        }
+        if (scope == ExitScope.searchAfter) {
+          viewModel.updateStatus(SearchStatus.before);
+        }
       },
       child: Column(
         children: [

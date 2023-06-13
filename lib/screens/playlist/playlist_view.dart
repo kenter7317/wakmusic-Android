@@ -20,6 +20,7 @@ import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/models_v2/playlist/playlist.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/keep/bot_sheet.dart';
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:wakmusic/widgets/proxy_decorator.dart';
@@ -104,8 +105,54 @@ class PlaylistView extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
     SelectSongProvider selectedList = Provider.of<SelectSongProvider>(context);
-    return WillPopScope(
-      onWillPop: () => _canPop(context, viewModel, selectedList),
+    return Exitable(
+      scopes: const [ExitScope.editMode, ExitScope.openedPageRouteBuilder],
+      onExitable: (scope) async {
+        if (scope == ExitScope.editMode) {
+          ExitScope.remove = ExitScope.editMode;
+          viewModel.applySongs(!listEquals(
+            viewModel.songs,
+            viewModel.tempsongs,
+          ));
+          selectedList.clearList();
+          return;
+        }
+        if (scope == ExitScope.openedPageRouteBuilder) {
+          if (await _canPop(context, viewModel, selectedList)) {
+            ExitScope.remove = ExitScope.openedPageRouteBuilder;
+            final nav = Provider.of<NavProvider>(context, listen: false);
+            final audio = Provider.of<AudioProvider>(context, listen: false);
+            if (nav.subState == true && nav.subIdx == 6) {
+              if (audio.isEmpty) {
+                nav.subSwitchForce(false);
+              } else {
+                nav.subChange(1);
+              }
+            }
+            Navigator.pop(
+              context,
+              playlist.copyWith(
+                title: viewModel.title,
+                songs: viewModel.songs.whereType<Song>().toList(),
+              ),
+            );
+            viewModel.title = null;
+          }
+          return;
+        }
+
+        final navProvider = Provider.of<NavProvider>(context, listen: false);
+        final audioProvider =
+            Provider.of<AudioProvider>(context, listen: false);
+        if (navProvider.subState == true && navProvider.subIdx == 6) {
+          if (audioProvider.isEmpty) {
+            navProvider.subSwitchForce(false);
+          } else {
+            navProvider.subChange(1);
+          }
+        }
+        return;
+      },
       child: FutureBuilder<void>(
         future: viewModel.getSongs(playlist),
         builder: (context, _) {
@@ -144,8 +191,7 @@ class PlaylistView extends StatelessWidget {
                                 isOpacityChange: false,
                               ),
                             ),
-                          if (!isEmpty && !viewModel.songs.contains(null))
-                            _buildSonglist(context),
+                          if (!isEmpty) _buildSonglist(context),
                         ],
                       ),
                     ),
@@ -234,8 +280,11 @@ class PlaylistView extends StatelessWidget {
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
+                            ExitScope.remove = ExitScope.editMode;
                             viewModel.applySongs(!listEquals(
-                                viewModel.songs, viewModel.tempsongs));
+                              viewModel.songs,
+                              viewModel.tempsongs,
+                            ));
                             selectedList.clearList();
                           },
                           child: const EditBtn(type: BtnType.done),

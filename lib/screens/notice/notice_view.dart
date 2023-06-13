@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:wakmusic/models_v2/notice.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/screens/notice/notice_detail_view.dart';
 import 'package:wakmusic/screens/notice/notice_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -9,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 
 class NoticeView extends StatelessWidget {
@@ -17,7 +19,10 @@ class NoticeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DismissibleView(
-      onDismissed: () => Navigator.pop(context),
+      onDismissed: () {
+        ExitScope.remove = ExitScope.openedPageRouteBuilder;
+        Navigator.pop(context);
+      },
       child: Scaffold(
         body: _buildBody(context),
       ),
@@ -26,27 +31,36 @@ class NoticeView extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     NoticeViewModel viewModel = Provider.of<NoticeViewModel>(context);
-    return SafeArea(
-      child: Column(
-        children: [
-          const Header(
-            type: HeaderType.back,
-            headerTxt: '공지사항',
-          ),
-          Expanded(
-            child: FutureBuilder<List<Notice>>(
-              future: viewModel.noticeList,
-              builder: (_, snapshot) => ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: snapshot.data?.length ?? 5,
-                itemBuilder: (context, idx) => _buildNotice(
-                  context,
-                  snapshot.data?[idx],
+    return Exitable(
+      scopes: const [ExitScope.openedPageRouteBuilder],
+      onExitable: (scope) {
+        if (scope == ExitScope.openedPageRouteBuilder) {
+          ExitScope.remove = ExitScope.openedPageRouteBuilder;
+          Navigator.pop(context);
+        }
+      },
+      child: SafeArea(
+        child: Column(
+          children: [
+            const Header(
+              type: HeaderType.back,
+              headerTxt: '공지사항',
+            ),
+            Expanded(
+              child: FutureBuilder<List<Notice>>(
+                future: viewModel.noticeList,
+                builder: (_, snapshot) => ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: snapshot.data?.length ?? 5,
+                  itemBuilder: (context, idx) => _buildNotice(
+                    context,
+                    snapshot.data?[idx],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
