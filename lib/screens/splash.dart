@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:wakmusic/main.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wakmusic/repository/s3_repo.dart';
-import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/models_v2/event.dart';

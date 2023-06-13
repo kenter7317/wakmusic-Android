@@ -5,5 +5,5 @@ enum HttpMethod {
   patch,
   delete;
 
-  int get code => {get, put}.contains(this) ? 200 : 201;
+  int get code => {post, delete}.contains(this) ? 201 : 200;
 }
