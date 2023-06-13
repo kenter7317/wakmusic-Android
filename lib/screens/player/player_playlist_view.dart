@@ -18,10 +18,13 @@ class PlayerPlayList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: WakColor.grey100,
-      body: _buildBody(context),
-      bottomNavigationBar: getPlayerPlaylistBottom(context),
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        backgroundColor: WakColor.grey100,
+        body: _buildBody(context),
+        bottomNavigationBar: getPlayerPlaylistBottom(context),
+      ),
     );
   }
 

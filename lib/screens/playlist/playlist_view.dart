@@ -144,7 +144,8 @@ class PlaylistView extends StatelessWidget {
                                 isOpacityChange: false,
                               ),
                             ),
-                          if (!isEmpty) _buildSonglist(context),
+                          if (!isEmpty && !viewModel.songs.contains(null))
+                            _buildSonglist(context),
                         ],
                       ),
                     ),

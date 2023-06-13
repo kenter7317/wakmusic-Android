@@ -47,34 +47,42 @@ class PlayerViewBottom extends StatelessWidget {
         children: [
           keepModel.loginStatus == LoginStatus.before
               ? playDetailBarBtn("ic_32_heart_off", koreanNumberFormater(0),
-                  onTap: () async {
-                  var result = await showModal(
+                  onTap: () {
+                  showModal(
                     context: context,
                     builder: (context) => const PopUp(
                       type: PopUpType.txtTwoBtn,
                       msg: '로그인이 필요한 서비스입니다.\n로그인 하시겠습니까?',
                     ),
-                  );
-                  if (result) {
+                  ).then((value) {
                     navProvider.update(4);
                     Navigator.popUntil(context, (route) => route.isFirst);
-                  }
+                  });
                 })
               : FutureBuilder(
-                  future: API.like.get(songId: audioProvider.currentSong?.id ?? ''),
+                  future:
+                      API.like.get(songId: audioProvider.currentSong?.id ?? ''),
                   builder: (context, snapshot) {
                     return playDetailBarBtn(
-                        keepModel.likes.contains(audioProvider.currentSong)
-                            ? "ic_32_heart_on"
-                            : "ic_32_heart_off",
-                        koreanNumberFormater(snapshot.data ?? 0),
-                        onTap: () {
-                      if (audioProvider.currentSong != null) {
-                        keepModel.likes.contains(audioProvider.currentSong)
-                        ? throttle.actionFunction(() => keepModel.removeLikeSong(audioProvider.currentSong!.id))
-                        : throttle.actionFunction(() => keepModel.addLikeSong(audioProvider.currentSong!.id));
-                      }
-                    });
+                      keepModel.likes.contains(audioProvider.currentSong)
+                          ? "ic_32_heart_on"
+                          : "ic_32_heart_off",
+                      koreanNumberFormater(snapshot.data ?? 0),
+                      onTap: () {
+                        if (audioProvider.currentSong != null) {
+                          keepModel.likes.contains(audioProvider.currentSong)
+                              ? throttle.actionFunction(() =>
+                                  keepModel.removeLikeSong(
+                                      audioProvider.currentSong!.id))
+                              : throttle.actionFunction(() => keepModel
+                                  .addLikeSong(audioProvider.currentSong!.id));
+                        }
+                      },
+                      txtColor:
+                          keepModel.likes.contains(audioProvider.currentSong)
+                              ? WakColor.pink
+                              : WakColor.grey400,
+                    );
                   },
                 ),
           playDetailBarBtn(
@@ -85,17 +93,16 @@ class PlayerViewBottom extends StatelessWidget {
           ),
           playDetailBarBtn("ic_32_playadd_900", "노래담기", onTap: () async {
             if (keepModel.loginStatus == LoginStatus.before) {
-              var result = await showModal(
+              showModal(
                 context: context,
                 builder: (context) => const PopUp(
                   type: PopUpType.txtTwoBtn,
                   msg: '로그인이 필요한 서비스입니다.\n로그인 하시겠습니까?',
                 ),
-              );
-              if (result) {
+              ).then((value) {
                 navProvider.update(4);
                 Navigator.popUntil(context, (route) => route.isFirst);
-              }
+              });
             } else {
               selProvider.addSong(audioProvider.currentSong!);
               Navigator.of(context, rootNavigator: true)
@@ -248,23 +255,23 @@ class PlayerPlaylistSelBottom extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               selNav.selNum != audioProvider.queue.length
-                  ? editBarBtn("ic_32_check_off", "전체선택",
-                      onTap: () {selNav.addAllSong(audioProvider.queue);})
+                  ? editBarBtn("ic_32_check_off", "전체선택", onTap: () {
+                      selNav.addAllSong(audioProvider.queue);
+                    })
                   : editBarBtn("ic_32_check_on", "전체선택해제",
                       onTap: selNav.clearList),
               editBarBtn("ic_32_playadd_25", "노래담기", onTap: () async {
                 if (keepModel.loginStatus == LoginStatus.before) {
-                  var result = await showModal(
+                  showModal(
                     context: context,
                     builder: (context) => const PopUp(
                       type: PopUpType.txtTwoBtn,
                       msg: '로그인이 필요한 서비스입니다.\n로그인 하시겠습니까?',
                     ),
-                  );
-                  if (result) {
+                  ).then((value) {
                     navProvider.update(4);
                     Navigator.popUntil(context, (route) => route.isFirst);
-                  }
+                  });
                 } else {
                   selNav.addSong(audioProvider.currentSong!);
                   Navigator.of(context, rootNavigator: true)
