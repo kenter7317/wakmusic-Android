@@ -225,6 +225,34 @@ class UserRepository {
     }
   }
 
+  Future<bool> addLikeSong(String songId) async {
+    final token = await _token;
+    if(token == null) {
+      return false;
+    }
+
+    try{
+      await API.like.add(songId: songId, token: token);
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+  
+  Future<bool> removeLikeSong(String songId) async {
+    final token = await _token;
+    if(token == null) {
+      return false;
+    }
+
+    try{
+      await API.like.remove(songId: songId, token: token);
+      return true;
+    }catch (e){
+      rethrow;
+    }
+  }
+
   Future<bool> removeUser(Login platform) async {
     final token = await _token;
     if (token == null) {

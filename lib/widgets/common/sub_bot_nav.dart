@@ -26,6 +26,7 @@ import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
 import '../../screens/player/player_view.dart';
+import '../page_route_builder.dart';
 
 class SubBotNav extends StatefulWidget {
   const SubBotNav({super.key});
@@ -161,13 +162,8 @@ class _SubBotNavState extends State<SubBotNav> {
     return GestureDetector(
       onTap: () {
         if (type == PlayerBarType.main) {
-          botNav.mainSwitchForce(false);
-          botNav.subSwitchForce(true);
-          botNav.subChange(0);
-          Navigator.push(
-            botNav.pageContext,
-            MaterialPageRoute(builder: (context) => const Player()),
-          );
+          Navigator.of(context, rootNavigator: true)
+              .push(pageRouteBuilder(page: const Player()));
         }
       },
       child: Stack(

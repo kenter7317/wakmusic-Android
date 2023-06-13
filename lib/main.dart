@@ -1,13 +1,13 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/repository/notice_repo.dart';
-import 'package:wakmusic/repository/s3_repo.dart';
 import 'package:wakmusic/screens/charts/charts_view.dart';
+import 'package:wakmusic/utils/error_catch.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/main_bot_nav.dart';
 import 'package:provider/provider.dart';
@@ -20,10 +20,13 @@ import 'package:wakmusic/screens/search/search_view.dart';
 import 'package:wakmusic/screens/keep/keep_view.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
+import 'package:wakmusic/widgets/common/toast_msg.dart';
 
 void main() async {
-  await dotenv.load();
-  runApp(const MyApp());
+  runZonedGuarded(() async {
+    await dotenv.load();
+    runApp(const MyApp());
+  }, ErrorCatch.call);
 }
 
 class MyApp extends StatelessWidget {
@@ -67,6 +70,19 @@ class _MainState extends State<Main> {
 
   @override
   void initState() {
+    ErrorCatch.method = (error, stack) {
+      showToastWidget(
+        context: context,
+        position: const StyledToastPosition(
+          align: Alignment.bottomCenter,
+          offset: 56,
+        ),
+        animation: StyledToastAnimation.slideFromBottomFade,
+        reverseAnimation: StyledToastAnimation.fade,
+        ToastMsg(msg: 'Error: $error StackTrace: $stack', size: 120),
+      );
+    };
+
     super.initState();
     final repo = NoticeRepository();
 

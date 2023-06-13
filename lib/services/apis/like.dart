@@ -27,6 +27,7 @@ class LikeAPI extends API {
     final response = await request(
       '$url/$songId/addLike',
       method: HttpMethod.post,
+      token: token
     );
 
     final status = HttpStatus.byCode(response.statusCode);
@@ -45,6 +46,7 @@ class LikeAPI extends API {
     final response = await request(
       '$url/$songId/removeLike',
       method: HttpMethod.post,
+      token: token
     );
 
     final status = HttpStatus.byCode(response.statusCode);
