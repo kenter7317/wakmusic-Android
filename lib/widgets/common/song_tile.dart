@@ -22,6 +22,7 @@ enum TileType {
     showViews: false,
     showDate: false,
     canSelect: false,
+    inPlayer: false,
     padding: {'start': 20, 'middle': 0, 'end': 20},
     icon: {},
   ),
@@ -30,6 +31,7 @@ enum TileType {
     showViews: false,
     showDate: false,
     canSelect: true,
+    inPlayer: false,
     padding: {'start': 20, 'middle': 16, 'end': 20},
     icon: {'icon': 'ic_32_move', 'size': 32.0},
   ),
@@ -38,6 +40,7 @@ enum TileType {
     showViews: false,
     showDate: false,
     canSelect: false,
+    inPlayer: false,
     padding: {'start': 0, 'middle': 12, 'end': 0},
     icon: {'icon': 'ic_24_play_shadow', 'size': 24.0},
   ),
@@ -46,6 +49,7 @@ enum TileType {
     showViews: false,
     showDate: false,
     canSelect: false,
+    inPlayer: false,
     padding: {'start': 20, 'middle': 12, 'end': 16},
     icon: {'icon': 'wavestream', 'size': 32.0},
   ),
@@ -54,6 +58,7 @@ enum TileType {
     showViews: false,
     showDate: false,
     canSelect: false,
+    inPlayer: false,
     padding: {'start': 20, 'middle': 16, 'end': 20},
     icon: {'icon': 'ic_32_play_point_shadow', 'size': 32.0},
   ),
@@ -62,6 +67,7 @@ enum TileType {
     showViews: true,
     showDate: false,
     canSelect: true,
+    inPlayer: false,
     padding: {'start': 20, 'middle': 12, 'end': 20},
     icon: {},
   ),
@@ -70,15 +76,26 @@ enum TileType {
     showViews: false,
     showDate: true,
     canSelect: true,
+    inPlayer: false,
     padding: {'start': 20, 'middle': 16, 'end': 20},
     icon: {},
-  );
+  ),
+  playerEditTile(
+    showRank: false,
+    showViews: false,
+    showDate: false,
+    canSelect: true,
+    inPlayer: true,
+    padding: {'start': 20, 'middle': 16, 'end': 20},
+    icon: {'icon': 'ic_32_move', 'size': 32.0},
+  ),;
 
   const TileType({
     required this.showRank,
     required this.showViews,
     required this.showDate,
     required this.canSelect,
+    required this.inPlayer,
     required this.padding,
     required this.icon,
   });
@@ -87,6 +104,7 @@ enum TileType {
   final bool showViews;
   final bool showDate;
   final bool canSelect;
+  final bool inPlayer;
   final Map<String, double> padding;
   final Map<String, dynamic> icon;
 }
@@ -127,28 +145,30 @@ class SongTile extends StatelessWidget {
                 if (audioProvider.isEmpty) navProvider.subSwitchForce(false);
               }
             } else {
-              switch (navProvider.curIdx) {
-                case 0:
-                  selectedList.setMaxSel(playlistViewModel.songs.length);
-                  navProvider.subChange(4);
-                  break;
-                case 1:
-                  navProvider.subChange(4);
-                  break;
-                case 2:
-                  selectedList.setMaxSel(playlistViewModel.songs.length);
-                  navProvider.subChange(9);
-                  break;
-                case 3:
-                  navProvider.subChange(4);
-                  break;
-                case 4:
-                  selectedList.setMaxSel(playlistViewModel.songs.length);
-                  navProvider.subChange(5);
-                  break;
-                default:
+              if(!tileType.inPlayer){
+                switch (navProvider.curIdx) {
+                  case 0:
+                    selectedList.setMaxSel(playlistViewModel.songs.length);
+                    navProvider.subChange(4);
+                    break;
+                  case 1:
+                    navProvider.subChange(4);
+                    break;
+                  case 2:
+                    selectedList.setMaxSel(playlistViewModel.songs.length);
+                    navProvider.subChange(9);
+                    break;
+                  case 3:
+                    navProvider.subChange(4);
+                    break;
+                  case 4:
+                    selectedList.setMaxSel(playlistViewModel.songs.length);
+                    navProvider.subChange(5);
+                    break;
+                  default:
+                }
+                navProvider.subSwitchForce(true);
               }
-              navProvider.subSwitchForce(true);
               selectedList.addSong(song!);
             }
             /* for test */
@@ -297,7 +317,7 @@ class SongTile extends StatelessWidget {
                           width: tileType.icon['size'],
                           height: tileType.icon['size'],
                         ),
-                if (tileType == TileType.editTile)
+                if (tileType == TileType.editTile || tileType == TileType.playerEditTile)
                   ReorderableDragStartListener(
                     index: idx,
                     child: SvgPicture.asset(

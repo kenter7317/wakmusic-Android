@@ -57,7 +57,7 @@ class PlayerViewBottom extends StatelessWidget {
                   );
                   if (result) {
                     navProvider.update(4);
-                    Navigator.pop(context);
+                    Navigator.popUntil(context, (route) => route.isFirst);
                   }
                 })
               : FutureBuilder(
@@ -94,7 +94,7 @@ class PlayerViewBottom extends StatelessWidget {
               );
               if (result) {
                 navProvider.update(4);
-                Navigator.pop(context);
+                Navigator.popUntil(context, (route) => route.isFirst);
               }
             } else {
               selProvider.addSong(audioProvider.currentSong!);
@@ -234,6 +234,9 @@ class PlayerPlaylistSelBottom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selNav = Provider.of<SelectSongProvider>(context);
+    final audioProvider = Provider.of<AudioProvider>(context);
+    final keepModel = Provider.of<KeepViewModel>(context);
+    final navProvider = Provider.of<NavProvider>(context);
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -244,13 +247,36 @@ class PlayerPlaylistSelBottom extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              selNav.selNum != selNav.maxSel
+              selNav.selNum != audioProvider.queue.length
                   ? editBarBtn("ic_32_check_off", "전체선택",
-                      onTap: selNav.addAllSong)
+                      onTap: () {selNav.addAllSong(audioProvider.queue);})
                   : editBarBtn("ic_32_check_on", "전체선택해제",
                       onTap: selNav.clearList),
-              editBarBtn("ic_32_playadd_25", "노래담기"),
-              editBarBtn("ic_32_play_25", "재생"),
+              editBarBtn("ic_32_playadd_25", "노래담기", onTap: () async {
+                if (keepModel.loginStatus == LoginStatus.before) {
+                  var result = await showModal(
+                    context: context,
+                    builder: (context) => const PopUp(
+                      type: PopUpType.txtTwoBtn,
+                      msg: '로그인이 필요한 서비스입니다.\n로그인 하시겠습니까?',
+                    ),
+                  );
+                  if (result) {
+                    navProvider.update(4);
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                  }
+                } else {
+                  selNav.addSong(audioProvider.currentSong!);
+                  Navigator.of(context, rootNavigator: true)
+                      .push(pageRouteBuilder(page: const KeepSongPopUp()));
+                }
+              }),
+              editBarBtn("ic_32_delete", "삭제", onTap: () {
+                if (selNav.list.isNotEmpty) {
+                  audioProvider.removeQueueItems(selNav.list);
+                  selNav.clearList();
+                }
+              }),
             ],
           ),
         ),

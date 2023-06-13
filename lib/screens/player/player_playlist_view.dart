@@ -135,7 +135,7 @@ class PlayerPlayList extends StatelessWidget {
                 key: Key(idx.toString()),
                 song: queue[idx],
                 idx: idx,
-                tileType: TileType.editTile,
+                tileType: TileType.playerEditTile,
               ),
               onReorder: (oldIdx, newIdx) {
                 Provider.of<AudioProvider>(
