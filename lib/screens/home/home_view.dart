@@ -120,6 +120,8 @@ class HomeView extends StatelessWidget {
 
   Widget _buildChartTitle(BuildContext context, List<Song>? toplist) {
     NavProvider botNav = Provider.of<NavProvider>(context);
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+    HomeViewModel viewModel = Provider.of<HomeViewModel>(context);
     return SizedBox(
       height: 24,
       child: Row(
@@ -143,9 +145,12 @@ class HomeView extends StatelessWidget {
           ),
           Expanded(
             child: GestureDetector(
-              onTap: () {
+              onTap: () async {
                 if (toplist != null) {
-                  /* play all the songs */
+                  botNav.subChange(1);
+                  botNav.subSwitchForce(true);
+                  audioProvider.addQueueItems(await viewModel.topList,
+                      override: true, autoplay: true);
                 }
               },
               child: Text(
@@ -243,6 +248,7 @@ class HomeView extends StatelessWidget {
   Widget _buildNewListItem(BuildContext context, Song? song) {
     AudioProvider audioProvider =
         Provider.of<AudioProvider>(context, listen: false);
+    NavProvider navProvider = Provider.of<NavProvider>(context);
     if (song == null) {
       return SizedBox(
         width: 144,
@@ -281,13 +287,15 @@ class HomeView extends StatelessWidget {
         height: 131,
         child: Column(
           children: [
-            Stack(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    audioProvider.addQueueItem(song, autoplay: true);
-                  },
-                  child: AspectRatio(
+            GestureDetector(
+              onTap: () {
+                audioProvider.addQueueItem(song, autoplay: true);
+                navProvider.subChange(1);
+                navProvider.subSwitchForce(true);
+              },
+              child: Stack(
+                children: [
+                  AspectRatio(
                     aspectRatio: 16 / 9,
                     child: ExtendedImage.network(
                       'https://i.ytimg.com/vi/${song.id}/hqdefault.jpg',
@@ -307,14 +315,9 @@ class HomeView extends StatelessWidget {
                       cacheMaxAge: const Duration(days: 30),
                     ),
                   ),
-                ),
-                Positioned(
-                  right: 8,
-                  bottom: 8,
-                  child: GestureDetector(
-                    onTap: () {
-                      /* play song */
-                    },
+                  Positioned(
+                    right: 8,
+                    bottom: 8,
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -333,8 +336,8 @@ class HomeView extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 8),
             Container(

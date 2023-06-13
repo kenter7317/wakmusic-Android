@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
@@ -25,7 +27,8 @@ class KeepTabView extends StatefulWidget {
   State<KeepTabView> createState() => _KeepTabViewState();
 }
 
-class _KeepTabViewState extends State<KeepTabView> with TickerProviderStateMixin {
+class _KeepTabViewState extends State<KeepTabView>
+    with TickerProviderStateMixin {
   late final int _length;
   late TabController _controller;
   int _prevIdx = 0;
@@ -55,8 +58,11 @@ class _KeepTabViewState extends State<KeepTabView> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
-    SelectPlaylistProvider selectedPlaylist = Provider.of<SelectPlaylistProvider>(context);
+    SelectPlaylistProvider selectedPlaylist =
+        Provider.of<SelectPlaylistProvider>(context);
     SelectSongProvider selectedLike = Provider.of<SelectSongProvider>(context);
+    NavProvider navProvider = Provider.of<NavProvider>(context);
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
     return DefaultTabController(
       length: _length,
       child: Column(
@@ -78,20 +84,28 @@ class _KeepTabViewState extends State<KeepTabView> with TickerProviderStateMixin
                 unselectedLabelStyle: WakText.txt16M,
                 labelColor: WakColor.grey900,
                 unselectedLabelColor: WakColor.grey400,
-                overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                overlayColor:
+                    MaterialStateProperty.all<Color>(Colors.transparent),
                 splashFactory: NoSplash.splashFactory,
                 indicatorSize: widget.type.indicatorSize,
                 labelPadding: widget.type.labelPadding,
                 padding: widget.type.padding,
                 isScrollable: widget.type.isScrollable,
                 onTap: (idx) async {
-                  if (widget.onPause == null && viewModel.playlists.isEmpty != viewModel.likes.isEmpty) setState(() {});
+                  if (widget.onPause == null &&
+                      viewModel.playlists.isEmpty != viewModel.likes.isEmpty)
+                    setState(() {});
                   if (widget.onPause != null && idx != _controller.index) {
                     if (await widget.onPause!()) {
                       _play = true;
                       _controller.index = idx;
                       _play = false;
                     }
+                  }
+                  if (audioProvider.isEmpty) {
+                    navProvider.subSwitchForce(false);
+                  } else {
+                    navProvider.subChange(1);
                   }
                 },
                 tabs: List.generate(
@@ -106,31 +120,37 @@ class _KeepTabViewState extends State<KeepTabView> with TickerProviderStateMixin
                   ),
                 ),
               ),
-              if ((viewModel.playlists.isNotEmpty && _controller.index == 0) || (viewModel.likes.isNotEmpty && _controller.index == 1))
+              if ((viewModel.playlists.isNotEmpty && _controller.index == 0) ||
+                  (viewModel.likes.isNotEmpty && _controller.index == 1))
                 Positioned(
                   top: 19,
                   right: 20,
                   child: (widget.onPause != null)
-                    ? GestureDetector(
-                        onTap: () {
-                          if (_controller.index == 0) {
-                            viewModel.applyPlaylists(true);
-                            selectedPlaylist.clearList();
-                          } else {
-                            viewModel.applyLikes(true);
-                            selectedLike.clearList();
-                          }
-                        },
-                        child: const EditBtn(type: BtnType.done),
-                      )
-                    : GestureDetector(
-                        onTap: () {
-                          viewModel.updateEditStatus((_controller.index == 0)
-                            ? EditStatus.playlists
-                            : EditStatus.likes);
-                        },
-                        child: const EditBtn(type: BtnType.edit),
-                      ),
+                      ? GestureDetector(
+                          onTap: () {
+                            if (_controller.index == 0) {
+                              viewModel.applyPlaylists(true);
+                              selectedPlaylist.clearList();
+                            } else {
+                              viewModel.applyLikes(true);
+                              selectedLike.clearList();
+                            }
+                            if (audioProvider.isEmpty) {
+                              navProvider.subSwitchForce(false);
+                            } else {
+                              navProvider.subChange(1);
+                            }
+                          },
+                          child: const EditBtn(type: BtnType.done),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            viewModel.updateEditStatus((_controller.index == 0)
+                                ? EditStatus.playlists
+                                : EditStatus.likes);
+                          },
+                          child: const EditBtn(type: BtnType.edit),
+                        ),
                 ),
             ],
           ),

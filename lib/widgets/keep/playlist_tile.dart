@@ -6,10 +6,11 @@ import 'package:provider/provider.dart';
 import 'package:wakmusic/models_v2/playlist/playlist.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
-import 'package:wakmusic/models_v2/scope.dart';
-import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
 import 'package:wakmusic/services/apis/api.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
+import 'package:wakmusic/screens/keep/keep_view_model.dart' as Keep;
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,7 +27,7 @@ class PlaylistTile extends StatelessWidget {
     this.idx = 0,
     this.onLongPress,
   });
-  final Playlist? playlist;
+  final UserPlaylist? playlist;
   final TileType tileType;
   final int idx;
   final VoidCallback? onLongPress;
@@ -38,22 +39,38 @@ class PlaylistTile extends StatelessWidget {
     } else {
       final selectedList = Provider.of<SelectPlaylistProvider>(context);
       bool isSelected = selectedList.list.contains(playlist);
+      SelectSongProvider selSongProvider =
+          Provider.of<SelectSongProvider>(context);
+      NavProvider navProvider = Provider.of<NavProvider>(context);
+      AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+      Keep.KeepViewModel keepViewModel =
+          Provider.of<Keep.KeepViewModel>(context);
+
       return GestureDetector(
-        onTap: () {
+        onTap: () async {
           if (tileType.canSelect) {
             if (isSelected) {
               selectedList.removePlaylist(playlist!);
+              if (selectedList.list.isEmpty && audioProvider.isEmpty) {
+                navProvider.subSwitchForce(false);
+              } else if (selectedList.list.isEmpty) {
+                navProvider.subChange(1);
+              }
             } else {
               selectedList.addPlaylist(playlist!);
+              if (keepViewModel.editStatus == Keep.EditStatus.playlists) {
+                navProvider.subChange(7);
+                navProvider.subSwitchForce(true);
+              }
             }
           } else if (tileType == TileType.baseTile) {
             final selectedSongs =
                 Provider.of<SelectSongProvider>(context, listen: false);
             final viewModel =
-                Provider.of<KeepViewModel>(context, listen: false);
+                Provider.of<Keep.KeepViewModel>(context, listen: false);
 
             viewModel.addSongs(playlist!, selectedSongs.list).then((value) {
-              if (value) {
+              if (value != -1) {
                 showToastWidget(
                   context: context,
                   position: const StyledToastPosition(
@@ -62,14 +79,31 @@ class PlaylistTile extends StatelessWidget {
                   ),
                   animation: StyledToastAnimation.slideFromBottomFade,
                   reverseAnimation: StyledToastAnimation.fade,
-                  ToastMsg(msg: '${playlist?.songs?.length}곡을 리스트에 담았습니다.'),
+                  ToastMsg(msg: '$value곡을 리스트에 담았습니다.'),
+                );
+                selSongProvider.clearList();
+                if (audioProvider.isEmpty) {
+                  navProvider.subSwitchForce(false);
+                } else {
+                  navProvider.subChange(1);
+                }
+              } else if (value == 0) {
+                showToastWidget(
+                  context: context,
+                  position: const StyledToastPosition(
+                    align: Alignment.bottomCenter,
+                    offset: 56,
+                  ),
+                  animation: StyledToastAnimation.slideFromBottomFade,
+                  reverseAnimation: StyledToastAnimation.fade,
+                  const ToastMsg(msg: '이미 리스트에 담긴 곡들입니다.'),
                 );
               }
               Navigator.pop(context);
             });
           } else {
             final viewModel =
-                Provider.of<KeepViewModel>(context, listen: false);
+                Provider.of<Keep.KeepViewModel>(context, listen: false);
             Navigator.push(
               context,
               pageRouteBuilder(page: PlaylistView(playlist: playlist!)),
@@ -135,7 +169,7 @@ class PlaylistTile extends StatelessWidget {
                       SizedBox(
                         height: 18,
                         child: Text(
-                          '${playlist!.songs!.length}곡',
+                          '${playlist!.songs.length}곡',
                           style: WakText.txt12L,
                         ),
                       ),

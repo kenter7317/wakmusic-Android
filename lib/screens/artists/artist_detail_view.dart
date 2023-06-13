@@ -3,8 +3,13 @@ import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 import 'package:wakmusic/models_v2/artist.dart';
 import 'package:wakmusic/models_v2/scope.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models/providers/tab_provider.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -12,6 +17,7 @@ import 'package:wakmusic/style/text_styles.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:wakmusic/utils/txt_size.dart';
 import 'package:wakmusic/widgets/common/play_btns.dart';
+import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/exitable.dart';
 
@@ -26,36 +32,39 @@ class ArtistView extends StatefulWidget {
 class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
   late FlipCardController cardController;
   late TabController tabController;
-  final scrollControllers = List.generate(3, (idx) => ScrollController());
+  final ScrollController scrollController = ScrollController();
   final ScrollController descScrollController = ScrollController();
-  bool hideArtistInfo = false;
   double descScrollHeight = 0;
-  double opacity = 1;
 
   @override
   void initState() {
     super.initState();
     cardController = FlipCardController();
     tabController = TabController(length: 3, vsync: this);
-    for (var controller in scrollControllers) {
-      controller.addListener(() {
-        setState(() {
-          double offset = controller.offset;
-          if (offset < 0) {
-            offset = 0;
-          } else if (offset > 100) {
-            offset = 100;
-          }
-          opacity = 1 - offset / 100;
-        });
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
+    TabProvider tabProvider = Provider.of<TabProvider>(context);
+    SelectSongProvider selProvider = Provider.of<SelectSongProvider>(context);
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+    NavProvider navProvider = Provider.of<NavProvider>(context);
     double artistImgRatio = (MediaQuery.of(context).size.width - 48) / 327;
     final artist = widget.artist;
+
+    tabController.addListener(() {
+      if (tabController.previousIndex != tabController.index) {
+        tabProvider.update(tabController.index);
+        selProvider.clearList();
+        if (audioProvider.isEmpty) {
+          navProvider.subSwitchForce(false);
+        } else {
+          navProvider.subChange(1);
+        }
+      }
+    });
+
     return Exitable(
       onExitable: (scope) {
         if (scope == ExitScope.artistDetail) {
@@ -64,71 +73,85 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
         }
       },
       child: Scaffold(
-        body: Stack(
-          children: [
-            albumsTabView(tabController),
-            Container(
-              height: 200,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  stops: [...artist.colors.map((e) => e.stop)],
-                  colors: [
-                    ...artist.colors.map((e) => e.color.withOpacity(e.opacity))
+        body: NestedScrollView(
+          controller: scrollController,
+          clipBehavior: Clip.none,
+          headerSliverBuilder: (context, isScrolled) => [
+            SliverStack(
+              children: [
+                SliverAppBar(
+                  pinned: true,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  collapsedHeight: MediaQuery.of(context).viewPadding.top + 172,
+                  expandedHeight: MediaQuery.of(context).viewPadding.top + 194,
+                  flexibleSpace: Stack(
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).viewPadding.top + 172,
+                        color: WakColor.grey100,
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).viewPadding.top + 144,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            stops: [...artist.colors.map((e) => e.stop)],
+                            colors: [
+                              ...artist.colors
+                                  .map((e) => e.color.withOpacity(e.opacity))
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                MultiSliver(
+                  children: [
+                    PreferredSize(
+                      preferredSize: const Size.fromHeight(48),
+                      child: SliverAppBar(
+                        pinned: true,
+                        toolbarHeight: 48,
+                        leadingWidth: 72,
+                        leading: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            viewModel.clear();
+                          },
+                          icon: Padding(
+                            padding: const EdgeInsets.only(left: 4),
+                            child: SvgPicture.asset(
+                              "assets/icons/ic_32_arrow_bottom.svg",
+                              width: 32,
+                              height: 32,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        expandedHeight: 72 +
+                            artistImgRatio *
+                                180, // appBar + 8 + artistImg + 16 = 80 + artistImg
+                        collapsedHeight: 48, // appBar + 8
+                        shadowColor: Colors.transparent,
+                        flexibleSpace: FlexibleSpaceBar(
+                          background: artistInfo(context),
+                        ),
+                      ),
+                    ),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: TabBarDelegate(tabController: tabController),
+                    ),
                   ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
                 ),
-              ),
-            ),
-            Positioned(
-              top: () {
-                final ctrl = scrollControllers[tabController.index];
-                return ctrl.hasClients ? -ctrl.position.pixels : 0.0;
-              }(),
-              child: Opacity(
-                opacity: opacity,
-                child: artistInfo(context),
-              ),
-            ),
-            Positioned(
-              top: MediaQuery.of(context).viewPadding.top + 8,
-              left: 20,
-              child: GestureDetector(
-                onTap: () {
-                  ExitScope.remove = ExitScope.artistDetail;
-                  Navigator.pop(context);
-                },
-                child: SvgPicture.asset(
-                  "assets/icons/ic_32_arrow_bottom.svg",
-                  width: 32,
-                  height: 32,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).viewPadding.top +
-                    56 +
-                    () {
-                      final ctrl = scrollControllers[tabController.index];
-                      final ratio = artistImgRatio * 180 + 24;
-                      if (!ctrl.hasClients) {
-                        return ratio;
-                      }
-                      if (ratio <= ctrl.position.pixels) {
-                        return 0;
-                      }
-                      return ratio - ctrl.position.pixels;
-                    }(),
-              ),
-              child: Column(
-                children: [
-                  albumsTabBar(tabController),
-                  const PlayBtns(),
-                ],
-              ),
+              ],
             ),
           ],
+          body: albumsTabView(tabController, widget.artist.colors[0].color),
         ),
       ),
     );
@@ -138,7 +161,7 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
     double artistImgRatio = (MediaQuery.of(context).size.width - 48) / 327;
     return Padding(
       padding: EdgeInsets.fromLTRB(
-          20, MediaQuery.of(context).viewPadding.top + 58, 20, 0),
+          20, MediaQuery.of(context).viewPadding.top + 56, 20, 16),
       child: Column(
         children: [
           Row(
@@ -412,100 +435,128 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
     );
   }
 
-  Widget albumsTabBar(TabController tabController) {
-    return Stack(
-      children: [
-        Container(
-          height: 36,
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: WakColor.grey200),
-            ),
+  Widget albumsTabView(TabController tabController, Color color) {
+    ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
+    if (viewModel.albums[AlbumType.values[tabController.index]] == null) {
+      return ListView.builder(
+        padding: const EdgeInsets.only(top: 0),
+        itemCount: 10,
+        itemBuilder: (_, idx) => const SkeletonBox(
+          child: SongTile(
+            song: null,
+            tileType: TileType.dateTile,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: TabBar(
-            controller: tabController,
-            indicatorColor: WakColor.lightBlue,
-            labelStyle: WakText.txt16B,
-            unselectedLabelStyle: WakText.txt16M,
-            labelColor: WakColor.grey900,
-            unselectedLabelColor: WakColor.grey400,
-            overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-            splashFactory: NoSplash.splashFactory,
-            labelPadding: EdgeInsets.zero,
-            tabs: AlbumType.values.map((e) {
-              return Tab(
-                height: 34,
-                child: Container(
-                  height: 34,
-                  padding: const EdgeInsets.fromLTRB(0, 2, 0, 8),
-                  child: Text(e.kor, textAlign: TextAlign.center),
+      );
+    } else {
+      return TabBarView(
+        controller: tabController,
+        children: AlbumType.values.map((type) {
+          return Stack(
+            key: PageStorageKey(type.index),
+            children: [
+              ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.zero,
+                itemCount: viewModel.albums[type] == null
+                    ? 0
+                    : viewModel.albums[type]!.length +
+                        (viewModel.isLastAlbum[type.index] ? 0 : 1),
+                itemBuilder: (_, idx) {
+                  if (idx == viewModel.albums[type]!.length) {
+                    viewModel.getAlbums(type, idx);
+                  }
+                  if (idx == viewModel.albums[type]!.length &&
+                      !viewModel.isLastAlbum[type.index]) {
+                    return const Center(
+                      child: SizedBox(
+                        height: 60,
+                        width: 60,
+                        child: Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: CircularProgressIndicator(
+                            color: WakColor.grey300,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return SongTile(
+                    song: viewModel.albums[type]![idx],
+                    tileType: TileType.dateTile,
+                  );
+                },
+              ),
+            ],
+          );
+        }).toList(),
+      );
+    }
+  }
+}
+
+class TabBarDelegate extends SliverPersistentHeaderDelegate {
+  const TabBarDelegate({required this.tabController});
+  final TabController tabController;
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 36,
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: WakColor.grey200),
+                  ),
                 ),
-              );
-            }).toList(),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TabBar(
+                  controller: tabController,
+                  indicatorColor: WakColor.lightBlue,
+                  labelStyle: WakText.txt16B,
+                  unselectedLabelStyle: WakText.txt16M,
+                  labelColor: WakColor.grey900,
+                  unselectedLabelColor: WakColor.grey400,
+                  overlayColor:
+                      MaterialStateProperty.all<Color>(Colors.transparent),
+                  splashFactory: NoSplash.splashFactory,
+                  labelPadding: EdgeInsets.zero,
+                  tabs: AlbumType.values.map((type) {
+                    return Tab(
+                      height: 34,
+                      child: Container(
+                        height: 34,
+                        padding: const EdgeInsets.fromLTRB(0, 2, 0, 8),
+                        child: Text(
+                          type.kor,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+          const PlayBtns(),
+        ],
+      ),
     );
   }
 
-  Widget albumsTabView(TabController tabController) {
-    ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
-    double artistImgRatio = (MediaQuery.of(context).size.width - 48) / 327;
-    return TabBarView(
-      controller: tabController,
-      children: AlbumType.values.map((type) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).viewPadding.top +
-                172 +
-                () {
-                  final ctrl = scrollControllers[tabController.index];
-                  final ratio = artistImgRatio * 180 + 24;
-                  if (!ctrl.hasClients) {
-                    return ratio;
-                  }
-                  if (ratio <= ctrl.position.pixels) {
-                    return 0;
-                  }
-                  return ratio - ctrl.position.pixels;
-                }(),
-            bottom: MediaQuery.of(context).viewPadding.bottom,
-          ),
-          child: ListView.builder(
-            controller: scrollControllers[tabController.index],
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.zero,
-            itemCount: viewModel.albums[type] == null
-                ? 0
-                : viewModel.albums[type]!.length +
-                    (viewModel.isLastAlbum[type.index] ? 0 : 1),
-            itemBuilder: (_, idx) {
-              if (idx == viewModel.albums[type]!.length) {
-                viewModel.getAlbums(type, idx);
-                if (!viewModel.isLastAlbum[type.index]) {
-                  return const Center(
-                    child: SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  );
-                }
-              }
-              return SongTile(
-                song: viewModel.albums[type]![idx],
-                tileType: TileType.dateTile,
-              );
-            },
-          ),
-        );
-      }).toList(),
-    );
-  }
+  @override
+  double get maxExtent => 124;
+
+  @override
+  double get minExtent => 124;
+
+  @override
+  bool shouldRebuild(covariant oldDelegate) => false;
 }

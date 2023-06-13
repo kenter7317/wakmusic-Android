@@ -1,6 +1,7 @@
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -19,6 +20,7 @@ class KeepSongPopUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
+    SelectSongProvider selProvider = Provider.of<SelectSongProvider>(context);
     return DismissibleView(
       onDismissed: () => Navigator.pop(context),
       direction: DismissiblePageDismissDirection.down,
@@ -40,9 +42,8 @@ class KeepSongPopUp extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '00곡',
-                      style:
-                          WakText.txt14MH.copyWith(color: WakColor.lightBlue),
+                      '${selProvider.selNum}곡',
+                      style: WakText.txt14MH.copyWith(color: WakColor.lightBlue),
                     ),
                   ],
                 ),

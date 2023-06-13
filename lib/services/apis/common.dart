@@ -24,7 +24,12 @@ class CommonAPI extends API {
     required AppVersion version,
   }) async {
     final url = dotenv.get('API_CHECK');
-    final response = await request(url, method: HttpMethod.get);
+    final response = await request(
+      '$url'
+      '?os=android'
+      '&version=${version.toString()}',
+      method: HttpMethod.get,
+    );
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.get)) {

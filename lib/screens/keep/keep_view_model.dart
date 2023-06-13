@@ -23,8 +23,8 @@ class KeepViewModel with ChangeNotifier {
   late final List<Profile> profiles;
   late List<Song?> _likes;
   late List<Song?> _tempLikes;
-  late List<Playlist?> _playlists;
-  late List<Playlist?> _tempPlaylists;
+  late List<UserPlaylist?> _playlists;
+  late List<UserPlaylist?> _tempPlaylists;
 
   User get user => _user;
   LoginStatus get loginStatus => _loginStatus;
@@ -32,8 +32,8 @@ class KeepViewModel with ChangeNotifier {
   Future<String> get version => _version;
   List<Song?> get likes => _likes;
   List<Song?> get tempLikes => _tempLikes;
-  List<Playlist?> get playlists => _playlists;
-  List<Playlist?> get tempPlaylists => _tempPlaylists;
+  List<UserPlaylist?> get playlists => _playlists;
+  List<UserPlaylist?> get tempPlaylists => _tempPlaylists;
 
   KeepViewModel() {
     _repo = UserRepository();
@@ -129,7 +129,7 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadList(Playlist? playlist) async {
+  Future<void> loadList(UserPlaylist? playlist) async {
     if (playlist == null) return;
     _playlists.add(playlist);
     _tempPlaylists = [..._playlists];
@@ -144,19 +144,21 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addSongs(Playlist playlist, List<Song> songs) async {
+  Future<int> addSongs(UserPlaylist playlist, List<Song> songs) async {
     if (playlist is Reclist || songs.isEmpty) {
-      return false;
+      return -1;
     }
 
-    if (await _repo.addPlaylistSongs(playlist.key, songs)) {
-      final list = songs.where((e) => !playlist.songs!.contains(e));
-      playlist.songs!.addAll(list);
+    final addedSongsNum = await _repo.addPlaylistSongs(playlist.key, songs);
+
+    if (addedSongsNum != -1) {
+      final list = songs.where((e) => !playlist.songs.contains(e));
+      playlist.songs.addAll(list);
       notifyListeners();
-      return true;
+      return addedSongsNum;
     }
 
-    return false;
+    return -1;
   }
 
   void moveSong(int oldIdx, int newIdx) {
@@ -166,7 +168,7 @@ class KeepViewModel with ChangeNotifier {
   }
 
   void movePlaylist(int oldIdx, int newIdx) {
-    Playlist? playlist = _tempPlaylists.removeAt(oldIdx);
+    UserPlaylist? playlist = _tempPlaylists.removeAt(oldIdx);
     _tempPlaylists.insert(newIdx, playlist);
     notifyListeners();
   }
@@ -198,9 +200,14 @@ class KeepViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePlaylist(Playlist old, Playlist updated) async {
+  Future<void> updatePlaylist(UserPlaylist old, UserPlaylist updated) async {
     if (old == updated) return;
     _playlists[_playlists.indexOf(old)] = updated;
+    notifyListeners();
+  }
+
+  void deleteLikeSongs(List<Song> songs) {
+    _repo.deleteLikeSongs(songs);
     notifyListeners();
   }
 }
