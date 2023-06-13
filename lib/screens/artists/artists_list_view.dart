@@ -123,11 +123,11 @@ class ArtistsListView extends StatelessWidget {
         ZoomTapAnimation(
           onTap: () {
             viewModel.setArtist(artist);
-            ExitScope.add = ExitScope.artistDetail;
             Navigator.push(
               context,
               pageRouteBuilder(
                 page: ArtistView(artist: artist),
+                scope: ExitScope.artistDetail,
                 offset: const Offset(0.0, 1.0),
               ),
             );

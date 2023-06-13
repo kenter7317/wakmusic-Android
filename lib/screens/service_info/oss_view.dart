@@ -5,7 +5,7 @@ import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/oss_licenses.dart';
 import 'package:wakmusic/widgets/common/item.dart';
-import 'package:wakmusic/widgets/exitable.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 
 class OSSView extends StatelessWidget {
@@ -15,14 +15,15 @@ class OSSView extends StatelessWidget {
   Widget build(BuildContext context) {
     return DismissibleView(
       onDismissed: () {
-        ExitScope.remove = ExitScope.openedPageRouteBuilder;
+        ExitScope.remove = ExitScope.ossLicense;
         Navigator.pop(context);
       },
       child: Scaffold(
         body: Exitable(
+          scopes: const [ExitScope.ossLicense],
           onExitable: (scope) {
-            if (scope == ExitScope.openedPageRouteBuilder) {
-              ExitScope.remove = ExitScope.openedPageRouteBuilder;
+            if (scope == ExitScope.ossLicense) {
+              ExitScope.remove = ExitScope.ossLicense;
               Navigator.pop(context);
             }
           },
@@ -54,6 +55,7 @@ class OSSView extends StatelessWidget {
                         name: package.name,
                         license: package.license ?? '',
                       ),
+                      scope: ExitScope.ossDetail,
                     ),
                   ),
                   text: package.name,

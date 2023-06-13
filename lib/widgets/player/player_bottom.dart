@@ -9,6 +9,7 @@ import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/player/player_playlist_view.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/services/throttle.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 
 import '../../models/providers/audio_provider.dart';
@@ -109,11 +110,16 @@ class PlayerViewBottom extends StatelessWidget {
                   .push(pageRouteBuilder(page: const KeepSongPopUp()));
             }
           }),
-          playDetailBarBtn("ic_32_play_list", "재생목록", edgePadding: false,
-              onTap: () {
-            Navigator.of(context, rootNavigator: true)
-                .push(pageRouteBuilder(page: const PlayerPlayList()));
-          })
+          playDetailBarBtn(
+            "ic_32_play_list",
+            "재생목록",
+            edgePadding: false,
+            onTap: () {
+              ExitScope.add = ExitScope.playerPlaylist;
+              Navigator.of(context, rootNavigator: true)
+                  .push(pageRouteBuilder(page: const PlayerPlayList()));
+            },
+          )
         ],
       ),
     );

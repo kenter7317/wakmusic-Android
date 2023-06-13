@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/suggestions.dart';
 import 'package:wakmusic/services/apis/api.dart';
@@ -283,7 +284,10 @@ class KeepView extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                pageRouteBuilder(page: const Suggestions()),
+                pageRouteBuilder(
+                  page: const Suggestions(),
+                  scope: ExitScope.suggestion,
+                ),
               );
             },
             child: SvgPicture.asset(

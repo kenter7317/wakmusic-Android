@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Providers(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: '왁타버스 뮤직',
         builder: (context, child) {
           return MediaQuery(
@@ -108,7 +109,7 @@ class _MainState extends State<Main> {
     return Scaffold(
       body: WillPopScope(
         onWillPop: () async {
-          log('${ExitScope.scope} -> ${ExitScope.scopes}');
+          print('EXIT SCOPE :: ${ExitScope.scope} ${ExitScope.scopes}');
           if (ExitScope.exitable) {
             return true;
           }

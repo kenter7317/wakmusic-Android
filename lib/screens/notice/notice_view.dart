@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
-import 'package:wakmusic/widgets/exitable.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 
 class NoticeView extends StatelessWidget {
@@ -32,6 +32,7 @@ class NoticeView extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     NoticeViewModel viewModel = Provider.of<NoticeViewModel>(context);
     return Exitable(
+      scopes: const [ExitScope.openedPageRouteBuilder],
       onExitable: (scope) {
         if (scope == ExitScope.openedPageRouteBuilder) {
           ExitScope.remove = ExitScope.openedPageRouteBuilder;

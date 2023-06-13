@@ -26,6 +26,7 @@ class PlaylistViewModel with ChangeNotifier {
   PlaylistViewModel() {
     _isScrolled = StreamController<bool>.broadcast();
     _repo = UserRepository();
+    clear();
   }
 
   void updateStatus(EditStatus status) {

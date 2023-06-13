@@ -12,7 +12,7 @@ import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/common/item.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
-import 'package:wakmusic/widgets/exitable.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
@@ -36,6 +36,7 @@ class ServiceInfoView extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
     return Exitable(
+      scopes: const [ExitScope.openedPageRouteBuilder],
       onExitable: (scope) {
         if (scope == ExitScope.openedPageRouteBuilder) {
           ExitScope.remove = ExitScope.openedPageRouteBuilder;
@@ -82,7 +83,10 @@ class ServiceInfoView extends StatelessWidget {
                         Item(
                           onTap: () => Navigator.push(
                             context,
-                            pageRouteBuilder(page: const OSSView()),
+                            pageRouteBuilder(
+                              page: const OSSView(),
+                              scope: ExitScope.ossLicense,
+                            ),
                           ),
                           text: '오픈소스 라이선스',
                         ),

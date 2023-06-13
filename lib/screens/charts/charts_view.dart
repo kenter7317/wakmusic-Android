@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/services/apis/api.dart';
@@ -13,6 +16,7 @@ import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/common/error_info.dart';
 import 'package:wakmusic/widgets/common/tab_view.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 
 class ChartsView extends StatelessWidget {
   const ChartsView({super.key});
@@ -20,12 +24,35 @@ class ChartsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     statusNavColor(context, ScreenType.etc);
-    return Scaffold(
-      body: SafeArea(
-        child: TabView(
-          type: TabType.maxTab,
-          tabBarList: [...ChartType.values.map((e) => e.str)],
-          tabViewList: [...ChartType.values.map((e) => _buildTab(context, e))],
+    return Exitable(
+      scopes: const [
+        ExitScope.selectedSong,
+        ExitScope.pageIsNotHome,
+      ],
+      onExitable: (scope) {
+        final botNav = Provider.of<NavProvider>(context, listen: false);
+        if (scope == ExitScope.selectedSong && botNav.curIdx == 1) {
+          final selectedList =
+              Provider.of<SelectSongProvider>(context, listen: false);
+          final audioProvider =
+              Provider.of<AudioProvider>(context, listen: false);
+          selectedList.clearList();
+          botNav.subChange(1);
+          if (audioProvider.isEmpty) botNav.subSwitchForce(false);
+          botNav.update(0);
+          ExitScope.remove = ExitScope.selectedSong;
+          ExitScope.remove = ExitScope.pageIsNotHome;
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: TabView(
+            type: TabType.maxTab,
+            tabBarList: [...ChartType.values.map((e) => e.str)],
+            tabViewList: [
+              ...ChartType.values.map((e) => _buildTab(context, e))
+            ],
+          ),
         ),
       ),
     );

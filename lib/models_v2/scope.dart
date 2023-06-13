@@ -23,23 +23,27 @@ enum ExitScope {
   player,
 
   @Bit(0x0040 | 64) // in_action
-  openedPageRouteBuilder,
+  ossDetail,
 
-  @Bit(0x0080 | 128) // required_confirm
-  suggestion,
+  @Bit(0x0080 | 128) // in_action
+  ossLicense,
 
   @Bit(0x0100 | 256) // in_action
-  artistDetail,
+  openedPageRouteBuilder,
 
   @Bit(0x0200 | 512) // in_action
-  searchAfter,
+  suggestion,
 
   @Bit(0x0400 | 1024) // in_action
-  pageIsNotHome,
+  artistDetail,
 
   @Bit(0x0800 | 2048)
-  @Bit(0x1000 | 4096)
+  searchAfter,
+
   @Bit(0x2000 | 8192)
+  pageIsNotHome,
+
+  @Bit(0x1000 | 4096)
   @Bit(0x4000 | 16384)
   @Bit(0x8000 | 32768)
   undefined;

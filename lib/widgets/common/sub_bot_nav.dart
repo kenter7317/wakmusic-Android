@@ -21,6 +21,7 @@ import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/utils/number_format.dart';
 import 'package:wakmusic/widgets/common/keep_song_pop_up.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/keep/bot_sheet.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
@@ -162,6 +163,7 @@ class _SubBotNavState extends State<SubBotNav> {
     return GestureDetector(
       onTap: () {
         if (type == PlayerBarType.main) {
+          ExitScope.add = ExitScope.player;
           Navigator.of(context, rootNavigator: true)
               .push(pageRouteBuilder(page: const Player()));
         }
@@ -469,6 +471,7 @@ class _SubBotNavState extends State<SubBotNav> {
                 }),
               if (type.showEdit)
                 editBarBtn("ic_32_edit", "편집", onTap: () {
+                  ExitScope.add = ExitScope.editMode;
                   playListViewModel.updateStatus(playlist.EditStatus.editing);
                   if (audioProvider.isEmpty) {
                     navProvider.subSwitchForce(false);

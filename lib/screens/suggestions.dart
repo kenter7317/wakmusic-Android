@@ -14,7 +14,7 @@ import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/edit_btn.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/text_with_dot.dart';
-import 'package:wakmusic/widgets/exitable.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
@@ -25,7 +25,7 @@ class Suggestions extends StatelessWidget {
   Widget build(BuildContext context) {
     return DismissibleView(
       onDismissed: () {
-        ExitScope.remove = ExitScope.openedPageRouteBuilder;
+        ExitScope.remove = ExitScope.suggestion;
         Navigator.pop(context);
       },
       child: Scaffold(
@@ -37,9 +37,10 @@ class Suggestions extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     KeepViewModel viewModel = Provider.of<KeepViewModel>(context);
     return Exitable(
+      scopes: const [ExitScope.suggestion],
       onExitable: (scope) {
-        if (scope == ExitScope.openedPageRouteBuilder) {
-          ExitScope.remove = ExitScope.openedPageRouteBuilder;
+        if (scope == ExitScope.suggestion) {
+          ExitScope.remove = ExitScope.suggestion;
           Navigator.pop(context);
         }
       },
@@ -54,7 +55,10 @@ class Suggestions extends StatelessWidget {
                     top: 8,
                     left: 20,
                     child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () {
+                        ExitScope.remove = ExitScope.suggestion;
+                        Navigator.pop(context);
+                      },
                       child: SvgPicture.asset(
                         'assets/icons/ic_32_arrow_left.svg',
                         width: 32,

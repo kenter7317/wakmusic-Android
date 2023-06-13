@@ -6,11 +6,14 @@ import 'package:provider/provider.dart';
 import 'package:wakmusic/models_v2/playlist/playlist.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
-import 'package:wakmusic/screens/keep/keep_view_model.dart' as Keep;
+import 'package:wakmusic/screens/keep/keep_view_model.dart' hide EditStatus;
+import 'package:wakmusic/screens/keep/keep_view_model.dart' as keep
+    show EditStatus;
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -43,31 +46,34 @@ class PlaylistTile extends StatelessWidget {
           Provider.of<SelectSongProvider>(context);
       NavProvider navProvider = Provider.of<NavProvider>(context);
       AudioProvider audioProvider = Provider.of<AudioProvider>(context);
-      Keep.KeepViewModel keepViewModel =
-          Provider.of<Keep.KeepViewModel>(context);
+      KeepViewModel keepViewModel = Provider.of<KeepViewModel>(context);
 
       return GestureDetector(
         onTap: () async {
           if (tileType.canSelect) {
             if (isSelected) {
               selectedList.removePlaylist(playlist!);
-              if (selectedList.list.isEmpty && audioProvider.isEmpty) {
-                navProvider.subSwitchForce(false);
-              } else if (selectedList.list.isEmpty) {
-                navProvider.subChange(1);
+              if (selectedList.list.isEmpty) {
+                ExitScope.remove = ExitScope.selectedPlaylist;
+                if (audioProvider.isEmpty) {
+                  navProvider.subSwitchForce(false);
+                } else {
+                  navProvider.subChange(1);
+                }
               }
             } else {
               selectedList.addPlaylist(playlist!);
-              if (keepViewModel.editStatus == Keep.EditStatus.playlists) {
+              if (keepViewModel.editStatus == keep.EditStatus.playlists) {
                 navProvider.subChange(7);
                 navProvider.subSwitchForce(true);
               }
+              ExitScope.add = ExitScope.selectedPlaylist;
             }
           } else if (tileType == TileType.baseTile) {
             final selectedSongs =
                 Provider.of<SelectSongProvider>(context, listen: false);
             final viewModel =
-                Provider.of<Keep.KeepViewModel>(context, listen: false);
+                Provider.of<KeepViewModel>(context, listen: false);
 
             viewModel.addSongs(playlist!, selectedSongs.list).then((value) {
               if (value != -1) {
@@ -103,7 +109,7 @@ class PlaylistTile extends StatelessWidget {
             });
           } else {
             final viewModel =
-                Provider.of<Keep.KeepViewModel>(context, listen: false);
+                Provider.of<KeepViewModel>(context, listen: false);
             Navigator.push(
               context,
               pageRouteBuilder(page: PlaylistView(playlist: playlist!)),

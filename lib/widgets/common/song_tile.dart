@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
@@ -88,7 +89,8 @@ enum TileType {
     inPlayer: true,
     padding: {'start': 20, 'middle': 16, 'end': 20},
     icon: {'icon': 'ic_32_move', 'size': 32.0},
-  ),;
+  ),
+  ;
 
   const TileType({
     required this.showRank,
@@ -133,7 +135,8 @@ class SongTile extends StatelessWidget {
       final viewModel = Provider.of<KeepViewModel>(context); /* for test */
       AudioProvider audioProvider = Provider.of<AudioProvider>(context);
       NavProvider navProvider = Provider.of<NavProvider>(context);
-      PlaylistViewModel playlistViewModel = Provider.of<PlaylistViewModel>(context);
+      PlaylistViewModel playlistViewModel =
+          Provider.of<PlaylistViewModel>(context);
       bool isSelected = selectedList.contains(song!);
       return GestureDetector(
         onTap: () {
@@ -141,11 +144,13 @@ class SongTile extends StatelessWidget {
             if (isSelected) {
               selectedList.removeSong(song!);
               if (selectedList.list.isEmpty) {
+                ExitScope.remove = ExitScope.selectedSong;
                 navProvider.subChange(1);
                 if (audioProvider.isEmpty) navProvider.subSwitchForce(false);
+                return;
               }
             } else {
-              if(!tileType.inPlayer){
+              if (!tileType.inPlayer) {
                 switch (navProvider.curIdx) {
                   case 0:
                     selectedList.setMaxSel(playlistViewModel.songs.length);
@@ -171,6 +176,8 @@ class SongTile extends StatelessWidget {
               }
               selectedList.addSong(song!);
             }
+            ExitScope.add = ExitScope.selectedSong;
+
             /* for test */
             /*if (viewModel.loginStatus == LoginStatus.before) {
                 showModal(
@@ -317,7 +324,8 @@ class SongTile extends StatelessWidget {
                           width: tileType.icon['size'],
                           height: tileType.icon['size'],
                         ),
-                if (tileType == TileType.editTile || tileType == TileType.playerEditTile)
+                if (tileType == TileType.editTile ||
+                    tileType == TileType.playerEditTile)
                   ReorderableDragStartListener(
                     index: idx,
                     child: SvgPicture.asset(

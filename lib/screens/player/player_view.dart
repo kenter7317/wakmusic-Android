@@ -10,6 +10,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:wakmusic/screens/player/player_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
+import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/player/player_bottom.dart';
 import 'package:wakmusic/widgets/player/player_button.dart';
 
@@ -27,7 +28,20 @@ class Player extends StatelessWidget {
       top: false,
       child: Scaffold(
         backgroundColor: WakColor.grey100,
-        body: _buildBody(context),
+        body: Exitable(
+          scopes: const [ExitScope.player],
+          onExitable: (scope) {
+            if (scope == ExitScope.player) {
+              final botNav = Provider.of<NavProvider>(context, listen: false);
+              botNav.mainSwitchForce(true);
+              botNav.subSwitchForce(true);
+              botNav.subChange(1);
+              ExitScope.remove = ExitScope.player;
+              Navigator.pop(context);
+            }
+          },
+          child: _buildBody(context),
+        ),
         bottomNavigationBar: const PlayerViewBottom(),
       ),
     );
@@ -63,26 +77,27 @@ class Player extends StatelessWidget {
                   width: width * 1.44,
                   decoration: BoxDecoration(
                     image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: ExtendedImage.network(
+                        'https://i.ytimg.com/vi/$id/hqdefault.jpg',
                         fit: BoxFit.cover,
-                        image: ExtendedImage.network(
-                          'https://i.ytimg.com/vi/$id/hqdefault.jpg',
-                          fit: BoxFit.cover,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(8),
-                          loadStateChanged: (state) {
-                            if (state.extendedImageLoadState !=
-                                LoadState.completed) {
-                              return Image.asset(
-                                'assets/images/img_81_thumbnail.png',
-                                fit: BoxFit.cover,
-                              );
-                            }
-                            return null;
-                          },
-                          cacheMaxAge: const Duration(days: 30),
-                        ).image,
-                        colorFilter: ColorFilter.mode(
-                            Colors.white.withOpacity(0.6), BlendMode.dstATop)),
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(8),
+                        loadStateChanged: (state) {
+                          if (state.extendedImageLoadState !=
+                              LoadState.completed) {
+                            return Image.asset(
+                              'assets/images/img_81_thumbnail.png',
+                              fit: BoxFit.cover,
+                            );
+                          }
+                          return null;
+                        },
+                        cacheMaxAge: const Duration(days: 30),
+                      ).image,
+                      colorFilter: ColorFilter.mode(
+                          Colors.white.withOpacity(0.6), BlendMode.dstATop),
+                    ),
                   ),
                   child: ClipRRect(
                     child: BackdropFilter(
@@ -133,6 +148,7 @@ class Player extends StatelessWidget {
                 botNav.mainSwitchForce(true);
                 botNav.subSwitchForce(true);
                 botNav.subChange(1);
+                ExitScope.remove = ExitScope.player;
                 Navigator.pop(context);
               },
               child: SvgPicture.asset(

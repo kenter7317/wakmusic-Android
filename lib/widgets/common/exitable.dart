@@ -10,9 +10,12 @@ typedef ExitableCallback<T> = void Function(T);
 class Exitable extends StatefulWidget {
   const Exitable({
     super.key,
+    this.scopes,
     required this.onExitable,
     required this.child,
   });
+
+  final List<ExitScope>? scopes;
 
   final ExitableCallback<ExitScope>? onExitable;
 
@@ -30,7 +33,10 @@ class _ExitableState extends State<Exitable> {
     super.didChangeDependencies();
     if (widget.onExitable != null) {
       _subscription?.cancel();
-      _subscription = ExitScope.stream.listen(widget.onExitable);
+      final stream = (widget.scopes?.isEmpty ?? true)
+          ? ExitScope.stream
+          : ExitScope.stream.where((e) => widget.scopes!.contains(e));
+      _subscription = stream.listen(widget.onExitable);
     }
   }
 
@@ -42,7 +48,10 @@ class _ExitableState extends State<Exitable> {
         _subscription!.cancel();
       }
       if (widget.onExitable != null) {
-        _subscription = ExitScope.stream.listen(widget.onExitable);
+        final stream = (widget.scopes?.isEmpty ?? true)
+            ? ExitScope.stream
+            : ExitScope.stream.where((e) => widget.scopes!.contains(e));
+        _subscription = stream.listen(widget.onExitable);
       }
     }
   }
