@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/screens/player/player_playlist_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
+import 'package:wakmusic/widgets/player/player_bottom.dart';
 
 import '../../models/providers/nav_provider.dart';
 import '../../models_v2/song.dart';
@@ -16,9 +18,13 @@ class PlayerPlayList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: WakColor.grey100,
-      body: _buildBody(context),
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        backgroundColor: WakColor.grey100,
+        body: _buildBody(context),
+        bottomNavigationBar: getPlayerPlaylistBottom(context),
+      ),
     );
   }
 
@@ -81,6 +87,7 @@ class PlayerPlayList extends StatelessWidget {
 
   Widget _buildPlayList(BuildContext context) {
     final viewModel = Provider.of<PlayerPlayListViewModel>(context);
+    final selProvider = Provider.of<SelectSongProvider>(context);
     return Expanded(
       child: Selector<AudioProvider, List<Song>>(
         selector: (context, audioProvider) => audioProvider.queue,
@@ -131,7 +138,7 @@ class PlayerPlayList extends StatelessWidget {
                 key: Key(idx.toString()),
                 song: queue[idx],
                 idx: idx,
-                tileType: TileType.editTile,
+                tileType: TileType.playerEditTile,
               ),
               onReorder: (oldIdx, newIdx) {
                 Provider.of<AudioProvider>(
