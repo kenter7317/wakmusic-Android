@@ -143,21 +143,20 @@ class HomeView extends StatelessWidget {
               ],
             ),
           ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () async {
-                if (toplist != null) {
-                  botNav.subChange(1);
-                  botNav.subSwitchForce(true);
-                  audioProvider.addQueueItems(await viewModel.topList,
-                      override: true, autoplay: true);
-                }
-              },
-              child: Text(
-                '전체듣기',
-                style: WakText.txt14MH.copyWith(color: WakColor.grey25),
-                textAlign: TextAlign.right,
-              ),
+          const Spacer(),
+          GestureDetector(
+            onTap: () async {
+              if (toplist != null) {
+                botNav.subChange(1);
+                botNav.subSwitchForce(true);
+                audioProvider.addQueueItems(await viewModel.topList,
+                    override: true, autoplay: true);
+              }
+            },
+            child: Text(
+              '전체듣기',
+              style: WakText.txt14MH.copyWith(color: WakColor.grey25),
+              textAlign: TextAlign.right,
             ),
           ),
         ],
