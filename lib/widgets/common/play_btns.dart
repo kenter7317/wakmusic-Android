@@ -4,19 +4,25 @@ import 'package:audio_service/models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models_v2/song.dart';
-import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class PlayBtns extends StatelessWidget {
-  const PlayBtns({super.key, this.isPlaylistView = false});
+  const PlayBtns({
+    super.key,
+    this.listCallback,
+    this.isPlaylistView = false,
+  });
+
   final bool isPlaylistView;
+
+  final Future<List<Song?>> Function()? listCallback;
 
   @override
   Widget build(BuildContext context) {
-    PlaylistViewModel viewModel = Provider.of<PlaylistViewModel>(context);
     AudioProvider audioProvider = Provider.of<AudioProvider>(context);
     return Container(
       padding: EdgeInsets.fromLTRB(20, isPlaylistView ? 8 : 16, 20, 12),
@@ -27,14 +33,19 @@ class PlayBtns extends StatelessWidget {
             context,
             iconName: 'ic_32_play_all',
             btnName: '전체재생',
-            onTap: () {
-              audioProvider.addQueueItems(
-                viewModel.tempsongs.whereType<Song>().toList(),
-                override: true,
-                autoplay: true,
-              );
-              log(audioProvider.currentSong?.title ?? 'null');
-              audioProvider.nextLoopMode(v: LoopMode.all);
+            onTap: () async {
+              final botNav = Provider.of<NavProvider>(context, listen: false);
+              if (listCallback != null) {
+                final list = await listCallback!();
+                audioProvider.addQueueItems(
+                  [...list.whereType<Song>()],
+                  override: true,
+                  autoplay: true,
+                );
+                audioProvider.nextLoopMode(v: LoopMode.all);
+                botNav.subChange(1);
+                botNav.subSwitchForce(true);
+              }
             },
           ),
           const SizedBox(width: 8),
@@ -42,12 +53,19 @@ class PlayBtns extends StatelessWidget {
             context,
             iconName: 'ic_32_random_900',
             btnName: '랜덤재생',
-            onTap: () {
-              audioProvider.addQueueItems(
-                viewModel.tempsongs.whereType<Song>().toList(),
-                override: true,
-                randomize: true,
-              );
+            onTap: () async {
+              final botNav = Provider.of<NavProvider>(context, listen: false);
+              if (listCallback != null) {
+                final list = await listCallback!();
+                audioProvider.addQueueItems(
+                  [...list.whereType<Song>()],
+                  override: true,
+                  randomize: true,
+                  autoplay: true,
+                );
+                botNav.subChange(1);
+                botNav.subSwitchForce(true);
+              }
             },
           ),
         ],
@@ -55,10 +73,12 @@ class PlayBtns extends StatelessWidget {
     );
   }
 
-  Widget _buildBtn(BuildContext context,
-      {required String iconName,
-      required String btnName,
-      required void Function()? onTap}) {
+  Widget _buildBtn(
+    BuildContext context, {
+    required String iconName,
+    required String btnName,
+    required void Function()? onTap,
+  }) {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
