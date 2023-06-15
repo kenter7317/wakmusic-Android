@@ -42,7 +42,6 @@ class PlayBtns extends StatelessWidget {
                   override: true,
                   autoplay: true,
                 );
-                audioProvider.nextLoopMode(v: LoopMode.all);
                 botNav.subChange(1);
                 botNav.subSwitchForce(true);
               }
