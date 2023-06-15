@@ -31,16 +31,25 @@ class Player extends StatelessWidget {
         body: Exitable(
           scopes: const [ExitScope.player],
           onExitable: (scope) {
-            if (scope == ExitScope.player) {
+            // if (scope == ExitScope.player) {
+            //   final botNav = Provider.of<NavProvider>(context, listen: false);
+            //   botNav.mainSwitchForce(true);
+            //   botNav.subSwitchForce(true);
+            //   botNav.subChange(1);
+            //   ExitScope.remove = ExitScope.player;
+            //   Navigator.pop(context);
+            // }
+          },
+          child: WillPopScope(
+            onWillPop: () async {
               final botNav = Provider.of<NavProvider>(context, listen: false);
               botNav.mainSwitchForce(true);
               botNav.subSwitchForce(true);
               botNav.subChange(1);
-              ExitScope.remove = ExitScope.player;
-              Navigator.pop(context);
-            }
-          },
-          child: _buildBody(context),
+              return true;
+            },
+            child: _buildBody(context),
+          ),
         ),
         bottomNavigationBar: const PlayerViewBottom(),
       ),
@@ -148,7 +157,7 @@ class Player extends StatelessWidget {
                 botNav.mainSwitchForce(true);
                 botNav.subSwitchForce(true);
                 botNav.subChange(1);
-                ExitScope.remove = ExitScope.player;
+                // ExitScope.remove = ExitScope.player;
                 Navigator.pop(context);
               },
               child: SvgPicture.asset(

@@ -163,7 +163,7 @@ class _SubBotNavState extends State<SubBotNav> {
     return GestureDetector(
       onTap: () {
         if (type == PlayerBarType.main) {
-          ExitScope.add = ExitScope.player;
+          // ExitScope.add = ExitScope.player;
           Navigator.of(context, rootNavigator: true)
               .push(pageRouteBuilder(page: const Player()));
         }
