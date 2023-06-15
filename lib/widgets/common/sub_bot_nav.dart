@@ -501,10 +501,7 @@ class _SubBotNavState extends State<SubBotNav> {
                     builder: (_) => BotSheet(
                       type: BotSheetType.selProfile,
                       initialValue: keepViewModel.user.profile.type,
-                      profiles: {
-                        for (var e in keepViewModel.profiles)
-                          e.type: e.imageVersion,
-                      },
+                      profiles: keepViewModel.profiles,
                     ),
                   ));
                   if (audioProvider.isEmpty) {
