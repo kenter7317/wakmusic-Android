@@ -165,7 +165,7 @@ class _SubBotNavState extends State<SubBotNav> {
         if (type == PlayerBarType.main) {
           // ExitScope.add = ExitScope.player;
           Navigator.of(context, rootNavigator: true)
-              .push(pageRouteBuilder(page: const Player()));
+              .push(pageRouteBuilder(page: const Player(), scope: null));
         }
       },
       child: Stack(
