@@ -143,7 +143,8 @@ class _BotSheetState extends State<BotSheet> {
                               case BotSheetType.shareList:
                                 return null;
                               case BotSheetType.selProfile:
-                                return _profile;
+                                return widget.profiles
+                                    ?.singleWhere((e) => e.type == _profile);
                               default:
                                 return _fieldText.text;
                             }
