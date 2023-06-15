@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'dart:developer' as dev;
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:audio_service/audio_handler.dart';
 import 'package:audio_service/audio_service.dart';
@@ -27,7 +26,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       }
     });
     AudioService.position.listen((pos) {
-      dev.log('$pos');
+      log('$pos');
     });
   }
 
@@ -161,9 +160,10 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       _shuffledQueue.clear();
       return loadRandom();
     }
-    final playable = _queue.where((s) => !_shuffledQueue.contains(s)).toList();
-    _index = Random().nextInt(playable.length);
-    await load(playable[_index]);
+    final list = [..._queue]..shuffle();
+    final song = list.firstWhere((e) => !_shuffledQueue.contains(e));
+    _index = _queue.indexOf(song);
+    await load(currentSong!);
   }
 
   @override
