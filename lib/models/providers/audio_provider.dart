@@ -21,7 +21,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
     _player.playbackStateStream.listen((state) {
       _playbackState = state;
       if (nextPlayable && state == PlaybackState.ended) {
-        toNext();
+        toNext(auto: true);
       } else {
         notifyListeners();
       }
@@ -41,7 +41,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
   @override
   bool get prevPlayable => !isFirst || loopMode == LoopMode.all;
   @override
-  bool get nextPlayable => !isLast || loopMode == LoopMode.all;
+  bool get nextPlayable => !isLast || loopMode != LoopMode.none;
 
   final Set<Song> _shuffledQueue = {};
   Set<Song> get shuffledQueue => _shuffledQueue;
@@ -202,7 +202,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
   }
 
   @override
-  Future<void> toNext() async {
+  Future<void> toNext({bool auto = false}) async {
     if (isEmpty) return;
     switch (loopMode) {
       case LoopMode.none:
@@ -218,7 +218,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
         }
         return load(_queue[_index]);
       case LoopMode.single:
-        return load(currentSong!);
+        if (auto) return load(currentSong!);
     }
   }
 
