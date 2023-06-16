@@ -97,6 +97,7 @@ class NoticeView extends StatelessWidget {
         Navigator.of(context, rootNavigator: true).push(
           pageRouteBuilder(
             page: NoticeDetailView(notice: notice),
+            scope: null,
             offset: const Offset(0.0, 1.0),
           ),
         );

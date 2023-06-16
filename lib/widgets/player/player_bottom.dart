@@ -106,8 +106,8 @@ class PlayerViewBottom extends StatelessWidget {
               });
             } else {
               selProvider.addSong(audioProvider.currentSong!);
-              Navigator.of(context, rootNavigator: true)
-                  .push(pageRouteBuilder(page: const KeepSongPopUp()));
+              Navigator.of(context, rootNavigator: true).push(
+                  pageRouteBuilder(page: const KeepSongPopUp(), scope: null));
             }
           }),
           playDetailBarBtn(
@@ -116,8 +116,8 @@ class PlayerViewBottom extends StatelessWidget {
             edgePadding: false,
             onTap: () {
               // ExitScope.add = ExitScope.playerPlaylist;
-              Navigator.of(context, rootNavigator: true)
-                  .push(pageRouteBuilder(page: const PlayerPlayList()));
+              Navigator.of(context, rootNavigator: true).push(
+                  pageRouteBuilder(page: const PlayerPlayList(), scope: null));
             },
           )
         ],
@@ -280,8 +280,12 @@ class PlayerPlaylistSelBottom extends StatelessWidget {
                   });
                 } else {
                   selNav.addSong(audioProvider.currentSong!);
-                  Navigator.of(context, rootNavigator: true)
-                      .push(pageRouteBuilder(page: const KeepSongPopUp()));
+                  Navigator.of(context, rootNavigator: true).push(
+                    pageRouteBuilder(
+                      page: const KeepSongPopUp(),
+                      scope: null,
+                    ),
+                  );
                 }
               }),
               editBarBtn("ic_32_delete", "삭제", onTap: () {

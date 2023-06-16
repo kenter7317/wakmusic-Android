@@ -123,6 +123,7 @@ class Suggestions extends StatelessWidget {
                             Navigator.of(context, rootNavigator: true).push(
                               pageRouteBuilder(
                                 page: const ContactView(),
+                                scope: null,
                                 offset: const Offset(0, 1),
                               ),
                             );

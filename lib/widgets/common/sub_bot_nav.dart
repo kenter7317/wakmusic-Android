@@ -370,54 +370,66 @@ class _SubBotNavState extends State<SubBotNav> {
             children: [
               if (type.showSelect)
                 selProvider.selNum != selProvider.maxSel
-                    ? editBarBtn("ic_32_check_off", "전체선택", onTap: () async {
-                        switch (navProvider.curIdx) {
-                          case 1:
-                            List<Song>? songlist = await chartViewModel
-                                .charts[ChartType.values[tabProvider.curIdx]];
-                            selProvider.addAllSong(
-                                songlist!.whereType<Song>().toList());
-                            break;
-                          case 3:
-                            selProvider.addAllSong(artistViewModel
-                                .albums[AlbumType.values[tabProvider.curIdx]]!
-                                .whereType<Song>()
-                                .toList());
-                            break;
-                          default:
-                            selProvider.addAllSong(playListViewModel.tempsongs
-                                .whereType<Song>()
-                                .toList());
-                            break;
-                        }
-                      })
-                    : editBarBtn("ic_32_check_on", "전체선택해제",
-                        onTap: selProvider.clearList),
+                    ? editBarBtn(
+                        "ic_32_check_off",
+                        "전체선택",
+                        onTap: () async {
+                          switch (navProvider.curIdx) {
+                            case 1:
+                              List<Song>? songlist = await chartViewModel
+                                  .charts[ChartType.values[tabProvider.curIdx]];
+                              selProvider.addAllSong(
+                                  songlist!.whereType<Song>().toList());
+                              break;
+                            case 3:
+                              selProvider.addAllSong(artistViewModel
+                                  .albums[AlbumType.values[tabProvider.curIdx]]!
+                                  .whereType<Song>()
+                                  .toList());
+                              break;
+                            default:
+                              selProvider.addAllSong(playListViewModel.tempsongs
+                                  .whereType<Song>()
+                                  .toList());
+                              break;
+                          }
+                        },
+                      )
+                    : editBarBtn(
+                        "ic_32_check_on",
+                        "전체선택해제",
+                        onTap: selProvider.clearList,
+                      ),
               if (type.showSongAdd)
-                editBarBtn("ic_32_playadd_25", "노래담기",
-                    onTap: () => {
-                          if (keepViewModel.loginStatus == LoginStatus.before)
-                            {
-                              selProvider.clearList(),
-                              if (audioProvider.isEmpty)
-                                {navProvider.subSwitchForce(false)}
-                              else
-                                {navProvider.subChange(1)},
-                              showModal(
-                                context: context,
-                                builder: (context) => PopUp(
-                                  type: PopUpType.txtOneBtn,
-                                  msg: '로그인이 필요한 기능입니다.',
-                                  posFunc: () => navProvider.update(4),
-                                ),
-                              )
-                            }
-                          else
-                            {
-                              Navigator.of(context, rootNavigator: true).push(
-                                  pageRouteBuilder(page: const KeepSongPopUp()))
-                            },
-                        }),
+                editBarBtn(
+                  "ic_32_playadd_25",
+                  "노래담기",
+                  onTap: () {
+                    if (keepViewModel.loginStatus == LoginStatus.before) {
+                      selProvider.clearList();
+                      if (audioProvider.isEmpty) {
+                        navProvider.subSwitchForce(false);
+                      } else {
+                        navProvider.subChange(1);
+                      }
+                      showModal(
+                        context: context,
+                        builder: (context) => PopUp(
+                          type: PopUpType.txtOneBtn,
+                          msg: '로그인이 필요한 기능입니다.',
+                          posFunc: () => navProvider.update(4),
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context, rootNavigator: true).push(
+                        pageRouteBuilder(
+                          page: const KeepSongPopUp(),
+                          scope: null,
+                        ),
+                      );
+                    }
+                  },
+                ),
               if (type.showPlayListAdd)
                 editBarBtn("ic_32_play_add", "재생목록추가", onTap: () async {
                   if (selProvider.list.isNotEmpty) {
@@ -435,15 +447,14 @@ class _SubBotNavState extends State<SubBotNav> {
                   navProvider.subChange(1);
                 }),
               if (type.showPlay)
-                editBarBtn("ic_32_play_25", "재생",
-                    onTap: () => {
-                          audioProvider.addQueueItems(
-                            selProvider.list,
-                            autoplay: true,
-                          ),
-                          selProvider.clearList(),
-                          navProvider.subChange(1),
-                        }),
+                editBarBtn("ic_32_play_25", "재생", onTap: () {
+                  audioProvider.addQueueItems(
+                    selProvider.list,
+                    autoplay: true,
+                  );
+                  selProvider.clearList();
+                  navProvider.subChange(1);
+                }),
               if (type.showDelete)
                 editBarBtn("ic_32_delete", "삭제", onTap: () {
                   if (selProvider.list.isNotEmpty) {

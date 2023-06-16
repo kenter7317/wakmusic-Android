@@ -63,6 +63,7 @@ class ServiceInfoView extends StatelessWidget {
                             Navigator.of(context, rootNavigator: true).push(
                               pageRouteBuilder(
                                 page: const PDFView(type: PDFType.terms),
+                                scope: null,
                                 offset: const Offset(0.0, 1.0),
                               ),
                             );
@@ -74,6 +75,7 @@ class ServiceInfoView extends StatelessWidget {
                             Navigator.of(context, rootNavigator: true).push(
                               pageRouteBuilder(
                                 page: const PDFView(type: PDFType.privacy),
+                                scope: null,
                                 offset: const Offset(0.0, 1.0),
                               ),
                             );
