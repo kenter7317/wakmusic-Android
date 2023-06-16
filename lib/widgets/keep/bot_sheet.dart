@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:wakmusic/models_v2/profile.dart';
 import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -47,7 +48,7 @@ class BotSheet extends StatefulWidget {
   });
   final BotSheetType type;
   final String? initialValue;
-  final JSONType<int>? profiles;
+  final List<Profile>? profiles;
 
   @override
   State<BotSheet> createState() => _BotSheetState();
@@ -142,7 +143,8 @@ class _BotSheetState extends State<BotSheet> {
                               case BotSheetType.shareList:
                                 return null;
                               case BotSheetType.selProfile:
-                                return _profile;
+                                return widget.profiles
+                                    ?.singleWhere((e) => e.type == _profile);
                               default:
                                 return _fieldText.text;
                             }
@@ -409,20 +411,21 @@ class _BotSheetState extends State<BotSheet> {
   }
 
   Widget _buildProfile(int idx) {
-    final profile = widget.profiles!.keys.toList()[idx];
+    final profile = widget.profiles![idx];
     double width = (MediaQuery.of(context).size.width - 70) / 4;
     return GestureDetector(
-      onTap: () => setState(() => _profile = profile),
+      onTap: () => setState(() => _profile = profile.type),
       child: ExtendedImage.network(
-        '${API.static.url}/profile/$profile.png'
-        '?v=${widget.profiles![profile]}',
+        '${API.static.url}/profile/${profile.type}.png'
+        '?v=${profile.imageVersion}',
         fit: BoxFit.cover,
         shape: BoxShape.circle,
         width: width,
         height: width,
         border: Border.all(
-          color:
-              (_profile == profile) ? WakColor.lightBlue : Colors.transparent,
+          color: (_profile == profile.type)
+              ? WakColor.lightBlue
+              : Colors.transparent,
           width: 2,
         ),
         loadStateChanged: (state) {

@@ -65,7 +65,7 @@ class ChartsView extends StatelessWidget {
       edgeOffset: 102,
       child: Column(
         children: [
-          const PlayBtns(),
+          PlayBtns(listCallback: () async => await viewModel.charts[type]!),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 0, 4),
             child: FutureBuilder<DateTime>(

@@ -1,3 +1,4 @@
+import 'package:audio_service/models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/services.dart';
@@ -186,7 +187,17 @@ class PlaylistTile extends StatelessWidget {
                 if (tileType == TileType.canPlayTile)
                   GestureDetector(
                     onTap: () {
-                      /* play playlist */
+                      final audioProvider =
+                          Provider.of<AudioProvider>(context, listen: false);
+                      final botNav =
+                          Provider.of<NavProvider>(context, listen: false);
+                      audioProvider.addQueueItems(
+                        playlist!.songs,
+                        override: true,
+                        autoplay: true,
+                      );
+                      botNav.subChange(1);
+                      botNav.subSwitchForce(true);
                     },
                     child: Container(
                       decoration: BoxDecoration(

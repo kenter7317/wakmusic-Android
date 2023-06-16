@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'dart:developer' as dev;
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:audio_service/audio_handler.dart';
 import 'package:audio_service/audio_service.dart';
@@ -21,13 +20,13 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
     _player.playbackStateStream.listen((state) {
       _playbackState = state;
       if (nextPlayable && state == PlaybackState.ended) {
-        toNext();
+        toNext(auto: true);
       } else {
         notifyListeners();
       }
     });
     AudioService.position.listen((pos) {
-      dev.log('$pos');
+      log('$pos');
     });
   }
 
@@ -41,7 +40,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
   @override
   bool get prevPlayable => !isFirst || loopMode == LoopMode.all;
   @override
-  bool get nextPlayable => !isLast || loopMode == LoopMode.all;
+  bool get nextPlayable => !isLast || loopMode != LoopMode.none;
 
   final Set<Song> _shuffledQueue = {};
   Set<Song> get shuffledQueue => _shuffledQueue;
@@ -161,9 +160,10 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       _shuffledQueue.clear();
       return loadRandom();
     }
-    final playable = _queue.where((s) => !_shuffledQueue.contains(s)).toList();
-    _index = Random().nextInt(playable.length);
-    await load(playable[_index]);
+    final list = [..._queue]..shuffle();
+    final song = list.firstWhere((e) => !_shuffledQueue.contains(e));
+    _index = _queue.indexOf(song);
+    await load(currentSong!);
   }
 
   @override
@@ -202,7 +202,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
   }
 
   @override
-  Future<void> toNext() async {
+  Future<void> toNext({bool auto = false}) async {
     if (isEmpty) return;
     switch (loopMode) {
       case LoopMode.none:
@@ -218,7 +218,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
         }
         return load(_queue[_index]);
       case LoopMode.single:
-        return load(currentSong!);
+        if (auto) return load(currentSong!);
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
+import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/models_v2/song.dart';
@@ -127,7 +128,10 @@ class HomeView extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => botNav.update(1),
+            onTap: () {
+              ExitScope.add = ExitScope.pageIsNotHome;
+              botNav.update(1);
+            },
             child: Row(
               children: [
                 Text(

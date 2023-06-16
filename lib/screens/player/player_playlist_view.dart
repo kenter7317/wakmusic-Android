@@ -22,19 +22,26 @@ class PlayerPlayList extends StatelessWidget {
     return Exitable(
       scopes: const [ExitScope.playerPlaylist],
       onExitable: (scope) {
-        if (scope == ExitScope.playerPlaylist) {
+        // if (scope == ExitScope.playerPlaylist) {
+        //   final botNav = Provider.of<NavProvider>(context, listen: false);
+        //   botNav.subChange(0);
+        //   ExitScope.remove = ExitScope.playerPlaylist;
+        //   Navigator.pop(context);
+        // }
+      },
+      child: WillPopScope(
+        onWillPop: () async {
           final botNav = Provider.of<NavProvider>(context, listen: false);
           botNav.subChange(0);
-          ExitScope.remove = ExitScope.playerPlaylist;
-          Navigator.pop(context);
-        }
-      },
-      child: SafeArea(
-        top: false,
-        child: Scaffold(
-          backgroundColor: WakColor.grey100,
-          body: _buildBody(context),
-          bottomNavigationBar: getPlayerPlaylistBottom(context),
+          return true;
+        },
+        child: SafeArea(
+          top: false,
+          child: Scaffold(
+            backgroundColor: WakColor.grey100,
+            body: _buildBody(context),
+            bottomNavigationBar: getPlayerPlaylistBottom(context),
+          ),
         ),
       ),
     );
@@ -63,7 +70,7 @@ class PlayerPlayList extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 botNav.subChange(0);
-                ExitScope.remove = ExitScope.playerPlaylist;
+                // ExitScope.remove = ExitScope.playerPlaylist;
                 Navigator.pop(context);
               },
               child: SvgPicture.asset(

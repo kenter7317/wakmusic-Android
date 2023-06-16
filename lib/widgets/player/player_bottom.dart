@@ -115,7 +115,7 @@ class PlayerViewBottom extends StatelessWidget {
             "재생목록",
             edgePadding: false,
             onTap: () {
-              ExitScope.add = ExitScope.playerPlaylist;
+              // ExitScope.add = ExitScope.playerPlaylist;
               Navigator.of(context, rootNavigator: true)
                   .push(pageRouteBuilder(page: const PlayerPlayList()));
             },

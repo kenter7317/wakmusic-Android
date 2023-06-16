@@ -31,16 +31,25 @@ class Player extends StatelessWidget {
         body: Exitable(
           scopes: const [ExitScope.player],
           onExitable: (scope) {
-            if (scope == ExitScope.player) {
+            // if (scope == ExitScope.player) {
+            //   final botNav = Provider.of<NavProvider>(context, listen: false);
+            //   botNav.mainSwitchForce(true);
+            //   botNav.subSwitchForce(true);
+            //   botNav.subChange(1);
+            //   ExitScope.remove = ExitScope.player;
+            //   Navigator.pop(context);
+            // }
+          },
+          child: WillPopScope(
+            onWillPop: () async {
               final botNav = Provider.of<NavProvider>(context, listen: false);
               botNav.mainSwitchForce(true);
               botNav.subSwitchForce(true);
               botNav.subChange(1);
-              ExitScope.remove = ExitScope.player;
-              Navigator.pop(context);
-            }
-          },
-          child: _buildBody(context),
+              return true;
+            },
+            child: _buildBody(context),
+          ),
         ),
         bottomNavigationBar: const PlayerViewBottom(),
       ),
@@ -148,7 +157,7 @@ class Player extends StatelessWidget {
                 botNav.mainSwitchForce(true);
                 botNav.subSwitchForce(true);
                 botNav.subChange(1);
-                ExitScope.remove = ExitScope.player;
+                // ExitScope.remove = ExitScope.player;
                 Navigator.pop(context);
               },
               child: SvgPicture.asset(
@@ -199,48 +208,40 @@ class Player extends StatelessWidget {
           selector: (context, provider) => provider.currentSong?.id ?? '',
           builder: (context, id, _) {
             log("song img : $id");
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: ExtendedImage.network(
-                    'https://i.ytimg.com/vi/$id/maxresdefault.jpg',
-                    fit: BoxFit.cover,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(8),
-                    loadStateChanged: (state) {
-                      switch (state.extendedImageLoadState) {
-                        case LoadState.loading:
+            return ExtendedImage.network(
+              'https://i.ytimg.com/vi/$id/maxresdefault.jpg',
+              fit: BoxFit.cover,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(12),
+              loadStateChanged: (state) {
+                switch (state.extendedImageLoadState) {
+                  case LoadState.loading:
+                    return Image.asset(
+                      'assets/images/img_81_thumbnail.png',
+                      fit: BoxFit.cover,
+                    );
+                  case LoadState.failed:
+                    return ExtendedImage.network(
+                      'https://i.ytimg.com/vi/$id/hqdefault.jpg',
+                      fit: BoxFit.cover,
+                      borderRadius: BorderRadius.circular(12),
+                      loadStateChanged: (state) {
+                        if (state.extendedImageLoadState !=
+                            LoadState.completed) {
                           return Image.asset(
                             'assets/images/img_81_thumbnail.png',
                             fit: BoxFit.cover,
                           );
-                        case LoadState.failed:
-                          return ExtendedImage.network(
-                            'https://i.ytimg.com/vi/$id/hqdefault.jpg',
-                            fit: BoxFit.cover,
-                            borderRadius: BorderRadius.circular(8),
-                            loadStateChanged: (state) {
-                              if (state.extendedImageLoadState !=
-                                  LoadState.completed) {
-                                return Image.asset(
-                                  'assets/images/img_81_thumbnail.png',
-                                  fit: BoxFit.cover,
-                                );
-                              }
-                              return null;
-                            },
-                            cacheMaxAge: const Duration(days: 30),
-                          );
-                        default:
-                          return null;
-                      }
-                    },
-                    cacheMaxAge: const Duration(days: 30),
-                  ).image,
-                ),
-              ),
+                        }
+                        return null;
+                      },
+                      cacheMaxAge: const Duration(days: 30),
+                    );
+                  default:
+                    return null;
+                }
+              },
+              cacheMaxAge: const Duration(days: 30),
             );
           },
         ),

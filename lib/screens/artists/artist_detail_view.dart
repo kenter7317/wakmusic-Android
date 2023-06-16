@@ -519,7 +519,10 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabController tabController;
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Column(
@@ -564,7 +567,12 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
               ),
             ],
           ),
-          const PlayBtns(),
+          PlayBtns(
+            listCallback: () async => Provider.of<ArtistsViewModel>(
+              context,
+              listen: false,
+            ).albums[tabController.index]!,
+          ),
         ],
       ),
     );

@@ -186,7 +186,10 @@ class PlaylistView extends StatelessWidget {
                             SliverPersistentHeader(
                               pinned: true,
                               delegate: MyHeaderDelegate(
-                                widget: const PlayBtns(isPlaylistView: true),
+                                widget: PlayBtns(
+                                  listCallback: () async => viewModel.tempsongs,
+                                  isPlaylistView: true,
+                                ),
                                 extent: 72,
                                 isOpacityChange: false,
                               ),
