@@ -14,23 +14,24 @@ class RepeatButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final audioProvider = Provider.of<AudioProvider>(context);
     return GestureDetector(
-        onTap: () {
-          audioProvider.nextLoopMode();
-        },
-        child: SvgPicture.asset(
-          () {
-            switch (audioProvider.loopMode) {
-              case LoopMode.none:
-                return 'assets/icons/ic_32_repeat_off.svg';
-              case LoopMode.all:
-                return 'assets/icons/ic_32_repeat_on_all.svg';
-              case LoopMode.single:
-                return 'assets/icons/ic_32_repeat_on_1.svg';
-            }
-          }(),
-          width: size,
-          height: size,
-        ));
+      onTap: () {
+        audioProvider.nextLoopMode();
+      },
+      child: SvgPicture.asset(
+        () {
+          switch (audioProvider.loopMode) {
+            case LoopMode.none:
+              return 'assets/icons/ic_32_repeat_off.svg';
+            case LoopMode.all:
+              return 'assets/icons/ic_32_repeat_on_all.svg';
+            case LoopMode.single:
+              return 'assets/icons/ic_32_repeat_on_1.svg';
+          }
+        }(),
+        width: size,
+        height: size,
+      ),
+    );
   }
 }
 
@@ -45,14 +46,15 @@ class PreviousSongButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final audioProvider = Provider.of<AudioProvider>(context);
     return GestureDetector(
-        onTap: () {
-          audioProvider.toPrevious();
-        },
-        child: SvgPicture.asset(
-          'assets/icons/ic_32_prev_on.svg',
-          width: size,
-          height: size,
-        ));
+      onTap: () {
+        audioProvider.toPrevious();
+      },
+      child: SvgPicture.asset(
+        'assets/icons/ic_32_prev_on.svg',
+        width: size,
+        height: size,
+      ),
+    );
   }
 }
 
@@ -101,38 +103,39 @@ class PlayCircleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final audioProvider = Provider.of<AudioProvider>(context);
     return StreamBuilder<PlaybackState>(
-        initialData: audioProvider.playbackState,
-        stream: audioProvider.playbackStream,
-        builder: (context, snapshot) => GestureDetector(
-              onTap: () {
-                audioProvider.playPause();
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: WakColor.dark.withOpacity(0.08),
-                      offset: const Offset(0, 8),
-                      blurRadius: 40,
-                    ),
-                  ],
-                ),
-                child: SvgPicture.asset(
-                  () {
-                    switch (snapshot.data) {
-                      case PlaybackState.playing:
-                        return 'assets/icons/ic_80_stop_shadow.svg';
-                      case PlaybackState.ended:
-                        return 'assets/icons/ic_80_replay_shadow.svg';
-                      default:
-                        return 'assets/icons/ic_80_play_shadow.svg';
-                    }
-                  }(),
-                  width: size,
-                  height: size,
-                ),
+      initialData: audioProvider.playbackState,
+      stream: audioProvider.playbackStream,
+      builder: (context, snapshot) => GestureDetector(
+        onTap: () {
+          audioProvider.playPause();
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: WakColor.dark.withOpacity(0.08),
+                offset: const Offset(0, 8),
+                blurRadius: 40,
               ),
-            ));
+            ],
+          ),
+          child: SvgPicture.asset(
+            () {
+              switch (snapshot.data) {
+                case PlaybackState.playing:
+                  return 'assets/icons/ic_80_stop_shadow.svg';
+                case PlaybackState.ended:
+                  return 'assets/icons/ic_80_replay_shadow.svg';
+                default:
+                  return 'assets/icons/ic_80_play_shadow.svg';
+              }
+            }(),
+            width: size,
+            height: size,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -144,14 +147,15 @@ class NextSongButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final audioProvider = Provider.of<AudioProvider>(context);
     return GestureDetector(
-        onTap: () {
-          audioProvider.toNext();
-        },
-        child: SvgPicture.asset(
-          'assets/icons/ic_32_next_on.svg',
-          width: size,
-          height: size,
-        ));
+      onTap: () {
+        audioProvider.toNext();
+      },
+      child: SvgPicture.asset(
+        'assets/icons/ic_32_next_on.svg',
+        width: size,
+        height: size,
+      ),
+    );
   }
 }
 
@@ -163,16 +167,17 @@ class ShuffleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final audioProvider = Provider.of<AudioProvider>(context);
     return GestureDetector(
-        onTap: () {
-          audioProvider.toggleShuffle();
-        },
-        child: SvgPicture.asset(
-          audioProvider.shuffle
-              ? 'assets/icons/ic_32_random_on.svg'
-              : 'assets/icons/ic_32_random_off.svg',
-          width: size,
-          height: size,
-        ));
+      onTap: () {
+        audioProvider.toggleShuffle();
+      },
+      child: SvgPicture.asset(
+        audioProvider.shuffle
+            ? 'assets/icons/ic_32_random_on.svg'
+            : 'assets/icons/ic_32_random_off.svg',
+        width: size,
+        height: size,
+      ),
+    );
   }
 }
 

@@ -55,7 +55,7 @@ class ArtistsViewModel with ChangeNotifier {
   }
 
   void setArtist(Artist artist) async {
-    if (artist.id != _artist.id) {
+    if (_albums.isNotEmpty && artist.id != _artist.id) {
       clear();
     }
     _artist = artist;

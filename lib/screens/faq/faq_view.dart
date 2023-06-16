@@ -50,19 +50,18 @@ class FAQView extends StatelessWidget {
               child: FutureBuilder<void>(
                 future: viewModel.getFAQ(),
                 builder: (_, __) {
-                  if (viewModel.categories[0] == Category.qnaAll) {
+                  if (viewModel.categories.isEmpty) {
                     return TabSkeletonView(
                       type: TabType.minTab,
-                      tabLength: viewModel.categories.length,
-                      tabViewList: viewModel.categories
-                          .map((e) => _buildTab(context, e))
-                          .toList(),
+                      tabLength: 5,
+                      tabViewList:
+                          List.generate(5, (_) => _buildTab(context, null)),
                       physics: const ClampingScrollPhysics(),
                     );
                   }
                   return TabView(
                     type: TabType.minTab,
-                    tabBarList: [...viewModel.categories.map((e) => e.name)],
+                    tabBarList: viewModel.categories.map((e) => e.name).toList(),
                     tabViewList: viewModel.categories
                         .map((e) => _buildTab(context, e))
                         .toList(),
@@ -78,48 +77,53 @@ class FAQView extends StatelessWidget {
     );
   }
 
-  Widget _buildTab(BuildContext context, Category category) {
+  Widget _buildTab(BuildContext context, Category? category) {
+    if (category == null) {
+      return ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: 10,
+        itemBuilder: (_, __) => Container(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 11),
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: WakColor.grey200),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SkeletonText(wakTxtStyle: WakText.txt12L, width: 47),
+                    const SizedBox(height: 2),
+                    SkeletonText(wakTxtStyle: WakText.txt16M),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              SkeletonBox(
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: const BoxDecoration(
+                    color: WakColor.grey200,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
     FAQViewModel viewModel = Provider.of<FAQViewModel>(context);
     List<FAQ?> faqList = viewModel.faqLists[category]!;
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: faqList.length,
       itemBuilder: (_, idx) {
-        if (faqList[idx] == null) {
-          return Container(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 11),
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: WakColor.grey200),
-              ),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SkeletonText(wakTxtStyle: WakText.txt12L, width: 47),
-                      const SizedBox(height: 2),
-                      SkeletonText(wakTxtStyle: WakText.txt16M),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                SkeletonBox(
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    decoration: const BoxDecoration(
-                      color: WakColor.grey200,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
         return GestureDetector(
           onTap: () => viewModel.onTap(faqList[idx]!),
           child: Column(

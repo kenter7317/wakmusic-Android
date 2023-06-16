@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
@@ -60,14 +59,13 @@ class ChartsView extends StatelessWidget {
 
   Widget _buildTab(BuildContext context, ChartType type) {
     ChartsViewModel viewModel = Provider.of<ChartsViewModel>(context);
-    initializeDateFormatting('ko');
     return RefreshIndicator(
       onRefresh: () => viewModel.getCharts(),
       color: WakColor.lightBlue,
       edgeOffset: 102,
       child: Column(
         children: [
-          const PlayBtns(),
+          PlayBtns(listCallback: () async => await viewModel.charts[type]!),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 0, 4),
             child: FutureBuilder<DateTime>(

@@ -52,7 +52,7 @@ class UserAPI extends API {
     required String token,
   }) async {
     final response = await request(
-      '$url/profile/set',
+      '$url/username',
       method: HttpMethod.post,
       token: token,
       body: {

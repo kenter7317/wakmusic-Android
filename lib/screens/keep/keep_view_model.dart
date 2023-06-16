@@ -75,7 +75,8 @@ class KeepViewModel with ChangeNotifier {
           return true;
         default:
           log('$e');
-          return false;
+          // return false;
+          rethrow;
       }
     }
     updateLoginStatus(LoginStatus.after);
@@ -212,12 +213,11 @@ class KeepViewModel with ChangeNotifier {
   }
 
   Future<bool> addLikeSong(String songId) async {
-    if(songId.isEmpty) return false;
-
+    if (songId.isEmpty) return false;
 
     var result = await _repo.addLikeSong(songId);
 
-    if(result){
+    if (result) {
       _likes = [...(await _repo.getLikes()).keys];
       notifyListeners();
     }
@@ -226,11 +226,11 @@ class KeepViewModel with ChangeNotifier {
   }
 
   Future<bool> removeLikeSong(String songId) async {
-    if(songId.isEmpty) return false;
+    if (songId.isEmpty) return false;
 
     var result = await _repo.removeLikeSong(songId);
 
-    if(result){
+    if (result) {
       _likes = [...(await _repo.getLikes()).keys];
       notifyListeners();
     }

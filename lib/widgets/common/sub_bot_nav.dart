@@ -163,9 +163,9 @@ class _SubBotNavState extends State<SubBotNav> {
     return GestureDetector(
       onTap: () {
         if (type == PlayerBarType.main) {
-          ExitScope.add = ExitScope.player;
+          // ExitScope.add = ExitScope.player;
           Navigator.of(context, rootNavigator: true)
-              .push(pageRouteBuilder(page: const Player()));
+              .push(pageRouteBuilder(page: const Player(), scope: null));
         }
       },
       child: Stack(
@@ -501,10 +501,7 @@ class _SubBotNavState extends State<SubBotNav> {
                     builder: (_) => BotSheet(
                       type: BotSheetType.selProfile,
                       initialValue: keepViewModel.user.profile.type,
-                      profiles: {
-                        for (var e in keepViewModel.profiles)
-                          e.type: e.imageVersion,
-                      },
+                      profiles: keepViewModel.profiles,
                     ),
                   ));
                   if (audioProvider.isEmpty) {
