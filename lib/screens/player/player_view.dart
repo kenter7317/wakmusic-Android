@@ -89,26 +89,26 @@ class Player extends StatelessWidget {
                     image: DecorationImage(
                       fit: BoxFit.cover,
                       image: id.isEmpty
-                      ? Image.asset(
-                        'assets/images/img_81_thumbnail.png',
-                        fit: BoxFit.cover).image
-                      : ExtendedImage.network(
-                        'https://i.ytimg.com/vi/$id/hqdefault.jpg',
-                        fit: BoxFit.cover,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(8),
-                        loadStateChanged: (state) {
-                          if (state.extendedImageLoadState !=
-                              LoadState.completed) {
-                            return Image.asset(
-                              'assets/images/img_81_thumbnail.png',
+                          ? Image.asset('assets/images/img_81_thumbnail.png',
+                                  fit: BoxFit.cover)
+                              .image
+                          : ExtendedImage.network(
+                              'https://i.ytimg.com/vi/$id/hqdefault.jpg',
                               fit: BoxFit.cover,
-                            );
-                          }
-                          return null;
-                        },
-                        cacheMaxAge: const Duration(days: 30),
-                      ).image,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(8),
+                              loadStateChanged: (state) {
+                                if (state.extendedImageLoadState !=
+                                    LoadState.completed) {
+                                  return Image.asset(
+                                    'assets/images/img_81_thumbnail.png',
+                                    fit: BoxFit.cover,
+                                  );
+                                }
+                                return null;
+                              },
+                              cacheMaxAge: const Duration(days: 30),
+                            ).image,
                       colorFilter: ColorFilter.mode(
                           Colors.white.withOpacity(0.6), BlendMode.dstATop),
                     ),
@@ -216,10 +216,7 @@ class Player extends StatelessWidget {
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: LoadImage(id)
-                ),
+                image: DecorationImage(fit: BoxFit.cover, image: LoadImage(id)),
               ),
             );
           },
@@ -266,7 +263,8 @@ class Player extends StatelessWidget {
                   stream: audioProvider.position,
                   builder: (context, position) {
                     var current = lyrics.durationSearch(
-                        currentSong?.start ?? Duration.zero + (position.data ?? Duration.zero));
+                        (currentSong?.start ?? Duration.zero) +
+                            (position.data ?? Duration.zero));
                     var nowIndex = (current != null)
                         ? lyrics.subtitles.indexOf(current)
                         : 0;
@@ -274,8 +272,9 @@ class Player extends StatelessWidget {
                       Future.microtask(() {
                         if (controller.position.userScrollDirection ==
                             ScrollDirection.idle) {
-                          var curr = lyrics.durationSearch(currentSong?.start ?? Duration.zero +
-                              (position.data ?? Duration.zero));
+                          var curr = lyrics.durationSearch(
+                              (currentSong?.start ?? Duration.zero) +
+                                  (position.data ?? Duration.zero));
                           if (curr == null) {
                             return;
                           }
@@ -357,9 +356,9 @@ class Player extends StatelessWidget {
                 thumbColor: WakColor.lightBlue,
                 timeLabelLocation: TimeLabelLocation.none,
                 onSeek: (duration) {
-                  if(currentSong != null){
+                  if (currentSong != null) {
                     audioProvider.seek(
-                        (duration +  (currentSong.start)).inSeconds.toDouble());
+                        (duration + (currentSong.start)).inSeconds.toDouble());
                   }
                 },
               ),
