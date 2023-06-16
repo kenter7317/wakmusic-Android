@@ -10,6 +10,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:wakmusic/screens/player/player_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
+import 'package:wakmusic/utils/load_image.dart';
 import 'package:wakmusic/widgets/common/exitable.dart';
 import 'package:wakmusic/widgets/player/player_bottom.dart';
 import 'package:wakmusic/widgets/player/player_button.dart';
@@ -87,7 +88,11 @@ class Player extends StatelessWidget {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: ExtendedImage.network(
+                      image: id.isEmpty
+                      ? Image.asset(
+                        'assets/images/img_81_thumbnail.png',
+                        fit: BoxFit.cover).image
+                      : ExtendedImage.network(
                         'https://i.ytimg.com/vi/$id/hqdefault.jpg',
                         fit: BoxFit.cover,
                         shape: BoxShape.rectangle,
@@ -172,19 +177,19 @@ class Player extends StatelessWidget {
           alignment: Alignment.center,
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 2),
-            child: Selector<AudioProvider, Song>(
-              selector: (context, audioProvider) => audioProvider.currentSong!,
+            child: Selector<AudioProvider, Song?>(
+              selector: (context, audioProvider) => audioProvider.currentSong,
               builder: (context, currentSong, _) {
                 //print( "title and artist : ${currentSong.title} & ${currentSong.artist}");
                 return Column(
                   children: [
                     Text(
-                      currentSong.title.toString(),
+                      currentSong?.title.toString() ?? '재생중인 곡이 없습니다.',
                       style: WakText.txt16M,
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      currentSong.artist.toString(),
+                      currentSong?.artist.toString() ?? '',
                       style: WakText.txt14M
                           .copyWith(color: WakColor.grey900.withOpacity(0.6)),
                       textAlign: TextAlign.center,
@@ -208,40 +213,14 @@ class Player extends StatelessWidget {
           selector: (context, provider) => provider.currentSong?.id ?? '',
           builder: (context, id, _) {
             log("song img : $id");
-            return ExtendedImage.network(
-              'https://i.ytimg.com/vi/$id/maxresdefault.jpg',
-              fit: BoxFit.cover,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(12),
-              loadStateChanged: (state) {
-                switch (state.extendedImageLoadState) {
-                  case LoadState.loading:
-                    return Image.asset(
-                      'assets/images/img_81_thumbnail.png',
-                      fit: BoxFit.cover,
-                    );
-                  case LoadState.failed:
-                    return ExtendedImage.network(
-                      'https://i.ytimg.com/vi/$id/hqdefault.jpg',
-                      fit: BoxFit.cover,
-                      borderRadius: BorderRadius.circular(12),
-                      loadStateChanged: (state) {
-                        if (state.extendedImageLoadState !=
-                            LoadState.completed) {
-                          return Image.asset(
-                            'assets/images/img_81_thumbnail.png',
-                            fit: BoxFit.cover,
-                          );
-                        }
-                        return null;
-                      },
-                      cacheMaxAge: const Duration(days: 30),
-                    );
-                  default:
-                    return null;
-                }
-              },
-              cacheMaxAge: const Duration(days: 30),
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: LoadImage(id)
+                ),
+              ),
             );
           },
         ),
@@ -258,11 +237,11 @@ class Player extends StatelessWidget {
       alignment: Alignment.center,
       height: height >= 732 ? 120 : 72,
       width: MediaQuery.of(context).size.width * 0.75, // = 270/360
-      child: Selector<AudioProvider, Song>(
-        selector: (context, audioProvider) => audioProvider.currentSong!,
+      child: Selector<AudioProvider, Song?>(
+        selector: (context, audioProvider) => audioProvider.currentSong,
         builder: (context, currentSong, _) {
           PlayerViewModel viewModel = Provider.of<PlayerViewModel>(context);
-          viewModel.getLyrics(currentSong.id);
+          viewModel.getLyrics(currentSong?.id ?? '');
           controller.addListener(() {
             if (controller.position.userScrollDirection !=
                 ScrollDirection.idle) {
@@ -287,7 +266,7 @@ class Player extends StatelessWidget {
                   stream: audioProvider.position,
                   builder: (context, position) {
                     var current = lyrics.durationSearch(
-                        currentSong.start + (position.data ?? Duration.zero));
+                        currentSong?.start ?? Duration.zero + (position.data ?? Duration.zero));
                     var nowIndex = (current != null)
                         ? lyrics.subtitles.indexOf(current)
                         : 0;
@@ -295,7 +274,7 @@ class Player extends StatelessWidget {
                       Future.microtask(() {
                         if (controller.position.userScrollDirection ==
                             ScrollDirection.idle) {
-                          var curr = lyrics.durationSearch(currentSong.start +
+                          var curr = lyrics.durationSearch(currentSong?.start ?? Duration.zero +
                               (position.data ?? Duration.zero));
                           if (curr == null) {
                             return;
@@ -359,7 +338,7 @@ class Player extends StatelessWidget {
 
   Widget _buildAudioProgressBar(BuildContext context) {
     final audioProvider = Provider.of<AudioProvider>(context);
-    final currentSong = audioProvider.currentSong!;
+    final currentSong = audioProvider.currentSong;
     return StreamBuilder(
       initialData: const Duration(),
       stream: audioProvider.position,
@@ -378,8 +357,10 @@ class Player extends StatelessWidget {
                 thumbColor: WakColor.lightBlue,
                 timeLabelLocation: TimeLabelLocation.none,
                 onSeek: (duration) {
-                  audioProvider.seek(
-                      (duration + currentSong.start).inSeconds.toDouble());
+                  if(currentSong != null){
+                    audioProvider.seek(
+                        (duration +  (currentSong.start)).inSeconds.toDouble());
+                  }
                 },
               ),
               const SizedBox(height: 4),
