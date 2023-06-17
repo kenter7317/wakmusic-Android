@@ -8,6 +8,7 @@ import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:wakmusic/models_v2/song.dart';
+import 'package:wakmusic/utils/load_image.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/song_tile.dart';
 import 'package:wakmusic/widgets/common/rec_playlist.dart';
@@ -300,23 +301,7 @@ class HomeView extends StatelessWidget {
                 children: [
                   AspectRatio(
                     aspectRatio: 16 / 9,
-                    child: ExtendedImage.network(
-                      'https://i.ytimg.com/vi/${song.id}/hqdefault.jpg',
-                      fit: BoxFit.cover,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(8),
-                      loadStateChanged: (state) {
-                        if (state.extendedImageLoadState !=
-                            LoadState.completed) {
-                          return Image.asset(
-                            'assets/images/img_81_thumbnail.png',
-                            fit: BoxFit.cover,
-                          );
-                        }
-                        return null;
-                      },
-                      cacheMaxAge: const Duration(days: 30),
-                    ),
+                    child: loadImage(song.id, ThumbnailType.high),
                   ),
                   Positioned(
                     right: 8,
