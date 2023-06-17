@@ -37,6 +37,8 @@ class PlayBtns extends StatelessWidget {
               final botNav = Provider.of<NavProvider>(context, listen: false);
               if (listCallback != null) {
                 final list = await listCallback!();
+                if (list.whereType<Song>().isEmpty) return;
+
                 audioProvider.addQueueItems(
                   [...list.whereType<Song>()],
                   override: true,
@@ -56,6 +58,8 @@ class PlayBtns extends StatelessWidget {
               final botNav = Provider.of<NavProvider>(context, listen: false);
               if (listCallback != null) {
                 final list = await listCallback!();
+                if (list.whereType<Song>().isEmpty) return;
+
                 audioProvider.addQueueItems(
                   [...list.whereType<Song>()],
                   override: true,
