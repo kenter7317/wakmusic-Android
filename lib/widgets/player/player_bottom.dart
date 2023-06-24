@@ -272,10 +272,9 @@ class PlayerPlaylistSelBottom extends StatelessWidget {
                   );
                 }
               }),
-              editBarBtn("ic_32_delete", "삭제", onTap: () {
+              editBarBtn("ic_32_delete", "삭제", onTap: () async {
                 if (selNav.list.isNotEmpty) {
-                  audioProvider.removeQueueItems(selNav.list);
-                  selNav.clearList();
+                  audioProvider.removeQueueItems(selNav.list).then((value) => {selNav.clearList()});
                 }
               }),
             ],
@@ -314,6 +313,7 @@ class PlayerPlaylistSelBottom extends StatelessWidget {
 
 Widget getPlayerPlaylistBottom(BuildContext context) {
   final selNav = Provider.of<SelectSongProvider>(context);
+  print(selNav.selNum);
   if (selNav.selNum == 0) {
     return const PlayerPlaylistBottom();
   } else {
