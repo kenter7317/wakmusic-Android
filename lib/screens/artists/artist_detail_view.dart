@@ -568,10 +568,12 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
             ],
           ),
           PlayBtns(
-            listCallback: () async => Provider.of<ArtistsViewModel>(
-              context,
-              listen: false,
-            ).albums[tabController.index]!,
+            listCallback: () async =>
+                Provider.of<ArtistsViewModel>(
+                  context,
+                  listen: false,
+                ).albums[AlbumType.values[tabController.index]] ??
+                [],
           ),
         ],
       ),
