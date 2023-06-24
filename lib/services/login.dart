@@ -51,7 +51,9 @@ class NaverLoginService implements LoginService {
       if (res.status != NaverLoginStatus.loggedIn) {
         return null;
       }
-      return res.account.id;
+
+      final token = await FlutterNaverLogin.currentAccessToken;
+      return token.accessToken;
     } catch (e) {
       await FlutterNaverLogin.logOutAndDeleteToken();
       return null;
@@ -76,13 +78,12 @@ class GoogleLoginService implements LoginService {
   @override
   Future<String?> login() async {
     final sign = GoogleSignIn();
-    if (await sign.isSignedIn()) {
-      await sign.signInSilently();
-      return sign.currentUser?.id;
-    }
+    final user = (await sign.isSignedIn())
+        ? await sign.signInSilently()
+        : await sign.signIn();
 
-    final res = await sign.signIn();
-    return res?.id;
+    final auth = await user?.authentication;
+    return auth?.accessToken;
   }
 
   @override

@@ -11,16 +11,20 @@ class AuthAPI extends API {
   Future<String> login({
     required Login provider,
   }) async {
-    final id = await provider.service.login();
-    if (id == null) {
+    final token = await provider.service.login();
+    if (token == null) {
       throw WakError.loginCancelled;
     }
 
     final url = dotenv.get('API_LOGIN');
-    final response = await request(url, method: HttpMethod.post, body: {
-      'id': id,
-      'provider': provider.name,
-    });
+    final response = await request(
+      url,
+      method: HttpMethod.post,
+      body: {
+        'token': token,
+        'provider': provider.name,
+      },
+    );
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.post)) {
