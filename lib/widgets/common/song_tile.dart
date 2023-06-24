@@ -12,6 +12,7 @@ import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wakmusic/utils/load_image.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:lottie/lottie.dart';
 
@@ -228,22 +229,11 @@ class SongTile extends StatelessWidget {
                       vertical: (tileType == TileType.homeTile) ? 1 : 10),
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
-                    child: ExtendedImage.network(
-                      'https://i.ytimg.com/vi/${song!.id}/hqdefault.jpg',
-                      fit: BoxFit.cover,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(4),
-                      loadStateChanged: (state) {
-                        if (state.extendedImageLoadState !=
-                            LoadState.completed) {
-                          return Image.asset(
-                            'assets/images/img_40_thumbnail.png',
-                            fit: BoxFit.cover,
-                          );
-                        }
-                        return null;
-                      },
-                      cacheMaxAge: const Duration(days: 30),
+                    child: loadImage(
+                      song!.id,
+                      ThumbnailType.high,
+                      small: true,
+                      borderRadius: 4,
                     ),
                   ),
                 ),
