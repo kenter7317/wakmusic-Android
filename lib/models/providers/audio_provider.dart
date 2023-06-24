@@ -286,10 +286,21 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
 
   @override
   Future<void> removeQueueItems(List<Song> songs) async {
+    if(songs.isEmpty) return;
+
+    var curSong = currentSong;
+
     _queue.removeWhere((s) => songs.contains(s));
-    if (songs.contains(currentSong)) {
-      _index = 0;
-      load(_queue[_index]);
+
+    if(_queue.isEmpty) {
+      stop();
+    } else if(curSong != null) {
+      if (songs.contains(curSong)) {
+        _index = 0;
+        load(_queue[_index]);
+      } else {
+        _index = _queue.indexOf(curSong);
+      }
     }
     notifyListeners();
   }
