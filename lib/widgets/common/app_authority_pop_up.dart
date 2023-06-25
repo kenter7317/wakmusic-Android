@@ -217,9 +217,8 @@ class AppAuthorityPopUp extends StatelessWidget {
     Map<Permission, PermissionStatus> permissionStatuses = await [
       Permission.camera,
       Permission.storage,
-      Permission.systemAlertWindow,
     ].request();
-
+    
     // 허용/비허용의 차이가 없기에 주석처리
     /*if((permissionStatuses[Permission.camera]?.isGranted ?? false) &&
         (permissionStatuses[Permission.storage]?.isGranted ?? false)){
