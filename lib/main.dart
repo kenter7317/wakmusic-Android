@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/repository/notice_repo.dart';
@@ -88,7 +91,7 @@ class _MainState extends State<Main> {
         ),
         animation: StyledToastAnimation.slideFromBottomFade,
         reverseAnimation: StyledToastAnimation.fade,
-        ToastMsg(msg: 'Error: $error StackTrace: $stack', size: 120),
+        ToastMsg(msg: 'Error: $error StackTrace: $stack', size: 200),
       );
     };
 
@@ -119,6 +122,12 @@ class _MainState extends State<Main> {
         onWillPop: () async {
           print('EXIT SCOPE :: ${ExitScope.scope} ${ExitScope.scopes}');
           if (ExitScope.exitable) {
+            final audio = Provider.of<AudioProvider>(context, listen: false);
+            if (audio.currentSong == null && audio.playbackState.isNotPlaying) {
+              await AudioService.stop();
+              AudioService.player.close();
+              Future.delayed(const Duration(seconds: 1), () => exit(0));
+            }
             return true;
           }
 
