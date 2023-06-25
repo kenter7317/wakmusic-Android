@@ -42,8 +42,8 @@ class NaverLoginService implements LoginService {
   Future<String?> login() async {
     try {
       if (!await isFirst() && await FlutterNaverLogin.isLoggedIn) {
-        final res = await FlutterNaverLogin.currentAccount();
-        return res.id;
+        final res = await FlutterNaverLogin.currentAccessToken;
+        return res.accessToken;
       }
 
       final NaverLoginResult res = await FlutterNaverLogin.logIn();
