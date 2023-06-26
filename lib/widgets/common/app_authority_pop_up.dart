@@ -15,7 +15,7 @@ class AppAuthorityPopUp extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
       child: SizedBox(
         width: 335,
-        height: 463,
+        height: 519,
         child: Column(
           children: [
             Container(
@@ -113,6 +113,36 @@ class AppAuthorityPopUp extends StatelessWidget {
                           children: [
                             Text(
                               '알림',
+                              style: WakText.txt16M
+                                  .copyWith(color: WakColor.grey900),
+                              textAlign: TextAlign.left,
+                            ),
+                            Text(
+                              '백그라운드 음악 재생을 위한 권한',
+                              style: WakText.txt14L
+                                  .copyWith(color: WakColor.grey500),
+                              textAlign: TextAlign.left,
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/ic_32_app_circle.svg',
+                        width: 32,
+                        height: 32,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '다른 앱 위에 표시',
                               style: WakText.txt16M
                                   .copyWith(color: WakColor.grey900),
                               textAlign: TextAlign.left,
