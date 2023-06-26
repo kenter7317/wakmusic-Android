@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:wakmusic/screens/player/player_view_model.dart';
+import 'package:wakmusic/services/debounce.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/utils/load_image.dart';
 import 'package:wakmusic/widgets/common/exitable.dart';
@@ -338,6 +339,7 @@ class Player extends StatelessWidget {
   Widget _buildAudioProgressBar(BuildContext context) {
     final audioProvider = Provider.of<AudioProvider>(context);
     final currentSong = audioProvider.currentSong;
+    final debounce = new Debounce();
     return StreamBuilder(
       initialData: const Duration(),
       stream: audioProvider.position,

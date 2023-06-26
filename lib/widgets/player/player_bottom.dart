@@ -15,6 +15,7 @@ import 'package:wakmusic/widgets/page_route_builder.dart';
 import '../../models/providers/audio_provider.dart';
 import '../../models/providers/nav_provider.dart';
 import '../../models/providers/select_song_provider.dart';
+import '../../services/debounce.dart';
 import '../../style/colors.dart';
 import '../../style/text_styles.dart';
 import '../../utils/number_format.dart';
@@ -27,7 +28,7 @@ class PlayerViewBottom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final throttle = Throttle();
+    final debounce = Debounce(milliseconds: 500);
     final keepModel = Provider.of<KeepViewModel>(context);
     final audioProvider = Provider.of<AudioProvider>(context);
     final selProvider = Provider.of<SelectSongProvider>(context);
@@ -47,22 +48,26 @@ class PlayerViewBottom extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           keepModel.loginStatus == LoginStatus.before
-              ? playDetailBarBtn("ic_32_heart_off", koreanNumberFormater(0),
-                  onTap: () {
-                  showModal(
-                    context: context,
-                    builder: (context) => const PopUp(
-                      type: PopUpType.txtTwoBtn,
-                      msg: '로그인이 필요한 서비스입니다.\n로그인 하시겠습니까?',
-                    ),
-                  ).then((value) {
-                    navProvider.update(4);
-                    Navigator.popUntil(context, (route) => route.isFirst);
-                  });
-                })
+              ? FutureBuilder(
+                  future: API.like.get(songId: audioProvider.currentSong?.id ?? ''),
+                  builder: (context, snapshot) {
+                    return playDetailBarBtn("ic_32_heart_off", koreanNumberFormater(snapshot.data ?? 0),
+                        onTap: () {
+                          showModal(
+                            context: context,
+                            builder: (context) => const PopUp(
+                              type: PopUpType.txtTwoBtn,
+                              msg: '로그인이 필요한 서비스입니다.\n로그인 하시겠습니까?',
+                            ),
+                          ).then((value) {
+                            navProvider.update(4);
+                            Navigator.popUntil(context, (route) => route.isFirst);
+                          });
+                        });
+                  },
+              )
               : FutureBuilder(
-                  future:
-                      API.like.get(songId: audioProvider.currentSong?.id ?? ''),
+                  future: API.like.get(songId: audioProvider.currentSong?.id ?? ''),
                   builder: (context, snapshot) {
                     return playDetailBarBtn(
                       keepModel.likes.contains(audioProvider.currentSong)
@@ -72,11 +77,14 @@ class PlayerViewBottom extends StatelessWidget {
                       onTap: () {
                         if (audioProvider.currentSong != null) {
                           keepModel.likes.contains(audioProvider.currentSong)
-                              ? throttle.actionFunction(() =>
-                                  keepModel.removeLikeSong(
-                                      audioProvider.currentSong!.id))
-                              : throttle.actionFunction(() => keepModel
-                                  .addLikeSong(audioProvider.currentSong!.id));
+                              ? {
+                                keepModel.likes.remove(audioProvider.currentSong),
+                                debounce.actionFunction(() {keepModel.removeLikeSong(audioProvider.currentSong!.id);})
+                              }
+                              :{
+                                keepModel.likes.add(audioProvider.currentSong),
+                                debounce.actionFunction(() {keepModel.addLikeSong(audioProvider.currentSong!.id);})
+                              };
                         }
                       },
                       txtColor:

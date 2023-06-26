@@ -4,8 +4,8 @@ class Throttle {
   Timer? _throttleTimer;
   late Duration _throttleDuration;
 
-  Throttle({int second = 1}){
-    _throttleDuration = Duration(seconds: second);
+  Throttle({int milliseconds = 1000}){
+    _throttleDuration = Duration(milliseconds: milliseconds);
   }
 
   void actionFunction(Function function){
