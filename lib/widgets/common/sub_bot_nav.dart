@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:audio_service/models/enums.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:extended_image/extended_image.dart';
@@ -173,125 +175,133 @@ class _SubBotNavState extends State<SubBotNav> {
       },
       child: Stack(
         children: [
-          Container(
-            height: 56,
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(20, 0, 16, 0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 7, 0, 8),
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: loadImage(
-                      audioProvider.currentSong?.id,
-                      ThumbnailType.high,
-                      borderRadius: 4,
-                    ),
-                  ),
-                ),
-                type == PlayerBarType.main
-                    ? Expanded(
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    audioProvider.currentSong == null
-                                        ? "노래 없음"
-                                        : audioProvider.currentSong!.title,
-                                    style: WakText.txt14MH
-                                        .copyWith(color: WakColor.grey900),
-                                  ),
-                                  Text(
-                                    audioProvider.currentSong == null
-                                        ? "노래 없음"
-                                        : audioProvider.currentSong!.artist,
-                                    style: WakText.txt12L
-                                        .copyWith(color: WakColor.grey900),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            audioProvider.playbackState == PlaybackState.playing
-                                ? iconBtn("ic_32_stop", edgePadding: true,
-                                    onTap: () {
-                                    setState(() {
-                                      audioProvider.pause();
-                                    });
-                                  })
-                                : iconBtn("ic_32_play_900", edgePadding: true,
-                                    onTap: () {
-                                    setState(() {
-                                      audioProvider.play();
-                                    });
-                                  }),
-                            iconBtn("ic_32_close", edgePadding: false,
-                                onTap: () {
-                              botNav.subSwitch();
-                              audioProvider.stop();
-                              audioProvider.clear();
-                            }),
-                          ],
-                        ),
-                      )
-                    : Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            () {
-                              switch (audioProvider.loopMode) {
-                                case LoopMode.all:
-                                  return iconBtn("ic_32_repeat_on_all",
-                                      onTap: () {
-                                    audioProvider.nextLoopMode();
-                                  });
-                                case LoopMode.single:
-                                  return iconBtn("ic_32_repeat_on_1",
-                                      onTap: () {
-                                    audioProvider.nextLoopMode();
-                                  });
-                                default:
-                                  return iconBtn("ic_32_repeat_off", onTap: () {
-                                    setState(() {
-                                      audioProvider.nextLoopMode();
-                                    });
-                                  });
-                              }
-                            }(),
-                            iconBtn("ic_32_prev_on", onTap: () {
-                              audioProvider.toPrevious();
-                            }),
-                            audioProvider.playbackState == PlaybackState.playing
-                                ? iconBtn("ic_32_stop", onTap: () {
-                                    audioProvider.pause();
-                                  })
-                                : iconBtn("ic_32_play_900", onTap: () {
-                                    audioProvider.play();
-                                  }),
-                            iconBtn("ic_32_next_on", onTap: () {
-                              audioProvider.toNext();
-                            }),
-                            audioProvider.shuffle
-                                ? iconBtn("ic_32_random_on", edgePadding: true,
-                                    onTap: () {
-                                    audioProvider.toggleShuffle();
-                                  })
-                                : iconBtn("ic_32_random_off", edgePadding: true,
-                                    onTap: () {
-                                    audioProvider.toggleShuffle();
-                                  }),
-                          ],
+          ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                height: 56,
+                color: Colors.white.withOpacity(0.6),
+                padding: const EdgeInsets.fromLTRB(20, 0, 16, 0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 7, 0, 8),
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: loadImage(
+                          audioProvider.currentSong?.id,
+                          ThumbnailType.high,
+                          borderRadius: 4,
                         ),
                       ),
-              ],
+                    ),
+                    type == PlayerBarType.main
+                        ? Expanded(
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        audioProvider.currentSong == null
+                                            ? "노래 없음"
+                                            : audioProvider.currentSong!.title,
+                                        style: WakText.txt14MH
+                                            .copyWith(color: WakColor.grey900),
+                                      ),
+                                      Text(
+                                        audioProvider.currentSong == null
+                                            ? "노래 없음"
+                                            : audioProvider.currentSong!.artist,
+                                        style: WakText.txt12L
+                                            .copyWith(color: WakColor.grey900),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                audioProvider.playbackState ==
+                                        PlaybackState.playing
+                                    ? iconBtn("ic_32_stop", edgePadding: true,
+                                        onTap: () {
+                                        setState(() {
+                                          audioProvider.pause();
+                                        });
+                                      })
+                                    : iconBtn("ic_32_play_900", edgePadding: true,
+                                        onTap: () {
+                                        setState(() {
+                                          audioProvider.play();
+                                        });
+                                      }),
+                                iconBtn("ic_32_close", edgePadding: false,
+                                    onTap: () {
+                                  botNav.subSwitch();
+                                  audioProvider.stop();
+                                  audioProvider.clear();
+                                }),
+                              ],
+                            ),
+                          )
+                        : Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                () {
+                                  switch (audioProvider.loopMode) {
+                                    case LoopMode.all:
+                                      return iconBtn("ic_32_repeat_on_all",
+                                          onTap: () {
+                                        audioProvider.nextLoopMode();
+                                      });
+                                    case LoopMode.single:
+                                      return iconBtn("ic_32_repeat_on_1",
+                                          onTap: () {
+                                        audioProvider.nextLoopMode();
+                                      });
+                                    default:
+                                      return iconBtn("ic_32_repeat_off",
+                                          onTap: () {
+                                        setState(() {
+                                          audioProvider.nextLoopMode();
+                                        });
+                                      });
+                                  }
+                                }(),
+                                iconBtn("ic_32_prev_on", onTap: () {
+                                  audioProvider.toPrevious();
+                                }),
+                                audioProvider.playbackState ==
+                                        PlaybackState.playing
+                                    ? iconBtn("ic_32_stop", onTap: () {
+                                        audioProvider.pause();
+                                      })
+                                    : iconBtn("ic_32_play_900", onTap: () {
+                                        audioProvider.play();
+                                      }),
+                                iconBtn("ic_32_next_on", onTap: () {
+                                  audioProvider.toNext();
+                                }),
+                                audioProvider.shuffle
+                                    ? iconBtn("ic_32_random_on",
+                                        edgePadding: true, onTap: () {
+                                        audioProvider.toggleShuffle();
+                                      })
+                                    : iconBtn("ic_32_random_off",
+                                        edgePadding: true, onTap: () {
+                                        audioProvider.toggleShuffle();
+                                      }),
+                              ],
+                            ),
+                          ),
+                  ],
+                ),
+              ),
             ),
           ),
           StreamBuilder(
