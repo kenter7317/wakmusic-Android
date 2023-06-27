@@ -150,15 +150,18 @@ class KeepViewModel with ChangeNotifier {
       return -1;
     }
 
-    final addedSongsNum = await _repo.addPlaylistSongs(playlist.key, songs);
-
-    if (addedSongsNum != -1) {
-      final list = songs.where((e) => !playlist.songs.contains(e));
-      playlist.songs.addAll(list);
-      notifyListeners();
-      return addedSongsNum;
+    try {
+      final addedSongsNum = await _repo.addPlaylistSongs(playlist.key, songs);
+      if (addedSongsNum != -1) {
+        final list = songs.where((e) => !playlist.songs.contains(e));
+        playlist.songs.addAll(list);
+        notifyListeners();
+        return addedSongsNum;
+      }
+    } catch (e) {
+      return -2; // 서버측의 전곡 중복에 대한 에러 미처리로 인한 임시 조치
     }
-
+    
     return -1;
   }
 
