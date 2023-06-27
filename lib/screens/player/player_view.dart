@@ -89,29 +89,11 @@ class Player extends StatelessWidget {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: id.isEmpty
-                          ? Image.asset('assets/images/img_81_thumbnail.png',
-                                  fit: BoxFit.cover)
-                              .image
-                          : ExtendedImage.network(
-                              'https://i.ytimg.com/vi/$id/hqdefault.jpg',
-                              fit: BoxFit.cover,
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.circular(8),
-                              loadStateChanged: (state) {
-                                if (state.extendedImageLoadState !=
-                                    LoadState.completed) {
-                                  return Image.asset(
-                                    'assets/images/img_81_thumbnail.png',
-                                    fit: BoxFit.cover,
-                                  );
-                                }
-                                return null;
-                              },
-                              cacheMaxAge: const Duration(days: 30),
-                            ).image,
+                      image: loadImage(id, ThumbnailType.high).image,
                       colorFilter: ColorFilter.mode(
-                          Colors.white.withOpacity(0.6), BlendMode.dstATop),
+                        Colors.white.withOpacity(0.6),
+                        BlendMode.dstATop,
+                      ),
                     ),
                   ),
                   child: ClipRRect(
@@ -214,12 +196,7 @@ class Player extends StatelessWidget {
           selector: (context, provider) => provider.currentSong?.id ?? '',
           builder: (context, id, _) {
             log("song img : $id");
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: DecorationImage(fit: BoxFit.cover, image: LoadImage(id)),
-              ),
-            );
+            return loadImage(id, ThumbnailType.max, borderRadius: 12);
           },
         ),
       ),

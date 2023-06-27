@@ -18,6 +18,7 @@ import 'package:wakmusic/screens/playlist/playlist_view_model.dart' as playlist;
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/utils/load_image.dart';
 import 'package:wakmusic/utils/number_format.dart';
 import 'package:wakmusic/widgets/common/keep_song_pop_up.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
@@ -181,28 +182,11 @@ class _SubBotNavState extends State<SubBotNav> {
                   padding: const EdgeInsets.fromLTRB(0, 7, 0, 8),
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
-                    child: audioProvider.currentSong == null
-                        ? Image.asset(
-                            'assets/images/img_81_thumbnail.png',
-                            fit: BoxFit.cover,
-                          )
-                        : ExtendedImage.network(
-                            'https://i.ytimg.com/vi/${audioProvider.currentSong!.id}/hqdefault.jpg',
-                            fit: BoxFit.cover,
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(4),
-                            loadStateChanged: (state) {
-                              if (state.extendedImageLoadState !=
-                                  LoadState.completed) {
-                                return Image.asset(
-                                  'assets/images/img_81_thumbnail.png',
-                                  fit: BoxFit.cover,
-                                );
-                              }
-                              return null;
-                            },
-                            cacheMaxAge: const Duration(days: 30),
-                          ),
+                    child: loadImage(
+                      audioProvider.currentSong?.id,
+                      ThumbnailType.high,
+                      borderRadius: 4,
+                    ),
                   ),
                 ),
                 type == PlayerBarType.main

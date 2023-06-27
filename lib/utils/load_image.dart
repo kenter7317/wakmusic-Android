@@ -1,44 +1,45 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 
-LoadImage(String? songId) {
+enum ThumbnailType {
+  max('maxresdefault'),
+  standard('sddefault'),
+  high('hqdefault'),
+  medium('mddefault'),
+  def('default');
 
-  List<String> links = [
-    'https://i.ytimg.com/vi/$songId/maxresdefault.jpg',
-    'https://i.ytimg.com/vi/$songId/hqdefault.jpg'
-  ];
+  final String filename;
+  const ThumbnailType(this.filename);
+}
 
-  if(songId != null && songId.isNotEmpty) {
-    for(var i = 0; i < 2; ++i){
-      try{
-        return ExtendedImage.network(
-          links[i],
-          fit: BoxFit.cover,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(8),
-          loadStateChanged: (state) {
-            switch (state.extendedImageLoadState) {
-              case LoadState.loading:
-                return Image.asset(
-                  'assets/images/img_81_thumbnail.png',
-                  fit: BoxFit.cover,
-                );
-              case LoadState.failed:
-                throw Exception('max image loading failed');
-              default:
-                return null;
-            }
-          },
-          cacheMaxAge: const Duration(days: 30),
-        ).image;
-      }catch(_) {
-        continue;
-      }
-    }
+ExtendedImage loadImage(
+  String? songId,
+  ThumbnailType type, {
+  bool small = false,
+  double borderRadius = 8,
+}) {
+  final link = 'https://i.ytimg.com/vi/$songId/${type.filename}.jpg';
+  final wakThumbnail = ExtendedImage.asset(
+    'assets/images/img_${small ? 40 : 81}_thumbnail.png',
+    fit: BoxFit.cover,
+  );
+
+  if (songId == null || songId.isEmpty) {
+    return wakThumbnail;
   }
 
-  return Image.asset(
-    'assets/images/img_81_thumbnail.png',
-    fit: BoxFit.cover
-  ).image;
+  return ExtendedImage.network(
+    link,
+    fit: BoxFit.cover,
+    shape: BoxShape.rectangle,
+    borderRadius: BorderRadius.circular(borderRadius),
+    loadStateChanged: (state) {
+      if (state.extendedImageLoadState == LoadState.completed) return null;
+      if (type == ThumbnailType.max) {
+        return loadImage(songId, ThumbnailType.high);
+      }
+      return wakThumbnail;
+    },
+    cacheMaxAge: const Duration(days: 30),
+  );
 }
