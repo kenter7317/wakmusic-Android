@@ -12,6 +12,7 @@ class AppAuthorityPopUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
       child: SizedBox(
         width: 335,
