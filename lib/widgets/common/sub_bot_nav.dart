@@ -2,6 +2,7 @@ import 'package:audio_service/models/enums.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
@@ -23,6 +24,7 @@ import 'package:wakmusic/utils/number_format.dart';
 import 'package:wakmusic/widgets/common/keep_song_pop_up.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/exitable.dart';
+import 'package:wakmusic/widgets/common/toast_msg.dart';
 import 'package:wakmusic/widgets/keep/bot_sheet.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
@@ -432,10 +434,33 @@ class _SubBotNavState extends State<SubBotNav> {
                 }),
               if (type.showPlay)
                 editBarBtn("ic_32_play_25", "재생", onTap: () {
-                  audioProvider.addQueueItems(
-                    selProvider.list,
-                    autoplay: true,
-                  );
+                  if (selProvider.list.length == 1) {
+                    if (audioProvider.queue.contains(selProvider.list[0])) {
+                      audioProvider.toQueueItem(
+                          audioProvider.queue.indexOf(selProvider.list[0]));
+                    } else {
+                      audioProvider.addQueueItem(selProvider.list[0],
+                          autoplay: true);
+                    }
+                  } else {
+                    if (audioProvider.queue.toSet().containsAll(selProvider.list)) {
+                      showToastWidget(
+                        context: context,
+                        position: const StyledToastPosition(
+                          align: Alignment.bottomCenter,
+                          offset: 56,
+                        ),
+                        animation: StyledToastAnimation.slideFromBottomFade,
+                        reverseAnimation: StyledToastAnimation.fade,
+                        const ToastMsg(msg: '이미 재생목록에 담긴 곡들입니다.'),
+                      );
+                    } else {
+                      audioProvider.addQueueItems(
+                      selProvider.list,
+                      autoplay: true,
+                    );
+                    }
+                  }
                   selProvider.clearList();
                   navProvider.subChange(1);
                 }),
