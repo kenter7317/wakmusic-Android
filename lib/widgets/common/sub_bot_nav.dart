@@ -365,7 +365,7 @@ class _SubBotNavState extends State<SubBotNav> {
                               List<Song>? songlist = await chartViewModel
                                   .charts[ChartType.values[tabProvider.curIdx]];
                               selProvider.addAllSong(
-                                  songlist!.whereType<Song>().toList());
+                                  songlist!.whereType<Song>().toList(), del: true);
                               break;
                             case 3:
                               selProvider.addAllSong(artistViewModel
