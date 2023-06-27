@@ -77,14 +77,15 @@ class PlayerViewBottom extends StatelessWidget {
                       koreanNumberFormater(snapshot.data ?? 0),
                       onTap: () {
                         if (audioProvider.currentSong != null) {
-                          keepModel.likes.contains(audioProvider.currentSong)
+                          var target = audioProvider.currentSong!;
+                          keepModel.likes.contains(target)
                               ? {
-                                keepModel.likes.remove(audioProvider.currentSong),
-                                debounce.actionFunction(() {keepModel.removeLikeSong(audioProvider.currentSong!.id);})
+                                keepModel.removeLikeList(target),
+                                debounce.actionFunction(() {keepModel.removeLikeSong(target.id);})
                               }
                               :{
-                                keepModel.likes.add(audioProvider.currentSong),
-                                debounce.actionFunction(() {keepModel.addLikeSong(audioProvider.currentSong!.id);})
+                                keepModel.addLikeList(target),
+                                debounce.actionFunction(() {keepModel.addLikeSong(target.id);})
                               };
                         }
                       },
