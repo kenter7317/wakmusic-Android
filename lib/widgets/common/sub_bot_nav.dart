@@ -180,7 +180,7 @@ class _SubBotNavState extends State<SubBotNav> {
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(
                 height: 56,
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withOpacity(0.2),
                 padding: const EdgeInsets.fromLTRB(20, 0, 16, 0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -616,7 +616,8 @@ class _SubBotNavState extends State<SubBotNav> {
             left: 20 - (selListProvider.list.length.toString().length - 1) * 4,
             child: Container(
               height: 32,
-              width: 32 + (selListProvider.list.length.toString().length - 1) * 8,
+              width:
+                  32 + (selListProvider.list.length.toString().length - 1) * 8,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 color: Colors.white,
