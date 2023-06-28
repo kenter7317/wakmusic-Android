@@ -219,6 +219,7 @@ class KeepViewModel with ChangeNotifier {
 
     if (result) {
       _likes = [...(await _repo.getLikes()).keys];
+      _tempLikes = [..._likes];
       notifyListeners();
     }
 
@@ -232,9 +233,22 @@ class KeepViewModel with ChangeNotifier {
 
     if (result) {
       _likes = [...(await _repo.getLikes()).keys];
+      _tempLikes = [..._likes];
       notifyListeners();
     }
 
     return result;
+  }
+
+  void addLikeList(Song song) {
+    _likes.add(song);
+    _tempLikes = [..._likes];
+    notifyListeners();
+  }
+
+  void removeLikeList(Song song) {
+    _likes.remove(song);
+    _tempLikes = [..._likes];
+    notifyListeners();
   }
 }
