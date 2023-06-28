@@ -140,6 +140,12 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                           onPressed: () {
                             Navigator.pop(context);
                             viewModel.clear();
+                            selProvider.clearList();
+                            if (audioProvider.isEmpty) {
+                              navProvider.subSwitchForce(false);
+                            } else {
+                              navProvider.subChange(1);
+                            }
                           },
                           icon: Padding(
                             padding: const EdgeInsets.only(left: 4),
