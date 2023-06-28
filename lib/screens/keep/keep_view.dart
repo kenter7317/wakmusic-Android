@@ -1,4 +1,5 @@
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -282,6 +283,8 @@ class KeepView extends StatelessWidget {
           tabDetector(
             context,
             onTap: () {
+              FirebaseAnalytics.instance
+                  .setCurrentScreen(screenName: 'suggestions');
               Navigator.push(
                 context,
                 pageRouteBuilder(

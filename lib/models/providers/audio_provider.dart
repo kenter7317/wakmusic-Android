@@ -6,6 +6,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audio_service/models/enums.dart';
 import 'package:audio_service/player/youtube_audio_player.dart';
 import 'package:audio_service/models/audio_value.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:wakmusic/models_v2/song.dart';
 
@@ -152,6 +153,10 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       start: song.start,
       end: song.end,
     );
+    FirebaseAnalytics.instance.logSelectContent(
+      contentType: 'SongPlay',
+      itemId: song.id,
+    );
     notifyListeners();
   }
 
@@ -286,15 +291,15 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
 
   @override
   Future<void> removeQueueItems(List<Song> songs) async {
-    if(songs.isEmpty) return;
+    if (songs.isEmpty) return;
 
     var curSong = currentSong;
 
     _queue.removeWhere((s) => songs.contains(s));
 
-    if(_queue.isEmpty) {
+    if (_queue.isEmpty) {
       stop();
-    } else if(curSong != null) {
+    } else if (curSong != null) {
       if (songs.contains(curSong)) {
         _index = 0;
         load(_queue[_index]);

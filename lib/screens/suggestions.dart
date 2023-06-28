@@ -1,6 +1,8 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/screens/contact/contact_view.dart';
@@ -26,6 +28,9 @@ class Suggestions extends StatelessWidget {
     return DismissibleView(
       onDismissed: () {
         ExitScope.remove = ExitScope.suggestion;
+        final botNav = Provider.of<NavProvider>(context, listen: false);
+        FirebaseAnalytics.instance
+            .setCurrentScreen(screenName: AppScreen.name(botNav.curIdx));
         Navigator.pop(context);
       },
       child: Scaffold(
@@ -41,6 +46,9 @@ class Suggestions extends StatelessWidget {
       onExitable: (scope) {
         if (scope == ExitScope.suggestion) {
           ExitScope.remove = ExitScope.suggestion;
+          final botNav = Provider.of<NavProvider>(context, listen: false);
+          FirebaseAnalytics.instance
+              .setCurrentScreen(screenName: AppScreen.name(botNav.curIdx));
           Navigator.pop(context);
         }
       },

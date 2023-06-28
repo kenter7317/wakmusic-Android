@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:wakmusic/models_v2/user.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/services/login.dart';
@@ -42,7 +43,16 @@ class AuthAPI extends API {
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.get)) {
-      return User.fromJson(jsonDecode(response.body));
+      final user = User.fromJson(jsonDecode(response.body));
+      final analytics = FirebaseAnalytics.instance;
+      if (user.first) {
+        analytics.logSignUp(signUpMethod: user.platform.name);
+      } else {
+        analytics.logLogin(loginMethod: user.platform.name);
+      }
+
+      analytics.setUserId(id: '${user.displayName}#${user.id.substring(0, 5)}');
+      return user;
     }
 
     assert(status.isError);

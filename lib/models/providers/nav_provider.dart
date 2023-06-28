@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 
 class IdxProvider extends ChangeNotifier {
@@ -10,20 +11,30 @@ class IdxProvider extends ChangeNotifier {
   }
 }
 
+enum AppScreen {
+  home,
+  charts,
+  search,
+  artists,
+  inventory;
+
+  static String name(int i) => values[i].name;
+}
+
 class NavProvider extends IdxProvider {
-  bool _mainState = true; 
+  bool _mainState = true;
   bool get mainState => _mainState;
 
   bool _subState = false;
   bool get subState => _subState;
-  
+
   int _subIdx = 0;
   int get subIdx => _subIdx;
 
   late BuildContext _pageContext;
   BuildContext get pageContext => _pageContext;
 
-  void setPageContext(BuildContext context){
+  void setPageContext(BuildContext context) {
     _pageContext = context;
   }
 
@@ -32,8 +43,8 @@ class NavProvider extends IdxProvider {
     notifyListeners();
   }
 
-  void mainSwitchForce(bool state){
-    if(_mainState != state){
+  void mainSwitchForce(bool state) {
+    if (_mainState != state) {
       _mainState = state;
       notifyListeners();
     }
@@ -44,17 +55,24 @@ class NavProvider extends IdxProvider {
     notifyListeners();
   }
 
-  void subSwitchForce(bool state){
-    if(_subState != state){
+  void subSwitchForce(bool state) {
+    if (_subState != state) {
       _subState = state;
       notifyListeners();
     }
   }
 
   void subChange(int idx) {
-    if(_subIdx != idx){
+    if (_subIdx != idx) {
       _subIdx = idx;
       notifyListeners();
     }
+  }
+
+  @override
+  void update(int idx) {
+    super.update(idx);
+    FirebaseAnalytics.instance
+        .setCurrentScreen(screenName: AppScreen.name(idx));
   }
 }

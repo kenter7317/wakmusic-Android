@@ -55,6 +55,12 @@ install.cmd
 #fvm
 .fvm
 
+#firebase
+firebase_options.dart
+
+#just add
+.vscode/
+
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*

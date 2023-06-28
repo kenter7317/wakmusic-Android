@@ -1,6 +1,7 @@
 import 'package:audio_service/models/enums.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -50,25 +51,27 @@ class PlayerViewBottom extends StatelessWidget {
         children: [
           keepModel.loginStatus == LoginStatus.before
               ? FutureBuilder(
-                  future: API.like.get(songId: audioProvider.currentSong?.id ?? ''),
+                  future:
+                      API.like.get(songId: audioProvider.currentSong?.id ?? ''),
                   builder: (context, snapshot) {
-                    return playDetailBarBtn("ic_32_heart_off", koreanNumberFormater(snapshot.data ?? 0),
-                        onTap: () {
-                          showModal(
-                            context: context,
-                            builder: (context) => const PopUp(
-                              type: PopUpType.txtTwoBtn,
-                              msg: '로그인이 필요한 서비스입니다.\n로그인 하시겠습니까?',
-                            ),
-                          ).then((value) {
-                            navProvider.update(4);
-                            Navigator.popUntil(context, (route) => route.isFirst);
-                          });
-                        });
+                    return playDetailBarBtn("ic_32_heart_off",
+                        koreanNumberFormater(snapshot.data ?? 0), onTap: () {
+                      showModal(
+                        context: context,
+                        builder: (context) => const PopUp(
+                          type: PopUpType.txtTwoBtn,
+                          msg: '로그인이 필요한 서비스입니다.\n로그인 하시겠습니까?',
+                        ),
+                      ).then((value) {
+                        navProvider.update(4);
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                      });
+                    });
                   },
-              )
+                )
               : FutureBuilder(
-                  future: API.like.get(songId: audioProvider.currentSong?.id ?? ''),
+                  future:
+                      API.like.get(songId: audioProvider.currentSong?.id ?? ''),
                   builder: (context, snapshot) {
                     return playDetailBarBtn(
                       keepModel.likes.contains(audioProvider.currentSong)
@@ -80,13 +83,17 @@ class PlayerViewBottom extends StatelessWidget {
                           var target = audioProvider.currentSong!;
                           keepModel.likes.contains(target)
                               ? {
-                                keepModel.removeLikeList(target),
-                                debounce.actionFunction(() {keepModel.removeLikeSong(target.id);})
-                              }
-                              :{
-                                keepModel.addLikeList(target),
-                                debounce.actionFunction(() {keepModel.addLikeSong(target.id);})
-                              };
+                                  keepModel.removeLikeList(target),
+                                  debounce.actionFunction(() {
+                                    keepModel.removeLikeSong(target.id);
+                                  })
+                                }
+                              : {
+                                  keepModel.addLikeList(target),
+                                  debounce.actionFunction(() {
+                                    keepModel.addLikeSong(target.id);
+                                  })
+                                };
                         }
                       },
                       txtColor:
@@ -126,6 +133,8 @@ class PlayerViewBottom extends StatelessWidget {
             edgePadding: false,
             onTap: () {
               // ExitScope.add = ExitScope.playerPlaylist;
+              FirebaseAnalytics.instance
+                  .setCurrentScreen(screenName: 'playerPlaylist');
               Navigator.of(context, rootNavigator: true).push(
                   pageRouteBuilder(page: const PlayerPlayList(), scope: null));
             },
@@ -283,7 +292,9 @@ class PlayerPlaylistSelBottom extends StatelessWidget {
               }),
               editBarBtn("ic_32_delete", "삭제", onTap: () async {
                 if (selNav.list.isNotEmpty) {
-                  audioProvider.removeQueueItems(selNav.list).then((value) => {selNav.clearList()});
+                  audioProvider
+                      .removeQueueItems(selNav.list)
+                      .then((value) => {selNav.clearList()});
                 }
               }),
             ],
