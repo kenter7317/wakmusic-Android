@@ -343,12 +343,17 @@ class PlaylistView extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Text(
-                        '${viewModel.songs.length}곡',
-                        style: WakText.txt14L.copyWith(
-                          color: WakColor.grey900.withOpacity(0.6),
-                        ),
-                      ),
+                      (viewModel.songs.first == null)
+                          ? SkeletonText(
+                              wakTxtStyle: WakText.txt14L,
+                              width: 26,
+                            )
+                          : Text(
+                              '${viewModel.songs.length}곡',
+                              style: WakText.txt14L.copyWith(
+                                color: WakColor.grey900.withOpacity(0.6),
+                              ),
+                            ),
                       if (viewModel.curStatus == EditStatus.editing)
                         Padding(
                           padding: const EdgeInsets.only(left: 4),
