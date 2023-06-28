@@ -217,10 +217,14 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           artistInfoCard(context),
-                          Text(
-                            widget.artist.appTitle,
-                            style: WakText.txt14MH
-                                .copyWith(overflow: TextOverflow.visible),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Text(
+                                widget.artist.appTitle,
+                                style: WakText.txt14MH
+                                    .copyWith(overflow: TextOverflow.visible),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -335,6 +339,7 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
   }
 
   Widget artistInfoCard(BuildContext context) {
+    double artistImgRatio = (MediaQuery.of(context).size.width - 48) / 327;
     final artist = widget.artist;
     if (artist.id == "woowakgood") {
       return Column(
@@ -353,17 +358,21 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
         ],
       );
     }
+
     if (artist.id == "KCMDBYTSSG") {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 131,
+            width: artistImgRatio* 150,
             child: Stack(
               children: [
                 Text(
                   "김치만두번영택\n사스가",
-                  style: WakText.txt18B,
+                  style: artistImgRatio * 123 <
+                          getTxtSize("김치만두번영택", WakText.txt18B).width
+                      ? WakText.txt16B
+                      : WakText.txt18B,
                 ),
                 Positioned(
                   right: 2,
@@ -392,7 +401,7 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
       );
     }
 
-    if (127 >
+    if (artistImgRatio * 123 >
         getTxtSize(artist.name, WakText.txt24B).width +
             getTxtSize(artist.id, WakText.txt14L).width) {
       return Column(
@@ -427,37 +436,42 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
           const SizedBox(height: 12),
         ],
       );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (getTxtSize(artist.name, WakText.txt24B).width <
+              artistImgRatio * 123)
+            Text(artist.name, style: WakText.txt24B)
+          else if (getTxtSize(artist.name, WakText.txt20B).width <
+              artistImgRatio * 123)
+            Text(artist.name, style: WakText.txt20B)
+          else if (getTxtSize(artist.name, WakText.txt18B).width <
+              artistImgRatio * 123)
+            Text(artist.name, style: WakText.txt18B)
+          else
+            Text(artist.name, style: WakText.txt16B),
+          Text(
+            artist.id.substring(0, 1).toUpperCase() + artist.id.substring(1),
+            style: WakText.txt14LS
+                .copyWith(color: WakColor.grey900.withOpacity(0.6)),
+          ),
+          getTxtSize(artist.name, WakText.txt20B).width < artistImgRatio * 123
+              ? const SizedBox(height: 12)
+              : const SizedBox(height: 16),
+          Row(
+            children: [
+              Text(
+                artist.group.kr,
+                style: WakText.txt14MH,
+              ),
+              if (artist.graduated) Text(" · 졸업", style: WakText.txt14MH)
+            ],
+          ),
+          const SizedBox(height: 12),
+        ],
+      );
     }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (getTxtSize(artist.name, WakText.txt24B).width < 131)
-          Text(artist.name, style: WakText.txt24B)
-        else if (getTxtSize(artist.name, WakText.txt20B).width < 131)
-          Text(artist.name, style: WakText.txt20B)
-        else
-          Text(artist.name, style: WakText.txt18B),
-        Text(
-          artist.id.substring(0, 1).toUpperCase() + artist.id.substring(1),
-          style: WakText.txt14LS
-              .copyWith(color: WakColor.grey900.withOpacity(0.6)),
-        ),
-        getTxtSize(artist.name, WakText.txt20B).width < 131
-            ? const SizedBox(height: 12)
-            : const SizedBox(height: 16),
-        Row(
-          children: [
-            Text(
-              artist.group.kr,
-              style: WakText.txt14MH,
-            ),
-            if (artist.graduated) Text(" · 졸업", style: WakText.txt14MH)
-          ],
-        ),
-        const SizedBox(height: 12),
-      ],
-    );
   }
 
   Widget albumsTabView(TabController tabController, Color color) {
