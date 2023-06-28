@@ -480,16 +480,8 @@ class _SubBotNavState extends State<SubBotNav> {
                     if (audioProvider.queue
                         .toSet()
                         .containsAll(selProvider.list)) {
-                      showToastWidget(
-                        context: context,
-                        position: const StyledToastPosition(
-                          align: Alignment.bottomCenter,
-                          offset: 56,
-                        ),
-                        animation: StyledToastAnimation.slideFromBottomFade,
-                        reverseAnimation: StyledToastAnimation.fade,
-                        const ToastMsg(msg: '이미 재생목록에 담긴 곡들입니다.'),
-                      );
+                      audioProvider.toQueueItem(
+                          audioProvider.queue.indexOf(selProvider.list[0]));
                     } else {
                       audioProvider.addQueueItems(
                         selProvider.list,
