@@ -462,6 +462,8 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
 
   Widget albumsTabView(TabController tabController, Color color) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
+    SelectSongProvider selProvider = Provider.of<SelectSongProvider>(context);
+
     if (viewModel.albums[AlbumType.values[tabController.index]] == null) {
       return ListView.builder(
         padding: const EdgeInsets.only(top: 0),
@@ -489,7 +491,8 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                         (viewModel.isLastAlbum[type.index] ? 0 : 1),
                 itemBuilder: (_, idx) {
                   if (idx == viewModel.albums[type]!.length) {
-                    viewModel.getAlbums(type, idx);
+                    viewModel.getAlbums(type, idx).then((_) =>
+                        selProvider.setMaxSel(viewModel.albums[type]!.length));
                   }
                   if (idx == viewModel.albums[type]!.length &&
                       !viewModel.isLastAlbum[type.index]) {
