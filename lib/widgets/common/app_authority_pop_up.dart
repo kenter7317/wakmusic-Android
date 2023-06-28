@@ -12,10 +12,11 @@ class AppAuthorityPopUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
       child: SizedBox(
         width: 335,
-        height: 463,
+        height: 519,
         child: Column(
           children: [
             Container(
@@ -128,6 +129,36 @@ class AppAuthorityPopUp extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/ic_32_app_circle.svg',
+                        width: 32,
+                        height: 32,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '다른 앱 위에 표시',
+                              style: WakText.txt16M
+                                  .copyWith(color: WakColor.grey900),
+                              textAlign: TextAlign.left,
+                            ),
+                            Text(
+                              '백그라운드 음악 재생을 위한 권한',
+                              style: WakText.txt14L
+                                  .copyWith(color: WakColor.grey500),
+                              textAlign: TextAlign.left,
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   Container(
                     decoration: const BoxDecoration(
@@ -217,9 +248,8 @@ class AppAuthorityPopUp extends StatelessWidget {
     Map<Permission, PermissionStatus> permissionStatuses = await [
       Permission.camera,
       Permission.storage,
-      Permission.systemAlertWindow,
     ].request();
-
+    
     // 허용/비허용의 차이가 없기에 주석처리
     /*if((permissionStatuses[Permission.camera]?.isGranted ?? false) &&
         (permissionStatuses[Permission.storage]?.isGranted ?? false)){
