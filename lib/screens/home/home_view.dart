@@ -215,7 +215,7 @@ class HomeView extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: 10,
+                  itemCount: newList.length < 10 ? newList.length : 10,
                   itemBuilder: (context, idx) =>
                       _buildNewListItem(context, newList[idx]),
                   separatorBuilder: (_, __) => const SizedBox(width: 8),
