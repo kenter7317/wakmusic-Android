@@ -204,7 +204,8 @@ class _SubBotNavState extends State<SubBotNav> {
                                 Expanded(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         audioProvider.currentSong == null
@@ -232,8 +233,8 @@ class _SubBotNavState extends State<SubBotNav> {
                                           audioProvider.pause();
                                         });
                                       })
-                                    : iconBtn("ic_32_play_900", edgePadding: true,
-                                        onTap: () {
+                                    : iconBtn("ic_32_play_900",
+                                        edgePadding: true, onTap: () {
                                         setState(() {
                                           audioProvider.play();
                                         });
@@ -364,7 +365,7 @@ class _SubBotNavState extends State<SubBotNav> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (type.showSelect)
+              if (type.showSelect && selListProvider.list.isEmpty)
                 selProvider.selNum != selProvider.maxSel
                     ? editBarBtn(
                         "ic_32_check_off",
@@ -394,6 +395,25 @@ class _SubBotNavState extends State<SubBotNav> {
                       )
                     : editBarBtn("ic_32_check_on", "전체선택해제", onTap: () {
                         selProvider.clearList();
+                        if (audioProvider.isEmpty) {
+                          navProvider.subSwitchForce(false);
+                        } else {
+                          navProvider.subChange(1);
+                        }
+                      }),
+              if (type.showSelect && selProvider.selNum == 0)
+                selListProvider.list.length != keepViewModel.playlists.length
+                    ? editBarBtn(
+                        "ic_32_check_off",
+                        "전체선택",
+                        onTap: () async {
+                          for (var playlist in keepViewModel.playlists) {
+                            selListProvider.addPlaylist(playlist!);
+                          }
+                        },
+                      )
+                    : editBarBtn("ic_32_check_on", "전체선택해제", onTap: () {
+                        selListProvider.clearList();
                         if (audioProvider.isEmpty) {
                           navProvider.subSwitchForce(false);
                         } else {
@@ -585,6 +605,32 @@ class _SubBotNavState extends State<SubBotNav> {
               alignment: Alignment.center,
               child: Text(
                 selProvider.selNum.toString(),
+                style: WakText.txt18B.copyWith(color: WakColor.lightBlue),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        if (selListProvider.list.isNotEmpty)
+          Positioned(
+            top: -16,
+            left: 20 - (selListProvider.list.length.toString().length - 1) * 4,
+            child: Container(
+              height: 32,
+              width: 32 + (selListProvider.list.length.toString().length - 1) * 8,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: WakColor.dark.withOpacity(0.04),
+                    blurRadius: 4,
+                    offset: const Offset(4, 4),
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                selListProvider.list.length.toString(),
                 style: WakText.txt18B.copyWith(color: WakColor.lightBlue),
                 textAlign: TextAlign.center,
               ),
