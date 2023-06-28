@@ -8,6 +8,7 @@ import 'package:wakmusic/screens/artists/artist_detail_view.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
@@ -19,12 +20,7 @@ class ArtistsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
+    statusNavColor(context, ScreenType.etc);
     return Scaffold(
       body: FutureBuilder(
         future: viewModel.artistsList,
@@ -128,7 +124,6 @@ class ArtistsListView extends StatelessWidget {
               pageRouteBuilder(
                 page: ArtistView(artist: artist),
                 scope: ExitScope.artistDetail,
-                offset: const Offset(0.0, 1.0),
               ),
             );
           },
