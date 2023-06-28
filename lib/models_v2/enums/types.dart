@@ -33,7 +33,8 @@ enum GroupType {
   all('전체'),
   woowakgood('우왁굳'),
   isedol('이세돌'),
-  gomem('고멤');
+  gomem('고멤'),
+  academy('아카데미');
 
   const GroupType(this.locale);
   final String locale;
