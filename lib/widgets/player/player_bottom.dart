@@ -152,7 +152,7 @@ class PlayerPlaylistBottom extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 7, 0, 8),
+                padding: const EdgeInsets.fromLTRB(0, 7, 7, 8),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
                   child: loadImage(
@@ -197,11 +197,11 @@ class PlayerPlaylistBottom extends StatelessWidget {
                         audioProvider.toNext();
                       }),
                       audioProvider.shuffle
-                          ? iconBtn("ic_32_random_on", edgePadding: true,
+                          ? iconBtn("ic_32_random_on", edgePadding: false,
                               onTap: () {
                               audioProvider.toggleShuffle();
                             })
-                          : iconBtn("ic_32_random_off", edgePadding: true,
+                          : iconBtn("ic_32_random_off", edgePadding: false,
                               onTap: () {
                               audioProvider.toggleShuffle();
                             }),
