@@ -188,7 +188,7 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                           icon: Padding(
                             padding: const EdgeInsets.only(left: 4),
                             child: SvgPicture.asset(
-                              "assets/icons/ic_32_arrow_bottom.svg",
+                              "assets/icons/ic_32_arrow_left.svg",
                               width: 32,
                               height: 32,
                             ),
