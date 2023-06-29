@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
@@ -272,7 +273,18 @@ class KeepView extends StatelessWidget {
           const SizedBox(width: 2),
           tabDetector(
             context,
-            onTap: () => viewModel.logout(),
+            onTap: () {
+              if (navProvider.subIdx == 8) {
+                final audioProvider =
+                    Provider.of<AudioProvider>(context, listen: false);
+                if (audioProvider.isEmpty) {
+                  navProvider.subSwitchForce(false);
+                } else {
+                  navProvider.subChange(1);
+                }
+              }
+              viewModel.logout();
+            },
             child: SvgPicture.asset(
               'assets/icons/ic_32_logout.svg',
               width: 32,
@@ -283,6 +295,15 @@ class KeepView extends StatelessWidget {
           tabDetector(
             context,
             onTap: () {
+              if (navProvider.subIdx == 8) {
+                final audioProvider =
+                    Provider.of<AudioProvider>(context, listen: false);
+                if (audioProvider.isEmpty) {
+                  navProvider.subSwitchForce(false);
+                } else {
+                  navProvider.subChange(1);
+                }
+              }
               FirebaseAnalytics.instance
                   .setCurrentScreen(screenName: 'suggestions');
               Navigator.push(

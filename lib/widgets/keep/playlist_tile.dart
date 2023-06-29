@@ -109,12 +109,18 @@ class PlaylistTile extends StatelessWidget {
               Navigator.pop(context);
             });
           } else {
-            final viewModel =
-                Provider.of<KeepViewModel>(context, listen: false);
+            if (navProvider.subIdx == 8) {
+              if (audioProvider.isEmpty) {
+                navProvider.subSwitchForce(false);
+              } else {
+                navProvider.subChange(1);
+              }
+            }
             Navigator.push(
               context,
               pageRouteBuilder(page: PlaylistView(playlist: playlist!)),
-            ).then((changed) => viewModel.updatePlaylist(playlist!, changed));
+            ).then(
+                (changed) => keepViewModel.updatePlaylist(playlist!, changed));
           }
         },
         onLongPress: () {

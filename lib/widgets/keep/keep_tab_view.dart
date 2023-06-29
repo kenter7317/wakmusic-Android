@@ -176,6 +176,13 @@ class _KeepTabViewState extends State<KeepTabView>
                         : GestureDetector(
                             onTap: () {
                               ExitScope.add = ExitScope.editMode;
+                              if (navProvider.subIdx == 8) {
+                                if (audioProvider.isEmpty) {
+                                  navProvider.subSwitchForce(false);
+                                } else {
+                                  navProvider.subChange(1);
+                                }
+                              }
                               viewModel.updateEditStatus(
                                   (_controller.index == 0)
                                       ? EditStatus.playlists

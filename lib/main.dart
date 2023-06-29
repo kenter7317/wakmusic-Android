@@ -130,12 +130,22 @@ class _MainState extends State<Main> {
       body: WillPopScope(
         onWillPop: () async {
           print('EXIT SCOPE :: ${ExitScope.scope} ${ExitScope.scopes}');
+          if (botNav.subIdx == 8) {
+            final audio = Provider.of<AudioProvider>(context, listen: false);
+            if (audio.isEmpty) {
+              botNav.subSwitchForce(false);
+            } else {
+              botNav.subChange(1);
+            }
+            return false;
+          }
+
           if (ExitScope.exitable) {
             final audio = Provider.of<AudioProvider>(context, listen: false);
             if (audio.currentSong == null && audio.playbackState.isNotPlaying) {
               await AudioService.stop();
               AudioService.player.close();
-              Future.delayed(const Duration(milliseconds: 500), () => exit(0));
+              Future.delayed(const Duration(milliseconds: 300), () => exit(0));
             }
             return true;
           }
