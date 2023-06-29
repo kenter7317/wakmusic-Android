@@ -53,15 +53,15 @@ class PopUp extends StatelessWidget {
               ),
             )
           else
-            Container(
-              decoration: const BoxDecoration(
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              child: Container(
                 color: WakColor.grey900,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              child: ExtendedImage.network(
-                '${API.static.url}/notice/$msg',
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width,
+                child: ExtendedImage.network(
+                  '${API.static.url}/notice/$msg',
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width,
+                ),
               ),
             ),
           Padding(
