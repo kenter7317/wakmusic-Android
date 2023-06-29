@@ -4,16 +4,15 @@ import 'dart:io';
 import 'package:audio_service/audio_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/repository/notice_repo.dart';
 import 'package:wakmusic/screens/charts/charts_view.dart';
-import 'package:wakmusic/utils/error_catch.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/main_bot_nav.dart';
 import 'package:provider/provider.dart';
@@ -26,15 +25,16 @@ import 'package:wakmusic/screens/search/search_view.dart';
 import 'package:wakmusic/screens/keep/keep_view.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
-import 'package:wakmusic/widgets/common/toast_msg.dart';
 
 void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
     await dotenv.load();
+
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
     runApp(const MyApp());
-  }, ErrorCatch.call);
+  }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }
 
 class MyApp extends StatelessWidget {
@@ -89,18 +89,18 @@ class _MainState extends State<Main> {
 
   @override
   void initState() {
-    ErrorCatch.method = (error, stack) {
-      showToastWidget(
-        context: context,
-        position: const StyledToastPosition(
-          align: Alignment.bottomCenter,
-          offset: 56,
-        ),
-        animation: StyledToastAnimation.slideFromBottomFade,
-        reverseAnimation: StyledToastAnimation.fade,
-        ToastMsg(msg: 'Error: $error StackTrace: $stack', size: 200),
-      );
-    };
+    // ErrorCatch.method = (error, stack) {
+    //   showToastWidget(
+    //     context: context,
+    //     position: const StyledToastPosition(
+    //       align: Alignment.bottomCenter,
+    //       offset: 56,
+    //     ),
+    //     animation: StyledToastAnimation.slideFromBottomFade,
+    //     reverseAnimation: StyledToastAnimation.fade,
+    //     ToastMsg(msg: 'Error: $error StackTrace: $stack', size: 200),
+    //   );
+    // };
 
     super.initState();
     FirebaseAnalytics.instance.logAppOpen();
