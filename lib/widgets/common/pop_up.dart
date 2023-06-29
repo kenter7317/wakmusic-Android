@@ -1,8 +1,12 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:wakmusic/models_v2/notice.dart';
+import 'package:wakmusic/screens/notice/notice_detail_view.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
+import 'package:wakmusic/widgets/page_route_builder.dart';
 
 enum PopUpType {
   txtOneBtn('', '확인'),
@@ -23,12 +27,14 @@ class PopUp extends StatelessWidget {
     this.posText,
     this.negFunc,
     this.posFunc,
+    this.notice,
   });
 
   final PopUpType type;
   final String? msg, negText, posText;
   final void Function()? negFunc;
   final void Function()? posFunc;
+  final Notice? notice;
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +61,26 @@ class PopUp extends StatelessWidget {
           else
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-              child: Container(
-                color: WakColor.grey900,
-                child: ExtendedImage.network(
-                  '${API.static.url}/notice/$msg',
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    pageRouteBuilder(
+                      page: NoticeDetailView(notice: notice!),
+                      scope: null,
+                      offset: const Offset(0.0, 1.0),
+                    ),
+                  ).whenComplete(() {
+                    statusNavColor(context, ScreenType.etc);
+                    Navigator.pop(context);
+                  });
+                },
+                child: Container(
+                  color: WakColor.grey900,
+                  child: ExtendedImage.network(
+                    '${API.static.url}/notice/${notice!.thumbnail}',
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width,
+                  ),
                 ),
               ),
             ),
