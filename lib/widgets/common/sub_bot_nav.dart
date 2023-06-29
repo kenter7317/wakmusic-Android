@@ -52,19 +52,44 @@ class _SubBotNavState extends State<SubBotNav> {
   Widget build(BuildContext context) {
     final botNav = Provider.of<NavProvider>(context);
 
-    final List<Widget> barList = [
-      playDetailBar(),
-      playerBar(PlayerBarType.main),
-      playerBar(PlayerBarType.sub),
-      editBar(context, EditBarType.playListBar),
-      editBar(context, EditBarType.chartBar),
-      editBar(context, EditBarType.keepBar),
-      editBar(context, EditBarType.keepDetailBar),
-      editBar(context, EditBarType.keepListBar),
-      editBar(context, EditBarType.keepProfileBar),
-      editBar(context, EditBarType.searchBar)
-    ];
-    return barList[botNav.subIdx];
+    switch (botNav.subIdx) {
+      case 0:
+        return playDetailBar();
+      case 1:
+        return playerBar(PlayerBarType.main);
+      case 2:
+        return playerBar(PlayerBarType.sub);
+      case 3:
+        return editBar(context, EditBarType.playListBar);
+      case 4:
+        return editBar(context, EditBarType.chartBar);
+      case 5:
+        return editBar(context, EditBarType.keepBar);
+      case 6:
+        return editBar(context, EditBarType.keepDetailBar);
+      case 7:
+        return editBar(context, EditBarType.keepListBar);
+      case 8:
+        return editBar(context, EditBarType.keepProfileBar);
+      case 9:
+        return editBar(context, EditBarType.searchBar);
+      default:
+        throw '${botNav.subIdx} is NOT SubBotNav Index';
+    }
+
+    // 렌더링은 전부 진행됨
+    // final List<Widget> barList = [
+    //   playDetailBar(),
+    //   playerBar(PlayerBarType.main),
+    //   playerBar(PlayerBarType.sub),
+    //   editBar(context, EditBarType.playListBar),
+    //   editBar(context, EditBarType.chartBar),
+    //   editBar(context, EditBarType.keepBar),
+    //   editBar(context, EditBarType.keepDetailBar),
+    //   editBar(context, EditBarType.keepListBar),
+    //   editBar(context, EditBarType.keepProfileBar),
+    //   editBar(context, EditBarType.searchBar)
+    // ];
   }
 
   /* 임시 노래재생상세 바 */
