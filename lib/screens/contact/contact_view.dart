@@ -108,7 +108,7 @@ class _ContactViewState extends State<ContactView> {
       final storedSize = _files.isNotEmpty
           ? _files.map((f) => f.lengthSync()).reduce((o, n) => o + n)
           : 0;
-      if ((file.lengthSync() + storedSize) / (1024 * 1024) > 100) {
+      if ((file.lengthSync() + storedSize) / (1024 * 1024) > 30) {
         showToastWidget(
           context: context,
           position: const StyledToastPosition(
@@ -117,7 +117,7 @@ class _ContactViewState extends State<ContactView> {
           ),
           animation: StyledToastAnimation.slideFromBottomFade,
           reverseAnimation: StyledToastAnimation.fade,
-          const ToastMsg(msg: '최대 파일 크기는 100MB입니다.'),
+          const ToastMsg(msg: '최대 파일 크기는 30MB입니다.'),
         );
         return;
       }
