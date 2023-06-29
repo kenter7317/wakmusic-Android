@@ -23,43 +23,6 @@ class NoticeDetailView extends StatelessWidget {
               type: HeaderType.close,
               headerTxt: '공지사항',
             ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 12, 60, 20),
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: WakColor.grey200),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    notice.title,
-                    style: WakText.txt18M,
-                    maxLines: 20,
-                  ),
-                  const SizedBox(height: 3),
-                  SizedBox(
-                    height: 18,
-                    child: Row(
-                      children: [
-                        Text(
-                          DateFormat('yy.MM.dd').format(notice.createAt),
-                          style:
-                              WakText.txt12L.copyWith(color: WakColor.grey500),
-                        ),
-                        const VerticalDivider(),
-                        Text(
-                          DateFormat('HH:mm').format(notice.createAt),
-                          style:
-                              WakText.txt12L.copyWith(color: WakColor.grey500),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
             Expanded(
               child: NotificationListener<OverscrollIndicatorNotification>(
                 onNotification: (notification) {
@@ -68,6 +31,7 @@ class NoticeDetailView extends StatelessWidget {
                 },
                 child: ListView(
                   children: [
+                    _buildTitle(),
                     Padding(
                       padding: const EdgeInsets.all(20),
                       child: Text(
@@ -106,6 +70,44 @@ class NoticeDetailView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 12, 60, 20),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: WakColor.grey200),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            notice.title,
+            style: WakText.txt18M,
+            maxLines: 20,
+          ),
+          const SizedBox(height: 3),
+          SizedBox(
+            height: 18,
+            child: Row(
+              children: [
+                Text(
+                  DateFormat('yy.MM.dd').format(notice.createAt),
+                  style: WakText.txt12L.copyWith(color: WakColor.grey500),
+                ),
+                const VerticalDivider(),
+                Text(
+                  DateFormat('HH:mm').format(notice.createAt),
+                  style: WakText.txt12L.copyWith(color: WakColor.grey500),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
