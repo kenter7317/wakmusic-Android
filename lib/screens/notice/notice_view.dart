@@ -49,14 +49,18 @@ class NoticeView extends StatelessWidget {
             Expanded(
               child: FutureBuilder<List<Notice>>(
                 future: viewModel.noticeList,
-                builder: (_, snapshot) => ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: snapshot.data?.length ?? 5,
-                  itemBuilder: (context, idx) => _buildNotice(
-                    context,
-                    snapshot.data?[idx],
-                  ),
-                ),
+                builder: (_, snapshot) {
+                  snapshot.data
+                      ?.sort((a, b) => b.createAt.compareTo(a.createAt));
+                  return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: snapshot.data?.length ?? 5,
+                    itemBuilder: (context, idx) => _buildNotice(
+                      context,
+                      snapshot.data?[idx],
+                    ),
+                  );
+                },
               ),
             ),
           ],
