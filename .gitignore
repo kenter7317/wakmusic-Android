@@ -61,6 +61,11 @@ firebase_options.dart
 #just add
 .vscode/
 
+#for designers (main)
+/assets/icons
+/assets/images
+/assets/lottie
+
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*

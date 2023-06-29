@@ -40,10 +40,10 @@ enum ExitScope {
   @Bit(0x0800 | 2048)
   searchAfter,
 
-  @Bit(0x2000 | 8192)
+  @Bit(0x1000 | 4096)
   pageIsNotHome,
 
-  @Bit(0x1000 | 4096)
+  @Bit(0x2000 | 8192)
   @Bit(0x4000 | 16384)
   @Bit(0x8000 | 32768)
   undefined;

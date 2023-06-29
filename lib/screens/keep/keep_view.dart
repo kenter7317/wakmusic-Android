@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
@@ -272,7 +273,18 @@ class KeepView extends StatelessWidget {
           const SizedBox(width: 2),
           tabDetector(
             context,
-            onTap: () => viewModel.logout(),
+            onTap: () {
+              if (navProvider.subIdx == 8) {
+                final audioProvider =
+                    Provider.of<AudioProvider>(context, listen: false);
+                if (audioProvider.isEmpty) {
+                  navProvider.subSwitchForce(false);
+                } else {
+                  navProvider.subChange(1);
+                }
+              }
+              viewModel.logout();
+            },
             child: SvgPicture.asset(
               'assets/icons/ic_32_logout.svg',
               width: 32,
@@ -283,6 +295,15 @@ class KeepView extends StatelessWidget {
           tabDetector(
             context,
             onTap: () {
+              if (navProvider.subIdx == 8) {
+                final audioProvider =
+                    Provider.of<AudioProvider>(context, listen: false);
+                if (audioProvider.isEmpty) {
+                  navProvider.subSwitchForce(false);
+                } else {
+                  navProvider.subChange(1);
+                }
+              }
               FirebaseAnalytics.instance
                   .setCurrentScreen(screenName: 'suggestions');
               Navigator.push(
@@ -315,9 +336,31 @@ class KeepView extends StatelessWidget {
 
   Widget _buildPlaylistTab(BuildContext context) {
     final viewModel = Provider.of<KeepViewModel>(context);
-    return Column(
-      children: [
-        if (viewModel.editStatus != EditStatus.playlists)
+    if (viewModel.editStatus == EditStatus.playlists) {
+      return ReorderableListView.builder(
+        key: const PageStorageKey(0),
+        proxyDecorator: proxyDecorator,
+        buildDefaultDragHandles: false,
+        itemCount: viewModel.tempPlaylists.length,
+        itemBuilder: (_, idx) => PlaylistTile(
+          key: Key(idx.toString()),
+          playlist: viewModel.tempPlaylists[idx],
+          idx: idx,
+          tileType: TileType.editTile,
+        ),
+        onReorder: (oldIdx, newIdx) {
+          viewModel.movePlaylist(
+              oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
+        },
+        onReorderStart: (_) => HapticFeedback.lightImpact(),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () async => viewModel.getLists(),
+      color: WakColor.lightBlue,
+      child: Column(
+        children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
             child: SizedBox(
@@ -355,73 +398,62 @@ class KeepView extends StatelessWidget {
               ),
             ),
           ),
-        Expanded(
-          child: (viewModel.playlists.isEmpty)
-              ? const ErrorInfo(errorMsg: '내 리스트가 없습니다.')
-              : (viewModel.editStatus == EditStatus.playlists)
-                  ? ReorderableListView.builder(
-                      key: const PageStorageKey(0),
-                      proxyDecorator: proxyDecorator,
-                      buildDefaultDragHandles: false,
-                      itemCount: viewModel.tempPlaylists.length,
-                      itemBuilder: (_, idx) => PlaylistTile(
-                        key: Key(idx.toString()),
-                        playlist: viewModel.tempPlaylists[idx],
-                        idx: idx,
-                        tileType: TileType.editTile,
-                      ),
-                      onReorder: (oldIdx, newIdx) {
-                        viewModel.movePlaylist(
-                            oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
-                      },
-                      onReorderStart: (_) => HapticFeedback.lightImpact(),
-                    )
-                  : ListView.builder(
-                      key: const PageStorageKey(0),
-                      itemCount: viewModel.playlists.length,
-                      itemBuilder: (_, idx) => PlaylistTile(
-                        playlist: viewModel.playlists[idx],
-                        tileType: TileType.canPlayTile,
-                        onLongPress: () =>
-                            viewModel.updateEditStatus(EditStatus.playlists),
-                      ),
+          Expanded(
+            child: (viewModel.playlists.isEmpty)
+                ? const ErrorInfo(errorMsg: '내 리스트가 없습니다.')
+                : ListView.builder(
+                    key: const PageStorageKey(0),
+                    itemCount: viewModel.playlists.length,
+                    itemBuilder: (_, idx) => PlaylistTile(
+                      playlist: viewModel.playlists[idx],
+                      tileType: TileType.canPlayTile,
+                      onLongPress: () =>
+                          viewModel.updateEditStatus(EditStatus.playlists),
                     ),
-        ),
-      ],
+                  ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildLikeTab(BuildContext context) {
     final viewModel = Provider.of<KeepViewModel>(context);
-    if (viewModel.likes.isEmpty) {
-      return const ErrorInfo(errorMsg: '좋아요 한 곡이 없습니다.');
+    if (viewModel.editStatus == EditStatus.likes) {
+      return ReorderableListView.builder(
+        key: const PageStorageKey(1),
+        proxyDecorator: proxyDecorator,
+        buildDefaultDragHandles: false,
+        itemCount: viewModel.tempLikes.length,
+        itemBuilder: (_, idx) => SongTile(
+          key: Key(idx.toString()),
+          song: viewModel.tempLikes[idx],
+          idx: idx,
+          tileType: TileType.editTile,
+        ),
+        onReorder: (oldIdx, newIdx) {
+          viewModel.moveSong(oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
+        },
+        onReorderStart: (_) => HapticFeedback.lightImpact(),
+      );
     }
-    return (viewModel.editStatus == EditStatus.likes)
-        ? ReorderableListView.builder(
-            key: const PageStorageKey(1),
-            proxyDecorator: proxyDecorator,
-            buildDefaultDragHandles: false,
-            itemCount: viewModel.tempLikes.length,
-            itemBuilder: (_, idx) => SongTile(
-              key: Key(idx.toString()),
-              song: viewModel.tempLikes[idx],
-              idx: idx,
-              tileType: TileType.editTile,
-            ),
-            onReorder: (oldIdx, newIdx) {
-              viewModel.moveSong(
-                  oldIdx, (oldIdx < newIdx) ? newIdx - 1 : newIdx);
-            },
-            onReorderStart: (_) => HapticFeedback.lightImpact(),
-          )
-        : ListView.builder(
-            key: const PageStorageKey(1),
-            itemCount: viewModel.likes.length,
-            itemBuilder: (_, idx) => SongTile(
-              song: viewModel.likes[idx],
-              tileType: TileType.canPlayTile,
-              onLongPress: () => viewModel.updateEditStatus(EditStatus.likes),
-            ),
-          );
+    return RefreshIndicator(
+      onRefresh: () async => viewModel.getLists(),
+      color: WakColor.lightBlue,
+      child: () {
+        if (viewModel.likes.isEmpty) {
+          return const ErrorInfo(errorMsg: '좋아요 한 곡이 없습니다.');
+        }
+        return ListView.builder(
+          key: const PageStorageKey(1),
+          itemCount: viewModel.likes.length,
+          itemBuilder: (_, idx) => SongTile(
+            song: viewModel.likes[idx],
+            tileType: TileType.canPlayTile,
+            onLongPress: () => viewModel.updateEditStatus(EditStatus.likes),
+          ),
+        );
+      }(),
+    );
   }
 }

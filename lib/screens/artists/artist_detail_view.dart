@@ -175,6 +175,7 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                         leadingWidth: 72,
                         leading: IconButton(
                           onPressed: () {
+                            ExitScope.remove = ExitScope.artistDetail;
                             Navigator.pop(context);
                             viewModel.clear();
                             selProvider.clearList();

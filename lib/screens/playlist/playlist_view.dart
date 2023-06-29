@@ -351,7 +351,8 @@ class PlaylistView extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      (viewModel.songs.first == null)
+                      (viewModel.songs.isNotEmpty &&
+                              viewModel.songs.first == null)
                           ? SkeletonText(
                               wakTxtStyle: WakText.txt14L,
                               width: 26,
