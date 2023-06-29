@@ -159,9 +159,11 @@ class KeepViewModel with ChangeNotifier {
         return addedSongsNum;
       }
     } catch (e) {
-      return -2; // 서버측의 전곡 중복에 대한 에러 미처리로 인한 임시 조치
+      if (e == HttpStatus.conflict) {
+        return -2;
+      }
     }
-    
+
     return -1;
   }
 
