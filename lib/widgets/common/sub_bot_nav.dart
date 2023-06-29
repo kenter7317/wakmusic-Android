@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:audio_service/models/enums.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
@@ -23,6 +26,7 @@ import 'package:wakmusic/utils/number_format.dart';
 import 'package:wakmusic/widgets/common/keep_song_pop_up.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
 import 'package:wakmusic/widgets/common/exitable.dart';
+import 'package:wakmusic/widgets/common/toast_msg.dart';
 import 'package:wakmusic/widgets/keep/bot_sheet.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
@@ -48,19 +52,44 @@ class _SubBotNavState extends State<SubBotNav> {
   Widget build(BuildContext context) {
     final botNav = Provider.of<NavProvider>(context);
 
-    final List<Widget> barList = [
-      playDetailBar(),
-      playerBar(PlayerBarType.main),
-      playerBar(PlayerBarType.sub),
-      editBar(context, EditBarType.playListBar),
-      editBar(context, EditBarType.chartBar),
-      editBar(context, EditBarType.keepBar),
-      editBar(context, EditBarType.keepDetailBar),
-      editBar(context, EditBarType.keepListBar),
-      editBar(context, EditBarType.keepProfileBar),
-      editBar(context, EditBarType.searchBar)
-    ];
-    return barList[botNav.subIdx];
+    switch (botNav.subIdx) {
+      case 0:
+        return playDetailBar();
+      case 1:
+        return playerBar(PlayerBarType.main);
+      case 2:
+        return playerBar(PlayerBarType.sub);
+      case 3:
+        return editBar(context, EditBarType.playListBar);
+      case 4:
+        return editBar(context, EditBarType.chartBar);
+      case 5:
+        return editBar(context, EditBarType.keepBar);
+      case 6:
+        return editBar(context, EditBarType.keepDetailBar);
+      case 7:
+        return editBar(context, EditBarType.keepListBar);
+      case 8:
+        return editBar(context, EditBarType.keepProfileBar);
+      case 9:
+        return editBar(context, EditBarType.searchBar);
+      default:
+        throw '${botNav.subIdx} is NOT SubBotNav Index';
+    }
+
+    // 렌더링은 전부 진행됨
+    // final List<Widget> barList = [
+    //   playDetailBar(),
+    //   playerBar(PlayerBarType.main),
+    //   playerBar(PlayerBarType.sub),
+    //   editBar(context, EditBarType.playListBar),
+    //   editBar(context, EditBarType.chartBar),
+    //   editBar(context, EditBarType.keepBar),
+    //   editBar(context, EditBarType.keepDetailBar),
+    //   editBar(context, EditBarType.keepListBar),
+    //   editBar(context, EditBarType.keepProfileBar),
+    //   editBar(context, EditBarType.searchBar)
+    // ];
   }
 
   /* 임시 노래재생상세 바 */
@@ -171,125 +200,134 @@ class _SubBotNavState extends State<SubBotNav> {
       },
       child: Stack(
         children: [
-          Container(
-            height: 56,
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(20, 0, 16, 0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 7, 0, 8),
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: loadImage(
-                      audioProvider.currentSong?.id,
-                      ThumbnailType.high,
-                      borderRadius: 4,
-                    ),
-                  ),
-                ),
-                type == PlayerBarType.main
-                    ? Expanded(
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    audioProvider.currentSong == null
-                                        ? "노래 없음"
-                                        : audioProvider.currentSong!.title,
-                                    style: WakText.txt14MH
-                                        .copyWith(color: WakColor.grey900),
-                                  ),
-                                  Text(
-                                    audioProvider.currentSong == null
-                                        ? "노래 없음"
-                                        : audioProvider.currentSong!.artist,
-                                    style: WakText.txt12L
-                                        .copyWith(color: WakColor.grey900),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            audioProvider.playbackState == PlaybackState.playing
-                                ? iconBtn("ic_32_stop", edgePadding: true,
-                                    onTap: () {
-                                    setState(() {
-                                      audioProvider.pause();
-                                    });
-                                  })
-                                : iconBtn("ic_32_play_900", edgePadding: true,
-                                    onTap: () {
-                                    setState(() {
-                                      audioProvider.play();
-                                    });
-                                  }),
-                            iconBtn("ic_32_close", edgePadding: false,
-                                onTap: () {
-                              botNav.subSwitch();
-                              audioProvider.stop();
-                              audioProvider.clear();
-                            }),
-                          ],
-                        ),
-                      )
-                    : Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            () {
-                              switch (audioProvider.loopMode) {
-                                case LoopMode.all:
-                                  return iconBtn("ic_32_repeat_on_all",
-                                      onTap: () {
-                                    audioProvider.nextLoopMode();
-                                  });
-                                case LoopMode.single:
-                                  return iconBtn("ic_32_repeat_on_1",
-                                      onTap: () {
-                                    audioProvider.nextLoopMode();
-                                  });
-                                default:
-                                  return iconBtn("ic_32_repeat_off", onTap: () {
-                                    setState(() {
-                                      audioProvider.nextLoopMode();
-                                    });
-                                  });
-                              }
-                            }(),
-                            iconBtn("ic_32_prev_on", onTap: () {
-                              audioProvider.toPrevious();
-                            }),
-                            audioProvider.playbackState == PlaybackState.playing
-                                ? iconBtn("ic_32_stop", onTap: () {
-                                    audioProvider.pause();
-                                  })
-                                : iconBtn("ic_32_play_900", onTap: () {
-                                    audioProvider.play();
-                                  }),
-                            iconBtn("ic_32_next_on", onTap: () {
-                              audioProvider.toNext();
-                            }),
-                            audioProvider.shuffle
-                                ? iconBtn("ic_32_random_on", edgePadding: true,
-                                    onTap: () {
-                                    audioProvider.toggleShuffle();
-                                  })
-                                : iconBtn("ic_32_random_off", edgePadding: true,
-                                    onTap: () {
-                                    audioProvider.toggleShuffle();
-                                  }),
-                          ],
+          ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                height: 56,
+                color: Colors.white.withOpacity(0.2),
+                padding: const EdgeInsets.fromLTRB(20, 0, 16, 0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 7, 0, 8),
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: loadImage(
+                          audioProvider.currentSong?.id,
+                          ThumbnailType.high,
+                          borderRadius: 4,
                         ),
                       ),
-              ],
+                    ),
+                    type == PlayerBarType.main
+                        ? Expanded(
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        audioProvider.currentSong == null
+                                            ? "노래 없음"
+                                            : audioProvider.currentSong!.title,
+                                        style: WakText.txt14MH
+                                            .copyWith(color: WakColor.grey900),
+                                      ),
+                                      Text(
+                                        audioProvider.currentSong == null
+                                            ? "노래 없음"
+                                            : audioProvider.currentSong!.artist,
+                                        style: WakText.txt12L
+                                            .copyWith(color: WakColor.grey900),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                audioProvider.playbackState ==
+                                        PlaybackState.playing
+                                    ? iconBtn("ic_32_stop", edgePadding: true,
+                                        onTap: () {
+                                        setState(() {
+                                          audioProvider.pause();
+                                        });
+                                      })
+                                    : iconBtn("ic_32_play_900",
+                                        edgePadding: true, onTap: () {
+                                        setState(() {
+                                          audioProvider.play();
+                                        });
+                                      }),
+                                iconBtn("ic_32_close", edgePadding: false,
+                                    onTap: () {
+                                  botNav.subSwitch();
+                                  audioProvider.stop();
+                                  audioProvider.clear();
+                                }),
+                              ],
+                            ),
+                          )
+                        : Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                () {
+                                  switch (audioProvider.loopMode) {
+                                    case LoopMode.all:
+                                      return iconBtn("ic_32_repeat_on_all",
+                                          onTap: () {
+                                        audioProvider.nextLoopMode();
+                                      });
+                                    case LoopMode.single:
+                                      return iconBtn("ic_32_repeat_on_1",
+                                          onTap: () {
+                                        audioProvider.nextLoopMode();
+                                      });
+                                    default:
+                                      return iconBtn("ic_32_repeat_off",
+                                          onTap: () {
+                                        setState(() {
+                                          audioProvider.nextLoopMode();
+                                        });
+                                      });
+                                  }
+                                }(),
+                                iconBtn("ic_32_prev_on", onTap: () {
+                                  audioProvider.toPrevious();
+                                }),
+                                audioProvider.playbackState ==
+                                        PlaybackState.playing
+                                    ? iconBtn("ic_32_stop", onTap: () {
+                                        audioProvider.pause();
+                                      })
+                                    : iconBtn("ic_32_play_900", onTap: () {
+                                        audioProvider.play();
+                                      }),
+                                iconBtn("ic_32_next_on", onTap: () {
+                                  audioProvider.toNext();
+                                }),
+                                audioProvider.shuffle
+                                    ? iconBtn("ic_32_random_on",
+                                        edgePadding: true, onTap: () {
+                                        audioProvider.toggleShuffle();
+                                      })
+                                    : iconBtn("ic_32_random_off",
+                                        edgePadding: true, onTap: () {
+                                        audioProvider.toggleShuffle();
+                                      }),
+                              ],
+                            ),
+                          ),
+                  ],
+                ),
+              ),
             ),
           ),
           StreamBuilder(
@@ -352,7 +390,7 @@ class _SubBotNavState extends State<SubBotNav> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (type.showSelect)
+              if (type.showSelect && selListProvider.list.isEmpty)
                 selProvider.selNum != selProvider.maxSel
                     ? editBarBtn(
                         "ic_32_check_off",
@@ -363,7 +401,8 @@ class _SubBotNavState extends State<SubBotNav> {
                               List<Song>? songlist = await chartViewModel
                                   .charts[ChartType.values[tabProvider.curIdx]];
                               selProvider.addAllSong(
-                                  songlist!.whereType<Song>().toList());
+                                  songlist!.whereType<Song>().toList(),
+                                  del: true);
                               break;
                             case 3:
                               selProvider.addAllSong(artistViewModel
@@ -379,11 +418,33 @@ class _SubBotNavState extends State<SubBotNav> {
                           }
                         },
                       )
-                    : editBarBtn(
-                        "ic_32_check_on",
-                        "전체선택해제",
-                        onTap: selProvider.clearList,
-                      ),
+                    : editBarBtn("ic_32_check_on", "전체선택해제", onTap: () {
+                        selProvider.clearList();
+                        if (audioProvider.isEmpty) {
+                          navProvider.subSwitchForce(false);
+                        } else {
+                          navProvider.subChange(1);
+                        }
+                      }),
+              if (type.showSelect && selProvider.selNum == 0)
+                selListProvider.list.length != keepViewModel.playlists.length
+                    ? editBarBtn(
+                        "ic_32_check_off",
+                        "전체선택",
+                        onTap: () async {
+                          for (var playlist in keepViewModel.playlists) {
+                            selListProvider.addPlaylist(playlist!);
+                          }
+                        },
+                      )
+                    : editBarBtn("ic_32_check_on", "전체선택해제", onTap: () {
+                        selListProvider.clearList();
+                        if (audioProvider.isEmpty) {
+                          navProvider.subSwitchForce(false);
+                        } else {
+                          navProvider.subChange(1);
+                        }
+                      }),
               if (type.showSongAdd)
                 editBarBtn(
                   "ic_32_playadd_25",
@@ -432,10 +493,27 @@ class _SubBotNavState extends State<SubBotNav> {
                 }),
               if (type.showPlay)
                 editBarBtn("ic_32_play_25", "재생", onTap: () {
-                  audioProvider.addQueueItems(
-                    selProvider.list,
-                    autoplay: true,
-                  );
+                  if (selProvider.list.length == 1) {
+                    if (audioProvider.queue.contains(selProvider.list[0])) {
+                      audioProvider.toQueueItem(
+                          audioProvider.queue.indexOf(selProvider.list[0]));
+                    } else {
+                      audioProvider.addQueueItem(selProvider.list[0],
+                          autoplay: true);
+                    }
+                  } else {
+                    if (audioProvider.queue
+                        .toSet()
+                        .containsAll(selProvider.list)) {
+                      audioProvider.toQueueItem(
+                          audioProvider.queue.indexOf(selProvider.list[0]));
+                    } else {
+                      audioProvider.addQueueItems(
+                        selProvider.list,
+                        autoplay: true,
+                      );
+                    }
+                  }
                   selProvider.clearList();
                   navProvider.subChange(1);
                 }),
@@ -544,6 +622,33 @@ class _SubBotNavState extends State<SubBotNav> {
               alignment: Alignment.center,
               child: Text(
                 selProvider.selNum.toString(),
+                style: WakText.txt18B.copyWith(color: WakColor.lightBlue),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        if (selListProvider.list.isNotEmpty)
+          Positioned(
+            top: -16,
+            left: 20 - (selListProvider.list.length.toString().length - 1) * 4,
+            child: Container(
+              height: 32,
+              width:
+                  32 + (selListProvider.list.length.toString().length - 1) * 8,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: WakColor.dark.withOpacity(0.04),
+                    blurRadius: 4,
+                    offset: const Offset(4, 4),
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                selListProvider.list.length.toString(),
                 style: WakText.txt18B.copyWith(color: WakColor.lightBlue),
                 textAlign: TextAlign.center,
               ),

@@ -162,7 +162,11 @@ class SongTile extends StatelessWidget {
                     break;
                   case 2:
                     selectedList.setMaxSel(playlistViewModel.songs.length);
-                    navProvider.subChange(9);
+                    if (playlistViewModel.songs.isEmpty) {
+                      navProvider.subChange(9);
+                    } else {
+                      navProvider.subChange(4);
+                    }
                     break;
                   case 3:
                     navProvider.subChange(4);

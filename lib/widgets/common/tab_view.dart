@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
+import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models/providers/tab_provider.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -54,6 +55,7 @@ class TabView extends StatelessWidget {
     int length = tabBarList.length;
     final tabProvider = Provider.of<TabProvider>(context);
     final selProvider = Provider.of<SelectSongProvider>(context);
+    final selListProvider = Provider.of<SelectPlaylistProvider>(context);
     final navProvider = Provider.of<NavProvider>(context);
     final audioProvider = Provider.of<AudioProvider>(context);
 
@@ -72,6 +74,7 @@ class TabView extends StatelessWidget {
           if (controller.previousIndex != controller.index) {
             tabProvider.update(controller.index);
             selProvider.clearList();
+            selListProvider.clearList();
             if (audioProvider.isEmpty) {
               navProvider.subSwitchForce(false);
             } else {

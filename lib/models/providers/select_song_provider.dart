@@ -26,7 +26,8 @@ class SelectSongProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addAllSong(List<Song> songs) {
+  void addAllSong(List<Song> songs, {bool del = false}) {
+    if (del) clearList();
     _list.addAll(songs.where((element) => !_list.contains(element)).toList());
     notifyListeners();
   }

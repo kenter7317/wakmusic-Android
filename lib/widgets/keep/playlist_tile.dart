@@ -77,7 +77,7 @@ class PlaylistTile extends StatelessWidget {
                 Provider.of<KeepViewModel>(context, listen: false);
 
             viewModel.addSongs(playlist!, selectedSongs.list).then((value) {
-              if (value != -1) {
+              if (value != -1 && value != -2) {
                 showToastWidget(
                   context: context,
                   position: const StyledToastPosition(
@@ -94,7 +94,7 @@ class PlaylistTile extends StatelessWidget {
                 } else {
                   navProvider.subChange(1);
                 }
-              } else if (value == 0) {
+              } else if (value == -2) {
                 showToastWidget(
                   context: context,
                   position: const StyledToastPosition(

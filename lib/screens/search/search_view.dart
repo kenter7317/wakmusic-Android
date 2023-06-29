@@ -94,6 +94,8 @@ class SearchView extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     SearchViewModel viewModel = Provider.of<SearchViewModel>(context);
+    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+    NavProvider navProvider = Provider.of<NavProvider>(context);
     final selectedList = Provider.of<SelectSongProvider>(context);
     double statusBarHeight = MediaQuery.of(context).padding.top;
     return Container(
@@ -164,6 +166,8 @@ class SearchView extends StatelessWidget {
                     FocusManager.instance.primaryFocus?.unfocus();
                     viewModel.updateStatus(SearchStatus.before);
                     selectedList.clearList();
+                    navProvider.subChange(1);
+                    if (audioProvider.isEmpty) navProvider.subSwitchForce(false);
                   },
                   child: const Padding(
                     padding: EdgeInsets.only(left: 8),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
@@ -79,6 +80,7 @@ class _MainBotNavState extends State<MainBotNav> with TickerProviderStateMixin {
     final botNav = Provider.of<NavProvider>(context);
     final audioProvider = Provider.of<AudioProvider>(context);
     final selProvider = Provider.of<SelectSongProvider>(context);
+    final selListProvier = Provider.of<SelectPlaylistProvider>(context);
 
     return Expanded(
       child: GestureDetector(
@@ -90,6 +92,7 @@ class _MainBotNavState extends State<MainBotNav> with TickerProviderStateMixin {
               ExitScope.add = ExitScope.pageIsNotHome;
             }
             selProvider.clearList();
+            selListProvier.clearList();
             if (audioProvider.isEmpty) {
               botNav.subSwitchForce(false);
             } else {
