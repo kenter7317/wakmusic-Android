@@ -442,7 +442,10 @@ class KeepView extends StatelessWidget {
       color: WakColor.lightBlue,
       child: () {
         if (viewModel.likes.isEmpty) {
-          return const ErrorInfo(errorMsg: '좋아요 한 곡이 없습니다.');
+          return const SizedBox(
+            width: double.infinity,
+            child: ErrorInfo(errorMsg: '좋아요 한 곡이 없습니다.'),
+          );
         }
         return ListView.builder(
           key: const PageStorageKey(1),
