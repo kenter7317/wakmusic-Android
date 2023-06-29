@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:ui';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
@@ -48,6 +49,8 @@ class Player extends StatelessWidget {
               botNav.mainSwitchForce(true);
               botNav.subSwitchForce(true);
               botNav.subChange(1);
+              FirebaseAnalytics.instance
+                  .setCurrentScreen(screenName: AppScreen.name(botNav.curIdx));
               return true;
             },
             child: _buildBody(context),

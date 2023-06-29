@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,8 @@ class PlayerPlayList extends StatelessWidget {
         onWillPop: () async {
           final botNav = Provider.of<NavProvider>(context, listen: false);
           botNav.subChange(0);
+          FirebaseAnalytics.instance
+              .setCurrentScreen(screenName: AppScreen.name(botNav.curIdx));
           return true;
         },
         child: SafeArea(

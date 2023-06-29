@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -28,6 +30,8 @@ import 'package:wakmusic/widgets/common/toast_msg.dart';
 
 void main() async {
   runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
     await dotenv.load();
     runApp(const MyApp());
   }, ErrorCatch.call);
@@ -48,6 +52,9 @@ class MyApp extends StatelessWidget {
         ],
         supportedLocales: const [
           Locale('ko'),
+        ],
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
         ],
         builder: (context, child) {
           return MediaQuery(
@@ -96,6 +103,8 @@ class _MainState extends State<Main> {
     };
 
     super.initState();
+    FirebaseAnalytics.instance.logAppOpen();
+    FirebaseAnalytics.instance.setCurrentScreen(screenName: AppScreen.name(0));
     final repo = NoticeRepository();
 
     repo.getNoticeDisplay().then((notices) async {
@@ -104,7 +113,7 @@ class _MainState extends State<Main> {
           context: context,
           builder: (_) => PopUp(
             type: PopUpType.contentBtn,
-            msg: n.images.isNotEmpty ? n.images[0] : null,
+            msg: n.thumbnail,
             negFunc: () => repo.hideNotice(n),
           ),
         );
@@ -126,7 +135,7 @@ class _MainState extends State<Main> {
             if (audio.currentSong == null && audio.playbackState.isNotPlaying) {
               await AudioService.stop();
               AudioService.player.close();
-              Future.delayed(const Duration(seconds: 1), () => exit(0));
+              Future.delayed(const Duration(milliseconds: 500), () => exit(0));
             }
             return true;
           }

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:audio_service/models/enums.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -194,6 +195,7 @@ class _SubBotNavState extends State<SubBotNav> {
       onTap: () {
         if (type == PlayerBarType.main) {
           // ExitScope.add = ExitScope.player;
+          FirebaseAnalytics.instance.setCurrentScreen(screenName: 'player');
           Navigator.of(context, rootNavigator: true)
               .push(pageRouteBuilder(page: const Player(), scope: null));
         }

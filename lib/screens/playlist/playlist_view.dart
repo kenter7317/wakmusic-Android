@@ -1,4 +1,6 @@
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -177,7 +179,13 @@ class PlaylistView extends StatelessWidget {
                               pinned: true,
                               delegate: MyHeaderDelegate(
                                 widget: PlayBtns(
-                                  listCallback: () async => viewModel.tempsongs,
+                                  listCallback: () async {
+                                    FirebaseAnalytics.instance.logSelectContent(
+                                      contentType: 'PlaylistAllPlay',
+                                      itemId: playlist.key,
+                                    );
+                                    return viewModel.tempsongs;
+                                  },
                                   isPlaylistView: true,
                                 ),
                                 extent: 72,

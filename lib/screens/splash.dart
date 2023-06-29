@@ -55,7 +55,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           ),
           dismissible: false,
         );
-        break;
+        return;
       case AppFlag.updateInfo:
         await showModal(
           context: context,
@@ -88,8 +88,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           ),
           dismissible: false,
         );
-        break;
+        return;
       default:
+        break;
     }
 
     if (!await EtcRepository().appAuthorityCheck()) {

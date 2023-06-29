@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,7 +22,7 @@ enum Login {
 
 const _storage = FlutterSecureStorage();
 
-class NaverLoginService implements LoginService {
+class NaverLoginService extends LoginService {
   const NaverLoginService();
 
   static const Login _platform = Login.naver;
@@ -63,11 +64,17 @@ class NaverLoginService implements LoginService {
   @override
   Future<void> logout() async {
     await FlutterNaverLogin.logOut();
-    _storage.delete(key: 'token');
+    super.logout();
+  }
+
+  @override
+  Future<void> remove() async {
+    await FlutterNaverLogin.logOutAndDeleteToken();
+    super.remove();
   }
 }
 
-class GoogleLoginService implements LoginService {
+class GoogleLoginService extends LoginService {
   const GoogleLoginService();
 
   static const Login _platform = Login.google;
@@ -91,11 +98,19 @@ class GoogleLoginService implements LoginService {
     final sign = GoogleSignIn();
 
     await sign.signOut();
-    _storage.delete(key: 'token');
+    super.logout();
+  }
+
+  @override
+  Future<void> remove() async {
+    final sign = GoogleSignIn();
+
+    await sign.disconnect();
+    super.remove();
   }
 }
 
-class AppleLoginService implements LoginService {
+class AppleLoginService extends LoginService {
   const AppleLoginService();
 
   static const Login _platform = Login.apple;
@@ -110,13 +125,29 @@ class AppleLoginService implements LoginService {
 
   @override
   Future<void> logout() async {
-    _storage.delete(key: 'token');
+    super.logout();
+  }
+
+  @override
+  Future<void> remove() async {
+    super.remove();
   }
 }
 
 abstract class LoginService {
+  const LoginService();
+
   Login get platform;
 
   Future<String?> login();
-  Future<void> logout();
+
+  Future<void> logout() async {
+    _storage.delete(key: 'token');
+    FirebaseAnalytics.instance.setUserId(id: null);
+  }
+
+  Future<void> remove() async {
+    _storage.delete(key: 'token');
+    FirebaseAnalytics.instance.setUserId(id: null);
+  }
 }
