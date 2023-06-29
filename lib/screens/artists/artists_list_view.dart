@@ -8,6 +8,8 @@ import 'package:wakmusic/screens/artists/artist_detail_view.dart';
 import 'package:wakmusic/screens/artists/artists_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
+import 'package:wakmusic/utils/txt_size.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
@@ -19,12 +21,7 @@ class ArtistsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
+    statusNavColor(context, ScreenType.etc);
     return Scaffold(
       body: FutureBuilder(
         future: viewModel.artistsList,
@@ -116,6 +113,7 @@ class ArtistsListView extends StatelessWidget {
   }) {
     ArtistsViewModel viewModel = Provider.of<ArtistsViewModel>(context);
     final calculated = (MediaQuery.of(context).size.width - 56) / 3;
+    final txtMaxWidth = (MediaQuery.of(context).size.width - 34) / 3;
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -128,7 +126,6 @@ class ArtistsListView extends StatelessWidget {
               pageRouteBuilder(
                 page: ArtistView(artist: artist),
                 scope: ExitScope.artistDetail,
-                offset: const Offset(0.0, 1.0),
               ),
             );
           },
@@ -160,7 +157,11 @@ class ArtistsListView extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           artist.name,
-          style: WakText.txt14MH.copyWith(color: WakColor.grey600),
+          style: getTxtSize("김치만두번영택사스가", WakText.txt14MH).width > txtMaxWidth
+              ? (getTxtSize("김치만두번영택사스가", WakText.txt12MH).width > txtMaxWidth
+                  ? WakText.txt11M.copyWith(color: WakColor.grey600)
+                  : WakText.txt12MH.copyWith(color: WakColor.grey600))
+              : WakText.txt14MH.copyWith(color: WakColor.grey600),
           overflow: TextOverflow.visible,
         ),
       ],
