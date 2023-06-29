@@ -121,8 +121,8 @@ class UserRepository {
     }
 
     try {
-      await API.playlist.addToMyPlaylist(key: key, token: token);
-      return await API.playlist.detail(key: key);
+      final newKey = await API.playlist.addToMyPlaylist(key: key, token: token);
+      return await API.playlist.detail(key: newKey);
     } catch (e) {
       rethrow;
     }
