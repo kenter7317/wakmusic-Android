@@ -5,6 +5,7 @@ import 'package:wakmusic/models_v2/notice.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 
@@ -14,8 +15,10 @@ class NoticeDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    statusNavColor(context, ScreenType.notice);
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -30,6 +33,7 @@ class NoticeDetailView extends StatelessWidget {
                   return true;
                 },
                 child: ListView(
+                  padding: EdgeInsets.zero,
                   children: [
                     _buildTitle(),
                     Padding(
