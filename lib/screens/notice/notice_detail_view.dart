@@ -5,6 +5,7 @@ import 'package:wakmusic/models_v2/notice.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 
@@ -14,51 +15,16 @@ class NoticeDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    statusNavColor(context, ScreenType.notice);
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Header(
               type: HeaderType.close,
               headerTxt: '공지사항',
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 12, 60, 20),
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: WakColor.grey200),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    notice.title,
-                    style: WakText.txt18M,
-                    maxLines: 20,
-                  ),
-                  const SizedBox(height: 3),
-                  SizedBox(
-                    height: 18,
-                    child: Row(
-                      children: [
-                        Text(
-                          DateFormat('yy.MM.dd').format(notice.createAt),
-                          style:
-                              WakText.txt12L.copyWith(color: WakColor.grey500),
-                        ),
-                        const VerticalDivider(),
-                        Text(
-                          DateFormat('HH:mm').format(notice.createAt),
-                          style:
-                              WakText.txt12L.copyWith(color: WakColor.grey500),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             ),
             Expanded(
               child: NotificationListener<OverscrollIndicatorNotification>(
@@ -67,7 +33,9 @@ class NoticeDetailView extends StatelessWidget {
                   return true;
                 },
                 child: ListView(
+                  padding: EdgeInsets.zero,
                   children: [
+                    _buildTitle(),
                     Padding(
                       padding: const EdgeInsets.all(20),
                       child: Text(
@@ -106,6 +74,44 @@ class NoticeDetailView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 12, 60, 20),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: WakColor.grey200),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            notice.title,
+            style: WakText.txt18M,
+            maxLines: 20,
+          ),
+          const SizedBox(height: 3),
+          SizedBox(
+            height: 18,
+            child: Row(
+              children: [
+                Text(
+                  DateFormat('yy.MM.dd').format(notice.createAt),
+                  style: WakText.txt12L.copyWith(color: WakColor.grey500),
+                ),
+                const VerticalDivider(),
+                Text(
+                  DateFormat('HH:mm').format(notice.createAt),
+                  style: WakText.txt12L.copyWith(color: WakColor.grey500),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

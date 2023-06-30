@@ -7,6 +7,7 @@ import 'package:wakmusic/screens/notice/notice_view_model.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
 import 'package:provider/provider.dart';
+import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/dismissible_view.dart';
 import 'package:wakmusic/widgets/common/header.dart';
 import 'package:wakmusic/widgets/common/skeleton_ui.dart';
@@ -49,14 +50,18 @@ class NoticeView extends StatelessWidget {
             Expanded(
               child: FutureBuilder<List<Notice>>(
                 future: viewModel.noticeList,
-                builder: (_, snapshot) => ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: snapshot.data?.length ?? 5,
-                  itemBuilder: (context, idx) => _buildNotice(
-                    context,
-                    snapshot.data?[idx],
-                  ),
-                ),
+                builder: (_, snapshot) {
+                  snapshot.data
+                      ?.sort((a, b) => b.createAt.compareTo(a.createAt));
+                  return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: snapshot.data?.length ?? 5,
+                    itemBuilder: (context, idx) => _buildNotice(
+                      context,
+                      snapshot.data?[idx],
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -100,7 +105,7 @@ class NoticeView extends StatelessWidget {
             scope: null,
             offset: const Offset(0.0, 1.0),
           ),
-        );
+        ).whenComplete(() => statusNavColor(context, ScreenType.etc));
       },
       child: Container(
         padding: const EdgeInsets.fromLTRB(20, 12, 60, 11),

@@ -108,13 +108,13 @@ class _MainState extends State<Main> {
     final repo = NoticeRepository();
 
     repo.getNoticeDisplay().then((notices) async {
-      for (final n in notices) {
+      for (final notice in notices) {
         await showModal(
           context: context,
           builder: (_) => PopUp(
             type: PopUpType.contentBtn,
-            msg: n.thumbnail,
-            negFunc: () => repo.hideNotice(n),
+            notice: notice,
+            negFunc: () => repo.hideNotice(notice),
           ),
         );
         await Future.delayed(const Duration(milliseconds: 300));

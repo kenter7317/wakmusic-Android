@@ -188,7 +188,7 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                           icon: Padding(
                             padding: const EdgeInsets.only(left: 4),
                             child: SvgPicture.asset(
-                              "assets/icons/ic_32_arrow_bottom.svg",
+                              "assets/icons/ic_32_arrow_left.svg",
                               width: 32,
                               height: 32,
                             ),
@@ -233,6 +233,21 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                 "${API.static.url}/artist/square/${widget.artist.id}.png"
                 "?v=${widget.artist.imageVersion.square}",
                 width: artistImgRatio * 140,
+                loadStateChanged: (state) {
+                  if (state.extendedImageLoadState != LoadState.completed) {
+                    return SkeletonBox(
+                      child: Container(
+                        width: artistImgRatio * 140,
+                        height: artistImgRatio * 180,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: WakColor.grey200,
+                        ),
+                      ),
+                    );
+                  }
+                  return null;
+                },
               ),
               const SizedBox(width: 8),
               AnimatedSwitcher(
@@ -254,7 +269,6 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                       : artistInfoCardBack(context),
                 ),
               ),
-          
             ],
           ),
         ],
