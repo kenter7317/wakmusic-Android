@@ -56,7 +56,7 @@ class Event {
     this.title,
     this.description,
     this.version,
-  })  : assert(flag != AppFlag.event || title != null && description != null),
+  })  : assert(flag != AppFlag.event || title != null),
         assert(flag == AppFlag.event || flag == AppFlag.ok || version != null);
 
   factory Event.fromJson(JSON json) {
