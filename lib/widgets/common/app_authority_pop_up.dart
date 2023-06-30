@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
+import 'package:wakmusic/widgets/common/text_with_dot.dart';
 
 import '../../services/etc_repo.dart';
 
@@ -12,12 +13,12 @@ class AppAuthorityPopUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: EdgeInsets.zero,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
       child: SizedBox(
         width: 335,
-        height: 519,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
@@ -40,124 +41,28 @@ class AppAuthorityPopUp extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/ic_32_camera_circle.svg',
-                        width: 32,
-                        height: 32,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '카메라',
-                              style: WakText.txt16M
-                                  .copyWith(color: WakColor.grey900),
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              '버그 제보 시 사진 촬영을 위한 권한',
-                              style: WakText.txt14L
-                                  .copyWith(color: WakColor.grey500),
-                              textAlign: TextAlign.left,
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
+                  _buildPermission(
+                    'camera',
+                    '카메라',
+                    '버그 제보 시 사진 촬영을 위한 권한',
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/ic_32_album_circle.svg',
-                        width: 32,
-                        height: 32,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '앨범',
-                              style: WakText.txt16M
-                                  .copyWith(color: WakColor.grey900),
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              '버그 제보 시 파일 첨부를 위한 권한',
-                              style: WakText.txt14L
-                                  .copyWith(color: WakColor.grey500),
-                              textAlign: TextAlign.left,
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
+                  _buildPermission(
+                    'album',
+                    '앨범',
+                    '버그 제보 시 파일 첨부를 위한 권한',
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/ic_32_alarm_circle.svg',
-                        width: 32,
-                        height: 32,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '알림',
-                              style: WakText.txt16M
-                                  .copyWith(color: WakColor.grey900),
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              '백그라운드 음악 재생을 위한 권한',
-                              style: WakText.txt14L
-                                  .copyWith(color: WakColor.grey500),
-                              textAlign: TextAlign.left,
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
+                  _buildPermission(
+                    'alarm',
+                    '알림',
+                    '백그라운드 음악 재생을 위한 권한',
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/ic_32_app_circle.svg',
-                        width: 32,
-                        height: 32,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '다른 앱 위에 표시',
-                              style: WakText.txt16M
-                                  .copyWith(color: WakColor.grey900),
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              '백그라운드 음악 재생을 위한 권한',
-                              style: WakText.txt14L
-                                  .copyWith(color: WakColor.grey500),
-                              textAlign: TextAlign.left,
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
+                  _buildPermission(
+                    'app',
+                    '다른 앱 위에 표시',
+                    '백그라운드 음악 재생을 위한 권한',
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -168,47 +73,12 @@ class AppAuthorityPopUp extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.only(top: 16),
                     child: Column(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/ic_16_dot.svg',
-                              width: 16,
-                              height: 16,
-                            ),
-                            Expanded(
-                              child: Text(
-                                '선택적 접근 권한은 서비스 사용 중 필요한 시점에 동의를 받고 있습니다. 허용하지 않으셔도 서비스 이용이 가능합니다.',
-                                style: WakText.txt12L
-                                    .copyWith(color: WakColor.grey500),
-                                textAlign: TextAlign.left,
-                                overflow: TextOverflow.visible,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/ic_16_dot.svg',
-                              width: 16,
-                              height: 16,
-                            ),
-                            Expanded(
-                              child: Text(
-                                '접근 권한 변경 방법 : 설정 > 왁타버스 뮤직',
-                                style: WakText.txt12L
-                                    .copyWith(color: WakColor.grey500),
-                                textAlign: TextAlign.left,
-                                overflow: TextOverflow.visible,
-                                maxLines: 3,
-                              ),
-                            )
-                          ],
-                        ),
+                      children: const [
+                        TextWithDot(
+                            text:
+                                '선택적 접근 권한은 서비스 사용 중 필요한 시점에 동의를 받고 있습니다. 허용하지 않으셔도 서비스 이용이 가능합니다.'),
+                        SizedBox(height: 4),
+                        TextWithDot(text: '접근 권한 변경 방법 : 설정 > 왁타버스 뮤직'),
                       ],
                     ),
                   ),
@@ -216,24 +86,22 @@ class AppAuthorityPopUp extends StatelessWidget {
                 ],
               ),
             ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  _requestPermission()
-                      .whenComplete(() => Navigator.pop(context));
-                },
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: WakColor.lightBlue,
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(24.0),
-                    ),
+            GestureDetector(
+              onTap: () {
+                _requestPermission().whenComplete(() => Navigator.pop(context));
+              },
+              child: Container(
+                height: 56,
+                decoration: const BoxDecoration(
+                  color: WakColor.lightBlue,
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(24.0),
                   ),
-                  child: Center(
-                    child: Text(
-                      '확인',
-                      style: WakText.txt18M.copyWith(color: WakColor.grey25),
-                    ),
+                ),
+                child: Center(
+                  child: Text(
+                    '확인',
+                    style: WakText.txt18M.copyWith(color: WakColor.grey25),
                   ),
                 ),
               ),
@@ -244,12 +112,43 @@ class AppAuthorityPopUp extends StatelessWidget {
     );
   }
 
+  Widget _buildPermission(
+      String iconName, String permissionName, String description) {
+    return Row(
+      children: [
+        SvgPicture.asset(
+          'assets/icons/ic_32_${iconName}_circle.svg',
+          width: 32,
+          height: 32,
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                permissionName,
+                style: WakText.txt16M.copyWith(color: WakColor.grey900),
+                textAlign: TextAlign.left,
+              ),
+              Text(
+                description,
+                style: WakText.txt14L.copyWith(color: WakColor.grey500),
+                textAlign: TextAlign.left,
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> _requestPermission() async {
     Map<Permission, PermissionStatus> permissionStatuses = await [
       Permission.camera,
       Permission.storage,
     ].request();
-    
+
     // 허용/비허용의 차이가 없기에 주석처리
     /*if((permissionStatuses[Permission.camera]?.isGranted ?? false) &&
         (permissionStatuses[Permission.storage]?.isGranted ?? false)){
