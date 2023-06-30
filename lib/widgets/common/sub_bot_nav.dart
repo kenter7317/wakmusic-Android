@@ -422,6 +422,7 @@ class _SubBotNavState extends State<SubBotNav> {
                       )
                     : editBarBtn("ic_32_check_on", "전체선택해제", onTap: () {
                         selProvider.clearList();
+                        ExitScope.remove = ExitScope.selectedSong;
                         if (audioProvider.isEmpty) {
                           navProvider.subSwitchForce(false);
                         } else {
@@ -441,6 +442,7 @@ class _SubBotNavState extends State<SubBotNav> {
                       )
                     : editBarBtn("ic_32_check_on", "전체선택해제", onTap: () {
                         selListProvider.clearList();
+                        ExitScope.remove = ExitScope.selectedSong;
                         if (audioProvider.isEmpty) {
                           navProvider.subSwitchForce(false);
                         } else {
@@ -454,6 +456,7 @@ class _SubBotNavState extends State<SubBotNav> {
                   onTap: () {
                     if (keepViewModel.loginStatus == LoginStatus.before) {
                       selProvider.clearList();
+                      ExitScope.remove = ExitScope.selectedSong;
                       if (audioProvider.isEmpty) {
                         navProvider.subSwitchForce(false);
                       } else {
@@ -491,6 +494,7 @@ class _SubBotNavState extends State<SubBotNav> {
                     }
                     selListProvider.clearList();
                   }
+                  ExitScope.remove = ExitScope.selectedSong;
                   navProvider.subChange(1);
                 }),
               if (type.showPlay)
@@ -517,6 +521,7 @@ class _SubBotNavState extends State<SubBotNav> {
                     }
                   }
                   selProvider.clearList();
+                  ExitScope.remove = ExitScope.selectedSong;
                   navProvider.subChange(1);
                 }),
               if (type.showDelete)
@@ -533,6 +538,7 @@ class _SubBotNavState extends State<SubBotNav> {
                     } else {
                       navProvider.subChange(1);
                     }
+                    ExitScope.remove = ExitScope.selectedPlaylist;
                   } else {
                     for (var list in selListProvider.list) {
                       keepViewModel.removeList(list);
@@ -542,6 +548,7 @@ class _SubBotNavState extends State<SubBotNav> {
                     } else {
                       navProvider.subChange(1);
                     }
+                    ExitScope.remove = ExitScope.selectedPlaylist;
                   }
                 }),
               if (type.showEdit)

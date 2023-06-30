@@ -75,8 +75,8 @@ class KeepViewModel with ChangeNotifier {
           return true;
         default:
           log('$e');
-          // return false;
-          rethrow;
+          return false;
+        // rethrow;
       }
     }
     updateLoginStatus(LoginStatus.after);

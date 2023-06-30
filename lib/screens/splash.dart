@@ -50,7 +50,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           context: context,
           builder: (_) => PopUp(
             type: PopUpType.txtOneBtn,
-            msg: '${event.title}\n\n${event.description}',
+            msg: '${event.title}\n\n${event.description ?? ''}',
             posFunc: () => SystemNavigator.pop(),
           ),
           dismissible: false,
