@@ -48,6 +48,7 @@ class PlaylistView extends StatelessWidget {
       ).whenComplete(() {
         ExitScope.remove = ExitScope.editMode;
         ExitScope.remove = ExitScope.openedPageRouteBuilder;
+        viewModel.isOpened = false;
         Navigator.pop(
           context,
           playlist.copyWith(
@@ -124,6 +125,7 @@ class PlaylistView extends StatelessWidget {
         if (scope == ExitScope.openedPageRouteBuilder) {
           if (await _canPop(context, viewModel, selectedList)) {
             ExitScope.remove = ExitScope.openedPageRouteBuilder;
+            viewModel.isOpened = false;
             final nav = Provider.of<NavProvider>(context, listen: false);
             final audio = Provider.of<AudioProvider>(context, listen: false);
             if (nav.subState == true && nav.subIdx == 6) {
@@ -226,6 +228,7 @@ class PlaylistView extends StatelessWidget {
                   navProvider.subChange(1);
                 }
                 if (await _canPop(context, viewModel, selectedList)) {
+                  viewModel.isOpened = false;
                   Navigator.pop(
                     context,
                     playlist.copyWith(

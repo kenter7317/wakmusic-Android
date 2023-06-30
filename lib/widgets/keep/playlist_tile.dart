@@ -9,6 +9,7 @@ import 'package:wakmusic/models/providers/select_playlist_provider.dart';
 import 'package:wakmusic/models/providers/select_song_provider.dart';
 import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
@@ -116,11 +117,27 @@ class PlaylistTile extends StatelessWidget {
                 navProvider.subChange(1);
               }
             }
-            Navigator.push(
-              context,
-              pageRouteBuilder(page: PlaylistView(playlist: playlist!)),
-            ).then(
-                (changed) => keepViewModel.updatePlaylist(playlist!, changed));
+
+            final vm = Provider.of<PlaylistViewModel>(context, listen: false);
+            if (vm.isOpened) {
+              showToastWidget(
+                context: context,
+                position: const StyledToastPosition(
+                  align: Alignment.bottomCenter,
+                  offset: 56,
+                ),
+                animation: StyledToastAnimation.slideFromBottomFade,
+                reverseAnimation: StyledToastAnimation.fade,
+                const ToastMsg(msg: '다른 리스트가 열려있습니다. 리스트를 닫고 다시 시도해주세요.'),
+              );
+            } else {
+              vm.isOpened = true;
+              Navigator.push(
+                context,
+                pageRouteBuilder(page: PlaylistView(playlist: playlist!)),
+              ).then((changed) =>
+                  keepViewModel.updatePlaylist(playlist!, changed));
+            }
           }
         },
         onLongPress: () {
