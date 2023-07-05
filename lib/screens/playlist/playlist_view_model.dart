@@ -23,6 +23,9 @@ class PlaylistViewModel with ChangeNotifier {
   List<Song?> get tempsongs => _tempsongs;
   String? get prevKeyword => _prevKeyword;
 
+  // View 중복 임시 조치
+  bool isOpened = false;
+
   PlaylistViewModel() {
     _isScrolled = StreamController<bool>.broadcast();
     _repo = UserRepository();

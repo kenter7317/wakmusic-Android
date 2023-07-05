@@ -1,7 +1,9 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/screens/playlist/playlist_view.dart';
+import 'package:wakmusic/screens/playlist/playlist_view_model.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -10,6 +12,7 @@ import 'package:wakmusic/widgets/common/skeleton_ui.dart';
 import 'package:wakmusic/models/providers/rec_playlist_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:wakmusic/widgets/page_route_builder.dart';
+import 'package:wakmusic/widgets/common/toast_msg.dart';
 
 class RecPlaylist extends StatelessWidget {
   const RecPlaylist({super.key});
@@ -84,10 +87,25 @@ class RecPlaylist extends StatelessWidget {
     } else {
       return GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            pageRouteBuilder(page: PlaylistView(playlist: playlist)),
-          );
+          final vm = Provider.of<PlaylistViewModel>(context, listen: false);
+          if (vm.isOpened) {
+            showToastWidget(
+              context: context,
+              position: const StyledToastPosition(
+                align: Alignment.bottomCenter,
+                offset: 56,
+              ),
+              animation: StyledToastAnimation.slideFromBottomFade,
+              reverseAnimation: StyledToastAnimation.fade,
+              const ToastMsg(msg: '다른 리스트가 열려있습니다. 리스트를 닫고 다시 시도해주세요.'),
+            );
+          } else {
+            vm.isOpened = true;
+            Navigator.push(
+              context,
+              pageRouteBuilder(page: PlaylistView(playlist: playlist)),
+            );
+          }
         },
         child: Container(
           padding: const EdgeInsets.fromLTRB(12, 0, 16, 0),
