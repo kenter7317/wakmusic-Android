@@ -6,13 +6,16 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:wakmusic/models/providers/audio_provider.dart';
 import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/repository/notice_repo.dart';
 import 'package:wakmusic/screens/charts/charts_view.dart';
+import 'package:wakmusic/utils/error_catch.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/main_bot_nav.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +27,7 @@ import 'package:wakmusic/screens/home/home_view.dart';
 import 'package:wakmusic/screens/search/search_view.dart';
 import 'package:wakmusic/screens/keep/keep_view.dart';
 import 'package:wakmusic/widgets/common/pop_up.dart';
+import 'package:wakmusic/widgets/common/toast_msg.dart';
 import 'package:wakmusic/widgets/show_modal.dart';
 
 void main() async {
@@ -31,10 +35,33 @@ void main() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
     await dotenv.load();
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
 
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+    FlutterError.onError = (details) {
+      switch (dotenv.get('LAUNCH_MODE')) {
+        case "release":
+          FirebaseCrashlytics.instance.recordFlutterError(details);
+          break;
+        case "debug":
+          ErrorCatch.call(details.exception, details.stack ?? StackTrace.empty);
+          break;
+      }
+    };
+
     runApp(const MyApp());
-  }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
+  }, (error, stack) {
+    switch (dotenv.get('LAUNCH_MODE')) {
+      case "release":
+        FirebaseCrashlytics.instance.recordError(error, stack);
+        break;
+      case "debug":
+        ErrorCatch.call(error, stack);
+        break;
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -89,18 +116,18 @@ class _MainState extends State<Main> {
 
   @override
   void initState() {
-    // ErrorCatch.method = (error, stack) {
-    //   showToastWidget(
-    //     context: context,
-    //     position: const StyledToastPosition(
-    //       align: Alignment.bottomCenter,
-    //       offset: 56,
-    //     ),
-    //     animation: StyledToastAnimation.slideFromBottomFade,
-    //     reverseAnimation: StyledToastAnimation.fade,
-    //     ToastMsg(msg: 'Error: $error StackTrace: $stack', size: 200),
-    //   );
-    // };
+    ErrorCatch.method = (error, stack) {
+      showToastWidget(
+        context: context,
+        position: const StyledToastPosition(
+          align: Alignment.bottomCenter,
+          offset: 56,
+        ),
+        animation: StyledToastAnimation.slideFromBottomFade,
+        reverseAnimation: StyledToastAnimation.fade,
+        ToastMsg(msg: 'Error: $error StackTrace: $stack', size: 200),
+      );
+    };
 
     super.initState();
     FirebaseAnalytics.instance.logAppOpen();
@@ -129,7 +156,7 @@ class _MainState extends State<Main> {
     return Scaffold(
       body: WillPopScope(
         onWillPop: () async {
-          print('EXIT SCOPE :: ${ExitScope.scope} ${ExitScope.scopes}');
+          // print('EXIT SCOPE :: ${ExitScope.scope} ${ExitScope.scopes}');
           if (botNav.subIdx == 8) {
             final audio = Provider.of<AudioProvider>(context, listen: false);
             if (audio.isEmpty) {
