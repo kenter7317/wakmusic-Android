@@ -27,7 +27,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       }
     });
     AudioService.position.listen((pos) {
-      log('$pos');
+      // log('$pos');
     });
   }
 
@@ -153,9 +153,9 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       start: song.start,
       end: song.end,
     );
-    FirebaseAnalytics.instance.logSelectContent(
-      contentType: 'SongPlay',
-      itemId: song.id,
+    FirebaseAnalytics.instance.logEvent(
+      name: 'SongPlay',
+      parameters: {'id': song.id},
     );
     notifyListeners();
   }

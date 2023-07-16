@@ -1,4 +1,5 @@
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
@@ -121,6 +122,10 @@ class ArtistsListView extends StatelessWidget {
         ZoomTapAnimation(
           onTap: () {
             viewModel.setArtist(artist);
+            FirebaseAnalytics.instance.logEvent(
+              name: 'Artist',
+              parameters: {'id': artist.id},
+            );
             Navigator.push(
               context,
               pageRouteBuilder(

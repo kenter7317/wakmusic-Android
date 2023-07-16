@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -207,7 +208,10 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                     ),
                     SliverPersistentHeader(
                       pinned: true,
-                      delegate: TabBarDelegate(tabController: tabController),
+                      delegate: TabBarDelegate(
+                        tabController: tabController,
+                        artist: artist,
+                      ),
                     ),
                   ],
                 ),
@@ -598,8 +602,14 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
 }
 
 class TabBarDelegate extends SliverPersistentHeaderDelegate {
-  const TabBarDelegate({required this.tabController});
+  const TabBarDelegate({
+    required this.tabController,
+    required this.artist,
+  });
+
   final TabController tabController;
+  final Artist artist;
+
   @override
   Widget build(
     BuildContext context,
@@ -651,12 +661,18 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
             ],
           ),
           PlayBtns(
-            listCallback: () async =>
-                Provider.of<ArtistsViewModel>(
+            listCallback: () async {
+              FirebaseAnalytics.instance.logEvent(
+                name: 'ArtistAllPlay',
+                parameters: {'id': artist.id},
+              );
+              return [
+                ...?Provider.of<ArtistsViewModel>(
                   context,
                   listen: false,
-                ).albums[AlbumType.values[tabController.index]] ??
-                [],
+                ).albums[AlbumType.values[tabController.index]]
+              ];
+            },
           ),
         ],
       ),
