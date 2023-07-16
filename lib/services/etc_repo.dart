@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EtcRepository {
-  final String authKey = "auth";
+  final String authKey = "auth_AmadeusChoi";
 
   Future<bool> appAuthorityCheck() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

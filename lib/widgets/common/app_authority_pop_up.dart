@@ -113,7 +113,10 @@ class AppAuthorityPopUp extends StatelessWidget {
   }
 
   Widget _buildPermission(
-      String iconName, String permissionName, String description) {
+    String iconName,
+    String permissionName,
+    String description,
+  ) {
     return Row(
       children: [
         SvgPicture.asset(
@@ -144,19 +147,23 @@ class AppAuthorityPopUp extends StatelessWidget {
   }
 
   Future<void> _requestPermission() async {
-    Map<Permission, PermissionStatus> permissionStatuses = await [
+    final required = [
+      Permission.ignoreBatteryOptimizations,
+    ];
+
+    Map<Permission, PermissionStatus> requiredStatus = await required.request();
+
+    if (!requiredStatus.values.every((status) => status.isGranted)) {
+      return await _requestPermission();
+    }
+
+    final optional = [
       Permission.camera,
       Permission.storage,
-    ].request();
+      Permission.notification,
+    ];
 
-    // 허용/비허용의 차이가 없기에 주석처리
-    /*if((permissionStatuses[Permission.camera]?.isGranted ?? false) &&
-        (permissionStatuses[Permission.storage]?.isGranted ?? false)){
-      //인증 완료 로직
-    }else{
-      //거부 로직
-    }*/
-
+    await optional.request();
     EtcRepository().appAuthoritySave();
   }
 }
