@@ -333,7 +333,7 @@ class PlayerPlaylistSelBottom extends StatelessWidget {
 
 Widget getPlayerPlaylistBottom(BuildContext context) {
   final selNav = Provider.of<SelectSongProvider>(context);
-  print(selNav.selNum);
+  // print(selNav.selNum);
   if (selNav.selNum == 0) {
     return const PlayerPlaylistBottom();
   } else {

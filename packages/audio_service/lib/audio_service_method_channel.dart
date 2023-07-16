@@ -54,7 +54,7 @@ class MethodChannelAudioService extends AudioServicePlatform {
     AudioHandlerCallbacks callbacks,
     MethodCall call,
   ) async {
-    log("tqlllj ${call.method}");
+    // log("tqlllj ${call.method}");
     switch (call.method) {
       case 'play':
         await callbacks.play();

@@ -109,7 +109,7 @@ class YoutubeAudioPlayer {
   }
 
   Future<void> seekTo({required double seconds, bool allowSeekAhead = false}) {
-    log('seconds: $seconds');
+    // log('seconds: $seconds');
     return _eval('seekTo', args: '$seconds, $allowSeekAhead');
   }
 

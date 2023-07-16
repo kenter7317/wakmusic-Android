@@ -39,11 +39,11 @@ class S3Repository {
       localFile: AWSFile.fromStream(file.openRead(), size: file.lengthSync()),
       key: '${_randString(5)}_${DateFormat('yyyyMMddhhmmss').format(_now)}.jpg',
       onProgress: (progress) {
-        print('Uploading | ${progress.fractionCompleted * 100}%');
+        // print('Uploading | ${progress.fractionCompleted * 100}%');
       },
     ).result;
     final fileName = await getUrl(uploaded.uploadedItem.key);
-    print('Uploaded from | ${file.path} =>\nUploaded to   | $fileName');
+    // print('Uploaded from | ${file.path} =>\nUploaded to   | $fileName');
     return fileName;
   }
 

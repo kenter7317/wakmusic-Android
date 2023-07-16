@@ -74,9 +74,9 @@ class KeepViewModel with ChangeNotifier {
         case WakError.loginCancelled:
           return true;
         default:
-          log('$e');
+          // log('$e');
+          // rethrow;
           return false;
-        // rethrow;
       }
     }
     updateLoginStatus(LoginStatus.after);

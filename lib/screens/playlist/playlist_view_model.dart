@@ -77,7 +77,7 @@ class PlaylistViewModel with ChangeNotifier {
       tempsongs.remove(song);
     }
     await applySongs(true);
-    print(tempsongs.length);
+    // print(tempsongs.length);
     _status = EditStatus.none;
     notifyListeners();
   }
