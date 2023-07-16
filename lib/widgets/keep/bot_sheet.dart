@@ -123,6 +123,9 @@ class _BotSheetState extends State<BotSheet> {
                               .addToMyPlaylist(_fieldText.text)
                               .then((list) => Navigator.pop(context, list));
                         } catch (_) {
+                          if (_ == HttpStatus.notFound) {
+                            return;
+                          }
                           showToastWidget(
                             context: context,
                             position: const StyledToastPosition(
