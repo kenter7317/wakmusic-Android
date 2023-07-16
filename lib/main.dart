@@ -15,6 +15,7 @@ import 'package:wakmusic/models/providers/nav_provider.dart';
 import 'package:wakmusic/models_v2/scope.dart';
 import 'package:wakmusic/repository/notice_repo.dart';
 import 'package:wakmusic/screens/charts/charts_view.dart';
+import 'package:wakmusic/utils/dotenv.dart';
 import 'package:wakmusic/utils/error_catch.dart';
 import 'package:wakmusic/utils/status_nav_color.dart';
 import 'package:wakmusic/widgets/common/main_bot_nav.dart';
@@ -41,11 +42,11 @@ void main() async {
     ]);
 
     FlutterError.onError = (details) {
-      switch (dotenv.get('LAUNCH_MODE')) {
-        case "release":
+      switch (LaunchMode.now) {
+        case LaunchMode.release:
           FirebaseCrashlytics.instance.recordFlutterError(details);
           break;
-        case "debug":
+        case LaunchMode.debug:
           ErrorCatch.call(details.exception, details.stack ?? StackTrace.empty);
           break;
       }
@@ -53,11 +54,11 @@ void main() async {
 
     runApp(const MyApp());
   }, (error, stack) {
-    switch (dotenv.get('LAUNCH_MODE')) {
-      case "release":
+    switch (LaunchMode.now) {
+      case LaunchMode.release:
         FirebaseCrashlytics.instance.recordError(error, stack);
         break;
-      case "debug":
+      case LaunchMode.debug:
         ErrorCatch.call(error, stack);
         break;
     }
