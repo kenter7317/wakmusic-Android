@@ -39,8 +39,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   void _preRunBehavior() async {
-    KeepViewModel viewModel =
-        Provider.of<KeepViewModel>(context, listen: false);
+    final viewModel = Provider.of<KeepViewModel>(context, listen: false);
     AppVersion version = AppVersion.parse(await viewModel.version);
     Event event = await API.check(version: version);
 
@@ -66,8 +65,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             posText: '업데이트 하러가기',
             posFunc: () {
               // Replace with Deep Link later
-              launchUrlString(
-                  'https://play.google.com/store/apps/details?id=com.waktaverse.music');
+              launchUrlString('market://details?id=com.waktaverse.music');
             },
           ),
           dismissible: false,
@@ -82,8 +80,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             posText: '업데이트 하러가기',
             posFunc: () {
               // Replace with Deep Link later
-              launchUrlString(
-                  'https://play.google.com/store/apps/details?id=com.waktaverse.music');
+              launchUrlString('market://details?id=com.waktaverse.music');
             },
           ),
           dismissible: false,
@@ -101,15 +98,18 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   Future<void> _showDialog() async {
     return await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return const AppAuthorityPopUp();
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return const AppAuthorityPopUp();
+      },
+    );
   }
 
   void _navigateToHomeScreen() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const Main()));
+      context,
+      MaterialPageRoute(builder: (context) => const Main()),
+    );
   }
 
   @override
@@ -127,12 +127,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         child: Column(
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-            Lottie.asset('assets/lottie/splash_logo_main.json',
-                controller: _controller,
-                width: MediaQuery.of(context).size.width * 5 / 12,
-                onLoaded: (composition) => _controller
-                  ..duration = composition.duration
-                  ..forward().whenComplete(() => _preRunBehavior())),
+            Lottie.asset(
+              'assets/lottie/splash_logo_main.json',
+              controller: _controller,
+              width: MediaQuery.of(context).size.width * 5 / 12,
+              onLoaded: (composition) => _controller
+                ..duration = composition.duration
+                ..forward().whenComplete(_preRunBehavior),
+            ),
           ],
         ),
       ),
