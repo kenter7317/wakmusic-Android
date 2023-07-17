@@ -66,7 +66,7 @@ class PlaylistAPI extends API {
   Future<UserPlaylist> detail({
     required String key,
   }) async {
-    final response = await request('$url/$key', method: HttpMethod.get);
+    final response = await request('$url/$key/detail', method: HttpMethod.get);
 
     final status = HttpStatus.byCode(response.statusCode);
     if (status.valid(HttpMethod.get)) {
