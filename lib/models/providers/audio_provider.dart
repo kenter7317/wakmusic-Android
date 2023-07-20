@@ -18,9 +18,18 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
     _player.metadataStream.listen((data) {
       _metadata = data;
     });
+
+    bool inUse = false;
     _player.playbackStateStream.listen((state) {
       _playbackState = state;
       if (nextPlayable && state == PlaybackState.ended) {
+        if (inUse) {
+          inUse = false;
+          return;
+        }
+        if (currentSong?.end != null) {
+          inUse = true;
+        }
         toNext(auto: true);
       } else {
         notifyListeners();
@@ -213,7 +222,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
       case LoopMode.none:
         if (shuffle) return loadRandom();
         if (isLast) return;
-        return load(_queue[++_index]);
+        return await load(_queue[++_index]);
       case LoopMode.all:
         if (shuffle) return loadRandom();
         if (isLast) {
@@ -221,7 +230,7 @@ class AudioProvider extends ChangeNotifier implements AudioHandler<Song> {
         } else {
           _index++;
         }
-        return load(_queue[_index]);
+        return await load(_queue[_index]);
       case LoopMode.single:
         if (auto) return load(currentSong!);
     }
