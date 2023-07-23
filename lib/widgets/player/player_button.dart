@@ -121,14 +121,16 @@ class PlayCircleButton extends StatelessWidget {
           ),
           child: SvgPicture.asset(
             () {
-              switch (snapshot.data) {
-                case PlaybackState.playing:
-                  return 'assets/icons/ic_80_stop_shadow.svg';
-                case PlaybackState.ended:
-                  return 'assets/icons/ic_80_replay_shadow.svg';
-                default:
-                  return 'assets/icons/ic_80_play_shadow.svg';
+              if (snapshot.data == PlaybackState.playing) {
+                return 'assets/icons/ic_80_stop_shadow.svg';
               }
+
+              if (snapshot.data == PlaybackState.ended &&
+                  !audioProvider.nextPlayable) {
+                return 'assets/icons/ic_80_replay_shadow.svg';
+              }
+
+              return 'assets/icons/ic_80_play_shadow.svg';
             }(),
             width: size,
             height: size,
