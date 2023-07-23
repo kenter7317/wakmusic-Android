@@ -79,7 +79,7 @@ class UserRepository {
       await API.user.setProfile(profile: profile, token: token);
       return true;
     } catch (e) {
-      dev.log('$e');
+      // dev.log('$e');
       rethrow;
     }
   }
@@ -94,7 +94,7 @@ class UserRepository {
       await API.user.setUsername(username: name, token: token);
       return true;
     } catch (e) {
-      dev.log('$e');
+      // dev.log('$e');
       rethrow;
     }
   }

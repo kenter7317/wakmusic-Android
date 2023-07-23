@@ -57,10 +57,10 @@ class AudioService {
       AudioServicePlatform.instance.setState(updatedValue);
       if (updatedValue.playbackState.isNotPlaying && previousState.isPlaying) {
         // AudioService.stop();
-        log('not playing now');
+        // log('not playing now');
       } else if (updatedValue.playbackState.isPlaying &&
           previousState.isNotPlaying) {
-        log('playing now');
+        // log('playing now');
       }
       previousState = state;
     });

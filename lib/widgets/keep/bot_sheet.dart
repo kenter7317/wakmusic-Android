@@ -1,8 +1,10 @@
 import 'dart:math';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wakmusic/models_v2/profile.dart';
 import 'package:wakmusic/repository/user_repo.dart';
+import 'package:wakmusic/screens/keep/keep_view_model.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/style/colors.dart';
 import 'package:wakmusic/style/text_styles.dart';
@@ -115,7 +117,7 @@ class _BotSheetState extends State<BotSheet> {
                             _type = FormType.loading;
                           });
                           if (_fieldText.text.length != 10) {
-                            throw Exception('Invalid Playlist Key :(');
+                            throw 'Invalid Playlist Key :(';
                           }
 
                           final repo = UserRepository();

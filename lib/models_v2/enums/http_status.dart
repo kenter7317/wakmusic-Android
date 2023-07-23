@@ -33,7 +33,7 @@ enum HttpStatus {
     return values.singleWhere(
       (e) => e.statusCode == code,
       orElse: () {
-        log('Unknown Http Status Code: $code');
+        // log('Unknown Http Status Code: $code');
         return unknown;
       },
     );

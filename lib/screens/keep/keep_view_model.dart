@@ -9,6 +9,7 @@ import 'package:wakmusic/models_v2/user.dart';
 import 'package:wakmusic/repository/user_repo.dart';
 import 'package:wakmusic/services/apis/api.dart';
 import 'package:wakmusic/services/login.dart';
+import 'package:wakmusic/utils/dotenv.dart';
 
 enum LoginStatus { before, after }
 
@@ -74,9 +75,11 @@ class KeepViewModel with ChangeNotifier {
         case WakError.loginCancelled:
           return true;
         default:
-          log('$e');
+          // log('$e');
+          if (LaunchMode.isDebug) {
+            rethrow;
+          }
           return false;
-        // rethrow;
       }
     }
     updateLoginStatus(LoginStatus.after);

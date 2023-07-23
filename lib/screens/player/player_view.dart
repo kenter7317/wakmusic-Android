@@ -198,7 +198,7 @@ class Player extends StatelessWidget {
         child: Selector<AudioProvider, String>(
           selector: (context, provider) => provider.currentSong?.id ?? '',
           builder: (context, id, _) {
-            log("song img : $id");
+            // log("song img : $id");
             return loadImage(id, ThumbnailType.max, borderRadius: 12);
           },
         ),

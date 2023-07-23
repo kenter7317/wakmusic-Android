@@ -182,9 +182,9 @@ class PlaylistView extends StatelessWidget {
                               delegate: MyHeaderDelegate(
                                 widget: PlayBtns(
                                   listCallback: () async {
-                                    FirebaseAnalytics.instance.logSelectContent(
-                                      contentType: 'PlaylistAllPlay',
-                                      itemId: playlist.key,
+                                    FirebaseAnalytics.instance.logEvent(
+                                      name: 'PlaylistAllPlay',
+                                      parameters: {'key': playlist.key},
                                     );
                                     return viewModel.tempsongs;
                                   },

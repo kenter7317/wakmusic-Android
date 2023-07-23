@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -36,10 +38,21 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
   bool infoCardFront = true;
   double descScrollHeight = 0;
 
+  AudioPlayer? audio;
+
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
+    if (widget.artist.id == "gosegu") {
+      audio = AudioPlayer();
+    }
+  }
+
+  @override
+  void dispose() {
+    audio?.dispose();
+    super.dispose();
   }
 
   Widget cardAnimatedBuilder(Widget widget, Animation<double> animation) {
@@ -207,7 +220,10 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
                     ),
                     SliverPersistentHeader(
                       pinned: true,
-                      delegate: TabBarDelegate(tabController: tabController),
+                      delegate: TabBarDelegate(
+                        tabController: tabController,
+                        artist: artist,
+                      ),
                     ),
                   ],
                 ),
@@ -229,25 +245,32 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
         children: [
           Row(
             children: [
-              ExtendedImage.network(
-                "${API.static.url}/artist/square/${widget.artist.id}.png"
-                "?v=${widget.artist.imageVersion.square}",
-                width: artistImgRatio * 140,
-                loadStateChanged: (state) {
-                  if (state.extendedImageLoadState != LoadState.completed) {
-                    return SkeletonBox(
-                      child: Container(
-                        width: artistImgRatio * 140,
-                        height: artistImgRatio * 180,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: WakColor.grey200,
-                        ),
-                      ),
-                    );
+              GestureDetector(
+                onTap: () async {
+                  if (widget.artist.id == "gosegu") {
+                    await audio!.play(AssetSource('gosegu.mp3'));
                   }
-                  return null;
                 },
+                child: ExtendedImage.network(
+                  "${API.static.url}/artist/square/${widget.artist.id}.png"
+                  "?v=${widget.artist.imageVersion.square}",
+                  width: artistImgRatio * 140,
+                  loadStateChanged: (state) {
+                    if (state.extendedImageLoadState != LoadState.completed) {
+                      return SkeletonBox(
+                        child: Container(
+                          width: artistImgRatio * 140,
+                          height: artistImgRatio * 180,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: WakColor.grey200,
+                          ),
+                        ),
+                      );
+                    }
+                    return null;
+                  },
+                ),
               ),
               const SizedBox(width: 8),
               AnimatedSwitcher(
@@ -598,8 +621,14 @@ class _ArtistViewState extends State<ArtistView> with TickerProviderStateMixin {
 }
 
 class TabBarDelegate extends SliverPersistentHeaderDelegate {
-  const TabBarDelegate({required this.tabController});
+  const TabBarDelegate({
+    required this.tabController,
+    required this.artist,
+  });
+
   final TabController tabController;
+  final Artist artist;
+
   @override
   Widget build(
     BuildContext context,
@@ -651,12 +680,18 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
             ],
           ),
           PlayBtns(
-            listCallback: () async =>
-                Provider.of<ArtistsViewModel>(
+            listCallback: () async {
+              FirebaseAnalytics.instance.logEvent(
+                name: 'ArtistAllPlay',
+                parameters: {'id': artist.id},
+              );
+              return [
+                ...?Provider.of<ArtistsViewModel>(
                   context,
                   listen: false,
-                ).albums[AlbumType.values[tabController.index]] ??
-                [],
+                ).albums[AlbumType.values[tabController.index]]
+              ];
+            },
           ),
         ],
       ),

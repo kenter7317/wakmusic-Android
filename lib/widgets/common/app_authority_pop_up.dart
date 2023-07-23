@@ -60,9 +60,10 @@ class AppAuthorityPopUp extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   _buildPermission(
-                    'app',
-                    '다른 앱 위에 표시',
+                    'battery',
+                    '배터리 최적화 제외',
                     '백그라운드 음악 재생을 위한 권한',
+                    required: true,
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -113,7 +114,11 @@ class AppAuthorityPopUp extends StatelessWidget {
   }
 
   Widget _buildPermission(
-      String iconName, String permissionName, String description) {
+    String iconName,
+    String permissionName,
+    String description, {
+    bool required = false,
+  }) {
     return Row(
       children: [
         SvgPicture.asset(
@@ -127,7 +132,7 @@ class AppAuthorityPopUp extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                permissionName,
+                '$permissionName (${required ? '필수' : '선택'})',
                 style: WakText.txt16M.copyWith(color: WakColor.grey900),
                 textAlign: TextAlign.left,
               ),
@@ -144,19 +149,23 @@ class AppAuthorityPopUp extends StatelessWidget {
   }
 
   Future<void> _requestPermission() async {
-    Map<Permission, PermissionStatus> permissionStatuses = await [
+    final required = [
+      Permission.ignoreBatteryOptimizations,
+    ];
+
+    Map<Permission, PermissionStatus> requiredStatus = await required.request();
+
+    if (!requiredStatus.values.every((status) => status.isGranted)) {
+      return await _requestPermission();
+    }
+
+    final optional = [
       Permission.camera,
       Permission.storage,
-    ].request();
+      Permission.notification,
+    ];
 
-    // 허용/비허용의 차이가 없기에 주석처리
-    /*if((permissionStatuses[Permission.camera]?.isGranted ?? false) &&
-        (permissionStatuses[Permission.storage]?.isGranted ?? false)){
-      //인증 완료 로직
-    }else{
-      //거부 로직
-    }*/
-
+    await optional.request();
     EtcRepository().appAuthoritySave();
   }
 }
