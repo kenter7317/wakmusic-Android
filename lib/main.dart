@@ -136,16 +136,19 @@ class _MainState extends State<Main> {
     final repo = NoticeRepository();
 
     repo.getNoticeDisplay().then((notices) async {
-      for (final notice in notices) {
+      if (notices.isNotEmpty) {
         await showModal(
           context: context,
           builder: (_) => PopUp(
             type: PopUpType.contentBtn,
-            notice: notice,
-            negFunc: () => repo.hideNotice(notice),
+            notices: notices,
+            negFunc: () {
+              for (final notice in notices) {
+                repo.hideNotice(notice);
+              }
+            },
           ),
         );
-        await Future.delayed(const Duration(milliseconds: 300));
       }
     });
   }
