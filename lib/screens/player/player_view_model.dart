@@ -24,7 +24,7 @@ class PlayerViewModel with ChangeNotifier {
 
   Future<void> getLyrics(String id) async {
     if (id != _id) {
-      _lyrics = API.static.lyrics(id: id);
+      _lyrics = API.songs.lyrics(songId: id);
       _id = id;
     }
   }
