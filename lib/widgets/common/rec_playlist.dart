@@ -118,10 +118,11 @@ class RecPlaylist extends StatelessWidget {
               Expanded(
                 child: Text(
                   playlist.title,
-                  style: WakText.txt14MH.copyWith(color: WakColor.grey600),
+                  style: WakText.txt14M.copyWith(color: WakColor.grey600),
+                  maxLines: 4,
                 ),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 14),
               ExtendedImage.network(
                 '${API.static.url}/playlist/icon/round/'
                 '${playlist.key}.png'
