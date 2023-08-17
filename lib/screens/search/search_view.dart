@@ -300,7 +300,7 @@ class SearchView extends StatelessWidget {
           }
           if (tabs.isEmpty) {
             return const ErrorInfo(errorMsg: '검색 결과가 없습니다.');
-          } else if (tabs.length == 1) {
+          /*} else if (tabs.length == 1) {
             return ListView.builder(
               physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.zero,
@@ -312,28 +312,30 @@ class SearchView extends StatelessWidget {
                       song: snapshot.data![tabs[0]][songIdx - 1],
                       tileType: TileType.dateTile,
                     ),
-            );
+            );*/
           } else {
             return ListView.separated(
               physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.zero,
-              itemCount: tabs.length,
+              itemCount: 3,
               itemBuilder: (context, idx) => Column(
                 children: [
-                  _buildTabHeader(context, tabs[idx],
-                      snapshot.data![tabs[idx]].length, true),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(
-                      3,
-                      (songIdx) => (songIdx < snapshot.data![tabs[idx]].length)
-                          ? SongTile(
-                              song: snapshot.data![tabs[idx]][songIdx],
-                              tileType: TileType.dateTile,
-                            )
-                          : Container(),
-                    ),
-                  ),
+                  _buildTabHeader(context, idx,
+                      snapshot.data![idx].length, true),
+                  tabs.contains(idx)
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        3,
+                        (songIdx) => (songIdx < snapshot.data![idx].length)
+                            ? SongTile(
+                                song: snapshot.data![idx][songIdx],
+                                tileType: TileType.dateTile,
+                              )
+                            : Container(),
+                      ),
+                    )
+                  : Container()
                 ],
               ),
               separatorBuilder: (_, __) => const SizedBox(height: 8),
@@ -396,24 +398,26 @@ class SearchView extends StatelessWidget {
               style: WakText.txt16M.copyWith(color: WakColor.lightBlue),
             ),
             const Spacer(),
-            GestureDetector(
-              onTap: () =>
-                  DefaultTabController.of(context)!.animateTo(tabIdx + 1),
-              child: Row(
-                children: [
-                  Text(
-                    '전체보기',
-                    style: WakText.txt12MH,
-                    textAlign: TextAlign.right,
-                  ),
-                  SvgPicture.asset(
-                    'assets/icons/ic_16_arrow_right_search.svg',
-                    width: 12,
-                    height: 16,
-                  ),
-                ],
-              ),
-            ),
+            (length != null && length > 0)
+            ? GestureDetector(
+                onTap: () =>
+                    DefaultTabController.of(context)!.animateTo(tabIdx + 1),
+                child: Row(
+                  children: [
+                    Text(
+                      '전체보기',
+                      style: WakText.txt12MH,
+                      textAlign: TextAlign.right,
+                    ),
+                    SvgPicture.asset(
+                      'assets/icons/ic_16_arrow_right_search.svg',
+                      width: 12,
+                      height: 16,
+                    ),
+                  ],
+                ),
+              )
+            : Container()
           ],
         ),
       );
