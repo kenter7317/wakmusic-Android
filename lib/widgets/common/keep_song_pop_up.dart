@@ -37,13 +37,12 @@ class KeepSongPopUp extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      '담을곡',
-                      style: WakText.txt14MH,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${selProvider.selNum}곡',
+                      '${selProvider.selNum}',
                       style: WakText.txt14MH.copyWith(color: WakColor.lightBlue),
+                    ),
+                    Text(
+                      '곡 선택',
+                      style: WakText.txt14MH,
                     ),
                   ],
                 ),
