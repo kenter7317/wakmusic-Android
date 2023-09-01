@@ -15,7 +15,7 @@ class PlayerSubtitleController extends SubtitleController{
   Future<void> initial() async {
     if (initialized) return;
     final providerObject = await provider.getSubtitle();
-    playerParser = PlayerSubtitlePerser(providerObject);
+    playerParser = PlayerSubtitleParser(providerObject);
     subtitles.addAll(playerParser!.parsing());
     sort();
   }
@@ -38,8 +38,8 @@ class PlayerSubtitleProvider extends SubtitleProvider{
   }
 }
 
-class PlayerSubtitlePerser extends SubtitleParser{
-  PlayerSubtitlePerser(super.object);
+class PlayerSubtitleParser extends SubtitleParser{
+  PlayerSubtitleParser(super.object);
 
   @override
   List<Subtitle> parsing({bool shouldNormalizeText = true}) {
