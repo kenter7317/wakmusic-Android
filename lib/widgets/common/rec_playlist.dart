@@ -70,7 +70,7 @@ class RecPlaylist extends StatelessWidget {
             Expanded(
               child: SkeletonText(wakTxtStyle: WakText.txt14MH),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 14),
             SkeletonBox(
               child: Container(
                 width: 48,
