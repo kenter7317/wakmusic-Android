@@ -61,6 +61,9 @@ class PlayerSubtitleParser extends SubtitleParser{
   Duration _doubleToDuration(double time){
 
     try{
+      //소숫점 6번째 자리에서 반올림하는 수식
+      time = (time * 1e6).round() / 1e6;
+
       List<String> splitTime = time.toString().split('.');
       int millisecond = splitTime.length == 1 ? 0 : int.parse(splitTime[1]);
 
