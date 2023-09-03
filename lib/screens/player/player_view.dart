@@ -8,7 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:scroll_snap_list/scroll_snap_list.dart';
+import 'package:subtitle/subtitle.dart';
 import 'package:wakmusic/screens/player/player_view_model.dart';
 import 'package:wakmusic/services/debounce.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -21,6 +21,7 @@ import '../../models/providers/audio_provider.dart';
 import '../../models/providers/nav_provider.dart';
 import '../../models_v2/song.dart';
 import '../../style/text_styles.dart';
+import '../../widgets/player/player_scroll_snap_list.dart';
 
 class Player extends StatelessWidget {
   const Player({Key? key}) : super(key: key);
@@ -269,7 +270,7 @@ class Player extends StatelessWidget {
                       });
                     }
 
-                    return ScrollSnapList(
+                    return PlayerScrollSnapList(
                       key: viewModel.scrollSnapListKey,
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
@@ -281,10 +282,10 @@ class Player extends StatelessWidget {
                         }
                       },
                       itemSize: 24,
-                      dynamicItemSize: true,
+                      //dynamicItemSize: true,
                       itemBuilder: (context, index) {
                         return Container(
-                          height: 24,
+                          height: 24 * lyrics.subtitles[index].data.split('\n').length.toDouble(),
                           alignment: Alignment.center,
                           child: Text(
                             _lyricsFormat(lyrics.subtitles[index].data),
@@ -297,6 +298,7 @@ class Player extends StatelessWidget {
                           ),
                         );
                       },
+                      positionList: _calcPositionList(lyrics.subtitles),
                       itemCount: lyrics.subtitles.length,
                       listController: controller,
                     );
@@ -375,5 +377,16 @@ class Player extends StatelessWidget {
         .format(duration.inMinutes % 60);
     String s = intl.NumberFormat('00').format(duration.inSeconds % 60);
     return '$h$m$s';
+  }
+
+  List<int> _calcPositionList(List<Subtitle> subList){
+    List<int> list = List.empty(growable: true);
+
+    for (var sub in subList) {
+      if(list.isEmpty) { list.add(0); }
+      else { list.add(list.last + 24 * sub.data.split('\n').length); }
+    }
+
+    return list;
   }
 }
