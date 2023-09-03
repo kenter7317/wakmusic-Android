@@ -43,13 +43,14 @@ class PlayerSubtitleParser extends SubtitleParser{
 
   @override
   List<Subtitle> parsing({bool shouldNormalizeText = true}) {
+    int index = 1;
     try{
       return (jsonDecode(object.data) as List)
           .map((item) => Subtitle(
           start: _doubleToDuration(item['start'].toDouble()),
           end: _doubleToDuration(item['end'].toDouble()),
           data: item['text'],
-          index: int.parse(item['identifier'])
+          index: /*int.parse(item['identifier'])*/index++
       )).toList();
     }catch(e){
       print('parsing error : ${e.toString()}');
@@ -74,8 +75,9 @@ class PlayerSubtitleParser extends SubtitleParser{
           milliseconds: millisecond
       );
     }catch(e){
-      print('duration error : $e');
-      return Duration.zero;
+      //print('duration error : $e');
+      //return Duration.zero;
+      rethrow;
     }
   }
 }
