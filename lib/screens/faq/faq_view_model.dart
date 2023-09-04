@@ -23,10 +23,7 @@ class FAQViewModel with ChangeNotifier {
     };
 
     _faqLists[Category.qnaAll]!.sort((a, b) {
-      int categoryIdxA, categoryIdxB;
-      categoryIdxA = _categories.indexOf(a.category);
-      categoryIdxB = _categories.indexOf(b.category);
-      return categoryIdxA.compareTo(categoryIdxB);
+      return b.createAt.compareTo(a.createAt);
     });
 
     for (Category category in _categories) {
