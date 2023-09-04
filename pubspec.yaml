@@ -77,6 +77,8 @@ dependencies:
   firebase_analytics: ^10.4.3
   firebase_crashlytics: ^3.3.3
   audioplayers: ^4.1.0
+  marquee: ^2.2.3
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:
