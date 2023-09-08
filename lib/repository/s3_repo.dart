@@ -1,13 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:wakmusic/amplifyconfiguration.dart';
-
+@Deprecated('suggest :: s3 -> mailto')
 class S3Repository {
   static bool _error = false;
   bool get hasError => _error;
@@ -21,11 +15,11 @@ class S3Repository {
   /// if returns `false`, failed initializing with error
   Future<bool> configure() async {
     try {
-      final auth = AmplifyAuthCognito();
-      final storage = AmplifyStorageS3();
-      await Amplify.addPlugins([auth, storage]);
+      // final auth = AmplifyAuthCognito();
+      // final storage = AmplifyStorageS3();
+      // await Amplify.addPlugins([auth, storage]);
 
-      await Amplify.configure(amplifyconfig);
+      // await Amplify.configure(amplifyconfig);
     } catch (e) {
       _error = true;
       print(e);
@@ -35,21 +29,23 @@ class S3Repository {
   }
 
   Future<String> uploadStorage(File file) async {
-    final uploaded = await Amplify.Storage.uploadFile(
-      localFile: AWSFile.fromStream(file.openRead(), size: file.lengthSync()),
-      key: '${_randString(5)}_${DateFormat('yyyyMMddhhmmss').format(_now)}.jpg',
-      onProgress: (progress) {
-        // print('Uploading | ${progress.fractionCompleted * 100}%');
-      },
-    ).result;
-    final fileName = await getUrl(uploaded.uploadedItem.key);
+    throw 0;
+    // final uploaded = await Amplify.Storage.uploadFile(
+    //   localFile: AWSFile.fromStream(file.openRead(), size: file.lengthSync()),
+    //   key: '${_randString(5)}_${DateFormat('yyyyMMddhhmmss').format(_now)}.jpg',
+    //   onProgress: (progress) {
+    //     // print('Uploading | ${progress.fractionCompleted * 100}%');
+    //   },
+    // ).result;
+    // final fileName = await getUrl(uploaded.uploadedItem.key);
     // print('Uploaded from | ${file.path} =>\nUploaded to   | $fileName');
-    return fileName;
+    // return fileName;
   }
 
   Future<String> getUrl(String fileName) async {
-    final result = await Amplify.Storage.getUrl(key: fileName).result;
-    return '${result.url}'.split('?').first;
+    throw 0;
+    // final result = await Amplify.Storage.getUrl(key: fileName).result;
+    // return '${result.url}'.split('?').first;
   }
 }
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:wakmusic/services/apis/api.dart';
 
+@Deprecated('suggest :: s3 -> mailto')
 class SuggestAPI extends API {
   @override
   String get url => dotenv.get('API_SUGGEST');
