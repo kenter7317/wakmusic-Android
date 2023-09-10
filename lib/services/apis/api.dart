@@ -11,7 +11,6 @@ import 'package:wakmusic/services/apis/notice.dart';
 import 'package:wakmusic/services/apis/playlist.dart';
 import 'package:wakmusic/services/apis/songs.dart';
 import 'package:wakmusic/services/apis/static.dart';
-import 'package:wakmusic/services/apis/suggest.dart';
 import 'package:wakmusic/services/apis/user.dart';
 
 import 'package:http/http.dart' as http;
@@ -39,7 +38,6 @@ class API {
   static const notice = NoticeAPI();
   static const playlist = PlaylistAPI();
   static const songs = SongsAPI();
-  static const suggest = SuggestAPI();
   static const user = UserAPI();
 
   static const static = StaticAPI();
