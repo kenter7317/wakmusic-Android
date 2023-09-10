@@ -1,14 +1,14 @@
-import 'dart:developer';
 import 'dart:ui';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:extended_image/extended_image.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:scroll_snap_list/scroll_snap_list.dart';
+import 'package:subtitle/subtitle.dart';
 import 'package:wakmusic/screens/player/player_view_model.dart';
 import 'package:wakmusic/services/debounce.dart';
 import 'package:wakmusic/style/colors.dart';
@@ -21,6 +21,7 @@ import '../../models/providers/audio_provider.dart';
 import '../../models/providers/nav_provider.dart';
 import '../../models_v2/song.dart';
 import '../../style/text_styles.dart';
+import '../../widgets/player/player_scroll_snap_list.dart';
 
 class Player extends StatelessWidget {
   const Player({Key? key}) : super(key: key);
@@ -137,30 +138,27 @@ class Player extends StatelessWidget {
 
   Widget _buildTitle(BuildContext context) {
     NavProvider botNav = Provider.of<NavProvider>(context);
-    return Stack(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 0, 0),
-            child: GestureDetector(
-              onTap: () {
-                botNav.mainSwitchForce(true);
-                botNav.subSwitchForce(true);
-                botNav.subChange(1);
-                // ExitScope.remove = ExitScope.player;
-                Navigator.pop(context);
-              },
-              child: SvgPicture.asset(
-                'assets/icons/ic_32_arrow_bottom.svg',
-                width: 32,
-                height: 32,
-              ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 0, 0),
+          child: GestureDetector(
+            onTap: () {
+              botNav.mainSwitchForce(true);
+              botNav.subSwitchForce(true);
+              botNav.subChange(1);
+              // ExitScope.remove = ExitScope.player;
+              Navigator.pop(context);
+            },
+            child: SvgPicture.asset(
+              'assets/icons/ic_32_arrow_bottom.svg',
+              width: 32,
+              height: 32,
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.center,
+        Expanded(
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 2),
             child: Selector<AudioProvider, Song?>(
@@ -169,22 +167,57 @@ class Player extends StatelessWidget {
                 //print( "title and artist : ${currentSong.title} & ${currentSong.artist}");
                 return Column(
                   children: [
-                    Text(
-                      currentSong?.title.toString() ?? '재생중인 곡이 없습니다.',
-                      style: WakText.txt16M,
-                      textAlign: TextAlign.center,
+                    SizedBox(
+                      height: 24,
+                      child: AutoSizeText(
+                        currentSong?.title.toString() ?? '재생중인 곡이 없습니다.',
+                        maxLines: 1,
+                        style: WakText.txt16M,
+                        overflowReplacement: Marquee(
+                          text: currentSong?.title.toString() ?? '재생중인 곡이 없습니다.',
+                          style: WakText.txt16M,
+                          scrollAxis: Axis.horizontal,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          blankSpace: 20.0,
+                          velocity: 20.0,
+                          pauseAfterRound: const Duration(seconds: 1),
+                          showFadingOnlyWhenScrolling: false,
+                          fadingEdgeEndFraction: 0.1,
+                          fadingEdgeStartFraction: 0.1,
+                        ),
+                      )
                     ),
-                    Text(
-                      currentSong?.artist.toString() ?? '',
-                      style: WakText.txt14M
-                          .copyWith(color: WakColor.grey900.withOpacity(0.6)),
-                      textAlign: TextAlign.center,
-                    )
+                    SizedBox(
+                      height: 20,
+                      child: AutoSizeText(
+                        currentSong?.artist.toString() ?? '',
+                        maxLines: 1,
+                        style: WakText.txt14M
+                            .copyWith(color: WakColor.grey900.withOpacity(0.6)),
+                        overflowReplacement: Marquee(
+                          text: currentSong?.artist.toString() ?? '',
+                          style: WakText.txt14M
+                              .copyWith(color: WakColor.grey900.withOpacity(0.6)),
+                          scrollAxis: Axis.horizontal,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          blankSpace: 20.0,
+                          velocity: 20.0,
+                          pauseAfterRound: const Duration(seconds: 1),
+                          showFadingOnlyWhenScrolling: false,
+                          fadingEdgeEndFraction: 0.1,
+                          fadingEdgeStartFraction: 0.1,
+                        ),
+                      ),
+                    ),
                   ],
                 );
               },
             ),
           ),
+        ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(0, 8, 20, 0),
+          child: SizedBox(width: 32, height: 32,)
         ),
       ],
     );
@@ -269,7 +302,7 @@ class Player extends StatelessWidget {
                       });
                     }
 
-                    return ScrollSnapList(
+                    return PlayerScrollSnapList(
                       key: viewModel.scrollSnapListKey,
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
@@ -281,10 +314,10 @@ class Player extends StatelessWidget {
                         }
                       },
                       itemSize: 24,
-                      dynamicItemSize: true,
+                      //dynamicItemSize: true,
                       itemBuilder: (context, index) {
                         return Container(
-                          height: 24,
+                          height: 24 * lyrics.subtitles[index].data.split('\n').length.toDouble(),
                           alignment: Alignment.center,
                           child: Text(
                             _lyricsFormat(lyrics.subtitles[index].data),
@@ -297,6 +330,7 @@ class Player extends StatelessWidget {
                           ),
                         );
                       },
+                      positionList: _calcPositionList(lyrics.subtitles),
                       itemCount: lyrics.subtitles.length,
                       listController: controller,
                     );
@@ -375,5 +409,16 @@ class Player extends StatelessWidget {
         .format(duration.inMinutes % 60);
     String s = intl.NumberFormat('00').format(duration.inSeconds % 60);
     return '$h$m$s';
+  }
+
+  List<int> _calcPositionList(List<Subtitle> subList){
+    List<int> list = List.empty(growable: true);
+
+    for (var sub in subList) {
+      if(list.isEmpty) { list.add(0); }
+      else { list.add(list.last + 24 * sub.data.split('\n').length); }
+    }
+
+    return list;
   }
 }
