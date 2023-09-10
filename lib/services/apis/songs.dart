@@ -1,5 +1,8 @@
+import 'package:subtitle/subtitle.dart';
 import 'package:wakmusic/models_v2/song.dart';
 import 'package:wakmusic/services/apis/api.dart';
+
+import '../../widgets/player/player_subtitle_controller.dart';
 
 class SongsAPI extends API {
   @override
@@ -55,5 +58,13 @@ class SongsAPI extends API {
 
     assert(status.isError);
     throw status;
+  }
+
+  Future<SubtitleController> lyrics({required String songId}) async {
+    final controller = PlayerSubtitleController(
+        provider: PlayerSubtitleProvider(
+            Uri.parse('$url/lyrics/$songId')));
+    await controller.initial();
+    return controller;
   }
 }
